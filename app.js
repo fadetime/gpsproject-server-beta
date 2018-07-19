@@ -15,6 +15,7 @@ const clientARoutes = require('./routes/clienta')
 const clientBRoutes = require('./routes/clientb')
 const timesRoutes = require('./routes/times')
 const missionRoutes = require('./routes/mission')
+const clerksRoutes = require('./routes/clerks')
 
 // **************************一系列的middleware************************
 
@@ -49,6 +50,7 @@ app.use('/clienta',clientARoutes)
 app.use('/clientb',clientBRoutes)
 app.use('/times',timesRoutes)
 app.use('/mission',missionRoutes)
+app.use('/clerks',clerksRoutes)
 
 
 // handling error

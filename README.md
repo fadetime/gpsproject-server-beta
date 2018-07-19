@@ -1,6 +1,6 @@
 # gpsproject-server-beta
-provide gps project serve
+##provide gps project serve
 
-start 
-npm i
-node server.js
+##start 
+###npm i
+###node server.js
