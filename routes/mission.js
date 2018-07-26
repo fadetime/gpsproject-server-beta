@@ -12,6 +12,6 @@ router.post('/create', MissionController.mission_create)
 // router.post('/update', MissionController.mission_update)
 
 // 删除数据
-// router.post('/remove', MissionController.mission_remove)
+router.post('/remove', MissionController.mission_remove)
 
 module.exports = router
