@@ -1,24 +1,66 @@
 const mongoose = require('mongoose');
 const Clerk = require('../models/clerk');
+const Driver = require('../models/dirver');
+const Client = require('../models/clienta');
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-exports.login = (req,res,next)=>{
-    Clerk.findOne({email:req.body.email})
-    .then(doc=>{
-        if(!doc){
-            res.json({
-                status:404,
-                msg:'该账号不存在'
-            })
-        }else{
-            bcrypt.compare(req.body.password,doc.password).then(result=>{
-                if(result){
+exports.login = (req, res, next) => {
+    Clerk.findOne({ email: req.body.email })
+        .then(doc => {
+            if (!doc) {
+                res.json({
+                    status: 404,
+                    msg: '该账号不存在'
+                })
+            } else {
+                bcrypt.compare(req.body.password, doc.password).then(result => {
+                    if (result) {
+                        const token = jwt.sign(
+                            {
+                                phone: doc.phone,
+                                name: doc.name,
+                                _id: doc._id
+                            },
+                            process.env.JWT_KEY,
+                            {
+                                expiresIn: '1 days'
+                            }
+                        )
+                        res.json({
+                            status: 0,
+                            msg: '登陆成功',
+                            token: token,
+                            payload: doc
+                        })
+                    } else {
+                        res.json({
+                            status: 2,
+                            msg: '密码错误，请重试'
+                        })
+                    }
+                })
+            }
+        })
+}
+
+exports.user_login = (req, res, next) => {
+    Driver.findOne({ dirverusername: req.body.username })
+        .then(doc => {
+            if (!doc) {
+                res.json({
+                    status: 404,
+                    msg: '该账号不存在',
+                    code: 1
+                })
+            } else {
+                // bcrypt.compare(req.body.password,doc.password).then(result=>{
+                if (req.body.password == doc.dirverpsw) {
                     const token = jwt.sign(
                         {
-                            phone:doc.phone,
-                            name:doc.name,
-                            _id:doc._id
+                            dirvername: doc.dirvername,
+                            dirverphone: doc.dirverphone,
+                            _id: doc._id
                         },
                         process.env.JWT_KEY,
                         {
@@ -26,18 +68,74 @@ exports.login = (req,res,next)=>{
                         }
                     )
                     res.json({
-                        status:0,
-                        msg:'登陆成功',
-                        token:token,
-                        payload:doc
+                        code: 0,
+                        msg: '登陆成功',
+                        token: token,
+                        drivername: doc.dirvername
                     })
-                }else{
+                } else {
                     res.json({
-                        status:2,
-                        msg:'密码错误，请重试'
+                        status: 2,
+                        msg: '密码错误，请重试',
+                        code: 2
                     })
                 }
-            })
-        }
-    })
+                // })
+            }
+        })
+}
+
+exports.company_login = (req, res, next) => {
+    Client.findOne({ clientausername: req.body.username })
+        .then(doc => {
+            if (!doc) {
+                res.json({
+                    status: 404,
+                    msg: '该账号不存在',
+                    code: 1
+                })
+            } else {
+                bcrypt.compare(req.body.password,doc.clientapsw)
+                .then(item=>{
+                // if (req.body.password == doc.clientapsw) {
+                    console.log('######')
+                    console.log(doc)
+                    const token = jwt.sign(
+                        {
+                            clientname: doc.clientaname,
+                            clientphone: doc.clientaphone,
+                            _id: doc._id
+                        },
+                        process.env.JWT_KEY,
+                        {
+                            expiresIn: '1 days'
+                        }
+                    )
+                    res.json({
+                        code: 0,
+                        msg: '登陆成功',
+                        token: token,
+                        name: doc.clientaname,
+                        address: doc.clientaaddress,
+                        phone: doc.clientaphone,
+                        postcode: doc.clientapostcode,
+                        email: doc.clientamail
+                    })
+                // } else {
+                    // res.json({
+                    //     status: 2,
+                    //     msg: '密码错误，请重试',
+                    //     code: 2
+                    // })
+                // }
+                })
+                .catch(err => {
+                    res.json({
+                        msg:'密码错误，请重试',
+                        code:2,
+                        error:err
+                    })
+                })
+            }
+        })
 }

@@ -46,7 +46,7 @@ exports.mission_remove = (req, res, next) => {
                     msg: '未找到该任务信息'
                 })
             } else {
-                Product.remove({_id:req.body.missionid})
+                Product.remove({ _id: req.body.missionid })
                     .then(() => {
                         res.send({
                             code: 0,
@@ -70,6 +70,4 @@ exports.mission_remove = (req, res, next) => {
                 error: err
             })
         })
-
-
 }

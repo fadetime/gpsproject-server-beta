@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const missionSchema = mongoose.Schema({
+const clientDriverSchema = mongoose.Schema({
     missiondate: { type: Date, default: Date.now },//线路时间
     missionline: { type: String, required: true },//线路名称
     missionnote: { type: String },//线路备注
@@ -20,4 +20,4 @@ const missionSchema = mongoose.Schema({
     ]//线路客户
 })
 
-module.exports = mongoose.model('Mission', missionSchema)
+module.exports = mongoose.model('Missions', clientDriverSchema)

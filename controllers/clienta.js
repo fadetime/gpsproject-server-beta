@@ -2,7 +2,7 @@
 const mongoose = require('mongoose')
 const Product = require('../models/clienta')
 const ClientB = require('../models/clientb')
-
+const bcrypt = require('bcryptjs')
 
 
 exports.clientas_get_all = (req, res, next) => {
@@ -37,6 +37,8 @@ exports.clientas_create_product = (req, res, next) => {
                                 msg: '此合作商邮编已存在'
                             })
                         } else {
+                            let psw = req.body.clientapsw
+                            req.body.clientapsw = bcrypt.hashSync(psw)
                             Product.create(req.body)
                                 .then((doc) => {
                                     console.log(doc)
@@ -101,6 +103,8 @@ exports.clientas_edit = (req, res, next) => {
                                                     return item._id != req.body._id
                                                 })
                                                 if (data2.length == 0) {
+                                                    let psw = req.body.clientapsw
+                                                    req.body.clientapsw = bcrypt.hashSync(psw)
                                                     Product.updateMany({ _id: req.body._id }, {
                                                         clientaname: req.body.clientaname,
                                                         clientaaddress: req.body.clientaaddress,

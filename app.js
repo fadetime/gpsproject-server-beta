@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 
 // 连接MongoDB by using mongoose
-mongoose.connect('mongodb://192.168.1.70/test')
+mongoose.connect('mongodb://192.168.1.70:27017/test',{ useNewUrlParser: true })
 mongoose.Promise = global.Promise
 
 // 创建Routes实例
@@ -16,11 +16,16 @@ const clientBRoutes = require('./routes/clientb')
 const timesRoutes = require('./routes/times')
 const missionRoutes = require('./routes/mission')
 const clerksRoutes = require('./routes/clerks')
+const clientDriverRoutes = require('./routes/client-driver')
+const clientCompanyRoutes = require('./routes/client-company')
 
 // **************************一系列的middleware************************
 
 // 打印请求状态
 app.use(morgan('dev'))
+
+//使图片文件夹能被访问
+app.use('/uploads', express.static('uploads'));
 
 // Parsing the Body
 app.use(bodyParser.urlencoded({extended: false}))
@@ -51,6 +56,8 @@ app.use('/clientb',clientBRoutes)
 app.use('/times',timesRoutes)
 app.use('/mission',missionRoutes)
 app.use('/clerks',clerksRoutes)
+app.use('/client-driver',clientDriverRoutes)
+app.use('/client-company',clientCompanyRoutes)
 
 
 // handling error
