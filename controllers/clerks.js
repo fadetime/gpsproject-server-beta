@@ -54,34 +54,48 @@ exports.user_login = (req, res, next) => {
                     code: 1
                 })
             } else {
-                // bcrypt.compare(req.body.password,doc.password).then(result=>{
-                if (req.body.password == doc.dirverpsw) {
-                    const token = jwt.sign(
-                        {
-                            dirvername: doc.dirvername,
-                            dirverphone: doc.dirverphone,
-                            _id: doc._id
-                        },
-                        process.env.JWT_KEY,
-                        {
-                            expiresIn: '1 days'
+                bcrypt.compare(req.body.password, doc.dirverpsw)
+                    .then(item => {
+                        if (item) {
+                            const token = jwt.sign(
+                                {
+                                    dirvername: doc.dirvername,
+                                    dirverphone: doc.dirverphone,
+                                    _id: doc._id
+                                },
+                                process.env.JWT_KEY,
+                                {
+                                    expiresIn: '1 days'
+                                }
+                            )
+                            res.json({
+                                code: 0,
+                                msg: '登陆成功',
+                                token: token,
+                                drivername: doc.dirvername
+                            })
+                        } else {
+                            res.json({
+                                msg: '密码错误，请重试',
+                                code: 1,
+                                error: err
+                            })
                         }
-                    )
-                    res.json({
-                        code: 0,
-                        msg: '登陆成功',
-                        token: token,
-                        drivername: doc.dirvername
                     })
-                } else {
-                    res.json({
-                        status: 2,
-                        msg: '密码错误，请重试',
-                        code: 2
+                    .catch(err => {
+                        res.json({
+                            msg: '服务器发生错误',
+                            code: 2,
+                            error: err
+                        })
                     })
-                }
-                // })
             }
+        })
+        .catch(err => {
+            res.json({
+                code: 2,
+                msg: '查找时发生错误'
+            })
         })
 }
 
@@ -95,47 +109,54 @@ exports.company_login = (req, res, next) => {
                     code: 1
                 })
             } else {
-                bcrypt.compare(req.body.password,doc.clientapsw)
-                .then(item=>{
-                // if (req.body.password == doc.clientapsw) {
-                    console.log('######')
-                    console.log(doc)
-                    const token = jwt.sign(
-                        {
-                            clientname: doc.clientaname,
-                            clientphone: doc.clientaphone,
-                            _id: doc._id
-                        },
-                        process.env.JWT_KEY,
-                        {
-                            expiresIn: '1 days'
+                bcrypt.compare(req.body.password, doc.clientapsw)
+                    .then(item => {
+                         if (item) {
+                        console.log('######')
+                        console.log(doc)
+                        const token = jwt.sign(
+                            {
+                                clientname: doc.clientaname,
+                                clientphone: doc.clientaphone,
+                                _id: doc._id
+                            },
+                            process.env.JWT_KEY,
+                            {
+                                expiresIn: '1 days'
+                            }
+                        )
+                        res.json({
+                            code: 0,
+                            msg: '登陆成功',
+                            token: token,
+                            name: doc.clientaname,
+                            address: doc.clientaaddress,
+                            phone: doc.clientaphone,
+                            postcode: doc.clientapostcode,
+                            email: doc.clientamail
+                        })
+                         } else {
+                        res.json({
+                            status: 2,
+                            msg: '密码错误，请重试',
+                            code: 2
+                        })
                         }
-                    )
-                    res.json({
-                        code: 0,
-                        msg: '登陆成功',
-                        token: token,
-                        name: doc.clientaname,
-                        address: doc.clientaaddress,
-                        phone: doc.clientaphone,
-                        postcode: doc.clientapostcode,
-                        email: doc.clientamail
                     })
-                // } else {
-                    // res.json({
-                    //     status: 2,
-                    //     msg: '密码错误，请重试',
-                    //     code: 2
-                    // })
-                // }
-                })
-                .catch(err => {
-                    res.json({
-                        msg:'密码错误，请重试',
-                        code:2,
-                        error:err
+                    .catch(err => {
+                        res.json({
+                            msg: '密码错误，请重试',
+                            code: 2,
+                            error: err
+                        })
                     })
-                })
             }
+        })
+        .catch(err => {
+            res.json({
+                msg:'查找账户时发生错误',
+                code:2,
+                error:err
+            })
         })
 }
