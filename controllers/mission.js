@@ -1,5 +1,6 @@
-const mongoose = require('mongoose')
 const Product = require('../models/mission')
+const CarModels = require('../models/car')
+const LineModels = require('../models/times')
 
 exports.mission_get_today = (req, res, next) => {
     let startdate = new Date(req.body.startdate).getTime()
@@ -22,11 +23,64 @@ exports.mission_get_today = (req, res, next) => {
 exports.mission_create = (req, res, next) => {
     Product.create(req.body)
         .then((doc) => {
-            res.send({
-                code: 0,
-                msg: '创建任务成功',
-                doc: doc
-            })
+            CarModels.findOne({ 'carid': req.body.missioncar })
+                .then(doc2 => {
+                    let carCount = doc2.cartimes + 1
+                    CarModels.update({ 'carid': req.body.missioncar }, {
+                        cartimes: carCount
+                    })
+                        .then(() => {
+                            LineModels.findOne({ 'timesname': req.body.missionline })
+                                .then(doc4 => {
+                                    let lineCount = doc4.timescount + 1
+                                    LineModels.update({ 'timesname': req.body.missionline }, {
+                                        timescount: lineCount
+                                    })
+                                        .then(() => {
+                                            res.send({
+                                                code: 0,
+                                                msg: '创建任务成功'
+                                            })
+                                        })
+                                        .catch(err => {
+                                            console.log('更新路线信息时服务器发生错误')
+                                            console.log(err)
+                                            res.status(500).json({
+                                                msg: '更新路线信息时服务器发生错误',
+                                                error: err,
+                                                code: 2
+                                            })
+                                        })
+                                })
+                                .catch(err => {
+                                    console.log('查找路线信息时服务器发生错误')
+                                    console.log(err)
+                                    res.status(500).json({
+                                        msg: '查找路线信息时服务器发生错误',
+                                        error: err,
+                                        code: 2
+                                    })
+                                })
+                        })
+                        .catch(err => {
+                            console.log('更新车辆信息时服务器发生错误')
+                            console.log(err)
+                            res.status(500).json({
+                                msg: '更新车辆信息时服务器发生错误',
+                                error: err,
+                                code: 2
+                            })
+                        })
+                })
+                .catch(err => {
+                    console.log('获取车辆信息时服务器发生错误')
+                    console.log(err)
+                    res.status(500).json({
+                        msg: '获取车辆信息时服务器发生错误',
+                        error: err,
+                        code: 2
+                    })
+                })
         })
         .catch((err) => {
             console.log(err)
@@ -38,7 +92,7 @@ exports.mission_create = (req, res, next) => {
 }
 
 exports.mission_remove = (req, res, next) => {
-    Product.find({ _id: req.body.missionid })
+    Product.findOne({ _id: req.body.missionid })
         .then(doc => {
             if (!doc) {
                 res.send({
@@ -46,18 +100,72 @@ exports.mission_remove = (req, res, next) => {
                     msg: '未找到该任务信息'
                 })
             } else {
-                Product.remove({ _id: req.body.missionid })
-                    .then(() => {
-                        res.send({
-                            code: 0,
-                            msg: '删除任务成功'
+                CarModels.findOne({ 'carid': doc.missioncar })
+                    .then(doc1 => {
+                        let carCount = doc1.cartimes - 1
+                        CarModels.update({ 'carid': doc.missioncar }, {
+                            cartimes: carCount
                         })
+                            .then(() => {
+                                LineModels.findOne({ 'timesname': doc.missionline })
+                                    .then(doc2 => {
+                                        let lineCount = doc2.timescount - 1
+                                        LineModels.update({ 'timesname': doc.missionline }, {
+                                            timescount: lineCount
+                                        })
+                                            .then(() => {
+                                                Product.remove({ _id: req.body.missionid })
+                                                    .then(() => {
+                                                        res.send({
+                                                            code: 0,
+                                                            msg: '删除任务成功'
+                                                        })
+                                                    })
+                                                    .catch((err) => {
+                                                        console.log(err)
+                                                        res.status(500).json({
+                                                            msg: '删除数据时服务器发生错误',
+                                                            err
+                                                        })
+                                                    })
+                                            })
+                                            .catch(err => {
+                                                console.log('更新线路信息时服务器发生错误')
+                                                console.log(err)
+                                                res.status(500).json({
+                                                    msg: '更新车线路息时服务器发生错误',
+                                                    error: err,
+                                                    code: 2
+                                                })
+                                            })
+                                    })
+                                    .catch(err => {
+                                        console.log('获取线路信息时服务器发生错误')
+                                        console.log(err)
+                                        res.status(500).json({
+                                            msg: '获取车线路息时服务器发生错误',
+                                            error: err,
+                                            code: 2
+                                        })
+                                    })
+                            })
+                            .catch(err => {
+                                console.log('更新车辆信息时服务器发生错误')
+                                console.log(err)
+                                res.status(500).json({
+                                    msg: '更新车辆信息时服务器发生错误',
+                                    error: err,
+                                    code: 2
+                                })
+                            })
                     })
-                    .catch((err) => {
+                    .catch(err => {
+                        console.log('获取车辆信息时服务器发生错误')
                         console.log(err)
                         res.status(500).json({
-                            msg: '删除数据时服务器发生错误',
-                            err
+                            msg: '获取车辆信息时服务器发生错误',
+                            error: err,
+                            code: 2
                         })
                     })
             }

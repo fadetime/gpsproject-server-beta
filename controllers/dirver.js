@@ -133,17 +133,30 @@ exports.dirvers_edit = (req, res, next) => {
                                                         msg: '该用户名已存在'
                                                     })
                                                 } else {
-                                                    let psw = req.body.dirverpsw
-                                                    req.body.dirverpsw = bcrypt.hashSync(psw)
-                                                    Product.updateMany({ _id: req.body._id }, {
-                                                        dirvername: req.body.dirvername,
-                                                        dirverid: req.body.dirverid,
-                                                        dirverphone: req.body.dirverphone,
-                                                        dirvercard: req.body.dirvercard,
-                                                        dirverusername: req.body.dirvercard,
-                                                        dirverpsw: req.body.dirverpsw,
-                                                        dirvernote: req.body.dirvernote
-                                                    })
+                                                    let updateInfo
+                                                    if (req.body.dirverpsw === undefined) {
+                                                        updateInfo = {
+                                                            dirvername: req.body.dirvername,
+                                                            dirverid: req.body.dirverid,
+                                                            dirverphone: req.body.dirverphone,
+                                                            dirvercard: req.body.dirvercard,
+                                                            dirverusername: req.body.dirverusername,
+                                                            dirvernote: req.body.dirvernote
+                                                        }
+                                                    } else {
+                                                        let psw = req.body.dirverpsw
+                                                        req.body.dirverpsw = bcrypt.hashSync(psw)
+                                                        updateInfo = {
+                                                            dirvername: req.body.dirvername,
+                                                            dirverid: req.body.dirverid,
+                                                            dirverphone: req.body.dirverphone,
+                                                            dirvercard: req.body.dirvercard,
+                                                            dirverusername: req.body.dirverusername,
+                                                            dirverpsw: req.body.dirverpsw,
+                                                            dirvernote: req.body.dirvernote
+                                                        }
+                                                    }
+                                                    Product.updateMany({ _id: req.body._id }, updateInfo)
                                                         .then(() => {
                                                             res.send({
                                                                 code: 0,
@@ -161,16 +174,33 @@ exports.dirvers_edit = (req, res, next) => {
                                                         })
                                                 }
                                             })
-                                            .catch()
+                                            .catch(err => {
+                                                res.send({
+                                                    code: 2,
+                                                    msg: '查找用户名时出错',
+                                                    error: err
+                                                })
+                                                console.log('查找用户名时出错')
+                                                console.log(err)
+                                            })
                                     }
                                 })
-                                .catch()
+                                .catch(err => {
+                                    res.send({
+                                        code: 2,
+                                        msg: '查找电话号码时出错',
+                                        error: err
+                                    })
+                                    console.log('查找准证号码时出错')
+                                    console.log(err)
+                                })
                         }
                     })
                     .catch((err) => {
                         res.send({
-                            code: 1,
-                            msg: '查找准证号码时出错'
+                            code: 2,
+                            msg: '查找准证号码时出错',
+                            error: err
                         })
                         console.log('查找准证号码时出错')
                         console.log(err)
@@ -181,7 +211,9 @@ exports.dirvers_edit = (req, res, next) => {
         .catch((err) => {
             console.log('修改司机时服务器发生错误')
             res.status(500).json({
-                msg: '修改司机时服务器发生错误'
+                msg: '修改司机时服务器发生错误',
+                code: 2,
+                error: err
             })
             console.log(err)
         })
@@ -217,6 +249,7 @@ exports.dirvers_delete = (req, res, next) => {
             console.log(err)
             res.status(500).json({
                 msg: '获取数据时服务器发生错误',
+                code: 2,
                 err
             })
         })
