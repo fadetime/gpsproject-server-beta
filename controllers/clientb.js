@@ -112,7 +112,7 @@ exports.clientbs_update_line = (req,res,next) => {
 exports.clientbs_edit = (req,res,next) => {
 	Product.find({_id:req.body._id})
 	.then((doc) => {
-        if(doc.length == 0){
+        if(doc.length === 0){
             res.send({
                 code:1,
                 msg:'未找到该客户'
@@ -123,14 +123,14 @@ exports.clientbs_edit = (req,res,next) => {
                 let data = doc1.filter((item) =>{
                     return item._id != req.body._id
                 })
-                if(data.length == 0){
+                if(data.length === 0){
                     Product.find({clientbpostcode:req.body.clientbpostcode})
                     .then((doc2) => {
                         let data1 = doc2.filter((item1) => {
                             return item1._id != req.body._id
                         })
-                        if(data1.length == 0){
-                            Product.updateMany({_id:req.body._id},{
+                        if(data1.length === 0){
+                            Product.update({_id:req.body._id},{
                                 clientbname: req.body.clientbname,
                                 clientbaddress: req.body.clientbaddress,
                                 clientbphone: req.body.clientbphone,

@@ -103,20 +103,37 @@ exports.clientas_edit = (req, res, next) => {
                                                     return item._id != req.body._id
                                                 })
                                                 if (data2.length == 0) {
-                                                    let psw = req.body.clientapsw
-                                                    req.body.clientapsw = bcrypt.hashSync(psw)
-                                                    Product.updateMany({ _id: req.body._id }, {
-                                                        clientaname: req.body.clientaname,
-                                                        clientaaddress: req.body.clientaaddress,
-                                                        clientaphone: req.body.clientaphone,
-                                                        clientastatus: req.body.clientastatus,
-                                                        clientapostcode: req.body.clientapostcode,
-                                                        clientausername: req.body.clientausername,
-                                                        clientapsw: req.body.clientapsw,
-                                                        clientacontract: req.body.clientacontract,
-                                                        clientatime: req.body.clientatime,
-                                                        clientamail: req.body.clientamail
-                                                    })
+                                                    let editInfo
+                                                    if (req.body.clientapsw) {
+                                                        let psw = req.body.clientapsw
+                                                        req.body.clientapsw = bcrypt.hashSync(psw)
+                                                        editInfo = {
+                                                            clientaname: req.body.clientaname,
+                                                            clientaaddress: req.body.clientaaddress,
+                                                            clientaphone: req.body.clientaphone,
+                                                            clientastatus: req.body.clientastatus,
+                                                            clientapostcode: req.body.clientapostcode,
+                                                            clientausername: req.body.clientausername,
+                                                            clientapsw: req.body.clientapsw,
+                                                            clientacontract: req.body.clientacontract,
+                                                            clientatime: req.body.clientatime,
+                                                            clientamail: req.body.clientamail
+                                                        }
+                                                    } else {
+                                                        editInfo = {
+                                                            clientaname: req.body.clientaname,
+                                                            clientaaddress: req.body.clientaaddress,
+                                                            clientaphone: req.body.clientaphone,
+                                                            clientastatus: req.body.clientastatus,
+                                                            clientapostcode: req.body.clientapostcode,
+                                                            clientausername: req.body.clientausername,
+                                                            clientacontract: req.body.clientacontract,
+                                                            clientatime: req.body.clientatime,
+                                                            clientamail: req.body.clientamail
+                                                        }
+                                                    }
+
+                                                    Product.updateMany({ _id: req.body._id }, editInfo)
                                                         .then(() => {
                                                             res.send({
                                                                 code: 0,
