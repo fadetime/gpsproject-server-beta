@@ -5,6 +5,12 @@ const CarController = require('../controllers/car')
 // 加载所有数据
 router.get('/', CarController.carts_get_all)
 
+// 分页加载所有数据
+router.post('/get', CarController.carts_post_all)
+
+// 查找数据
+router.post('/find', CarController.carts_find)
+
 // 增加数据
 router.post('/', CarController.carts_create_product)
 

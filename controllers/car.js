@@ -1,18 +1,45 @@
 const Product = require('../models/car')
 
-
-
 exports.carts_get_all = (req, res, next) => {
     Product.find()
         .then((doc) => {
-            console.log(doc)
             res.send(doc)
         })
         .catch((err) => {
             console.log(err)
             res.status(500).json({
                 msg: '获取数据时服务器发生错误',
-                err
+                error: err
+            })
+        })
+}
+
+exports.carts_post_all = (req, res, next) => {
+    Product.find()
+        .limit(req.body.pageSize)
+        .skip(req.body.pageSize * (req.body.pageNow - 1))
+        .then((doc) => {
+            Product.count()
+                .then(item => {
+                    res.send({
+                        msg: '计数成功',
+                        code: 0,
+                        count: item,
+                        doc: doc
+                    })
+                })
+                .catch(err => {
+                    res.send({
+                        msg: '计数时服务器发生错误',
+                        error: err
+                    })
+                })
+        })
+        .catch((err) => {
+            console.log(err)
+            res.status(500).json({
+                msg: '获取数据时服务器发生错误',
+                error: err
             })
         })
 }
@@ -45,7 +72,7 @@ exports.carts_update = (req, res, next) => {
                             res.send({
                                 code: 2,
                                 msg: '更新时出现问题',
-                                err
+                                error: err
                             })
                             console.log(err)
                         })
@@ -76,7 +103,7 @@ exports.carts_update = (req, res, next) => {
                                         res.send({
                                             code: 2,
                                             msg: '更新时出现问题',
-                                            err
+                                            error: err
                                         })
                                         console.log(err)
                                     })
@@ -97,7 +124,7 @@ exports.carts_update = (req, res, next) => {
             console.log(err)
             res.status(500).json({
                 msg: '获取数据时服务器发生错误',
-                err
+                error: err
             })
         })
 }
@@ -124,7 +151,7 @@ exports.carts_create_product = (req, res, next) => {
                         res.send({
                             code: 2,
                             msg: '添加时出现错误',
-                            err
+                            error: err
                         })
                     })
             } else {
@@ -161,7 +188,7 @@ exports.carts_remove = (req, res, next) => {
                         res.send({
                             code: 2,
                             msg: '删除时出现错误',
-                            err
+                            error: err
                         })
                     })
             }
@@ -175,30 +202,39 @@ exports.carts_remove = (req, res, next) => {
         })
 }
 
-exports.car_count = (req, res, next) => {
-    Product.find({ '_id': req.body._id })
-        .then(doc => {
-            if (doc.length === 0) {
+exports.carts_find = (req, res, next) => {
+    Product.find({ 'carid': { $regex: req.body.word, $options: 'i' } })
+        .limit(req.body.pageSize)
+        .skip(req.body.pageSize * (req.body.pageNow - 1))
+        .then((doc) => {
+            if (doc.length == 0) {
                 res.send({
                     code: 1,
-                    msg: '计数时未找到该车辆信息'
+                    msg: '未找到该数据'
                 })
             } else {
-                let count = doc.cartimes + 1
-                Product.update({ '_id': req.body._id },{
-                    cartimes:count
-                })
-                .then()
-                .catch()
+                Product.count({ "carid": { $regex: req.body.word, $options: 'i' } })
+                    .then(item => {
+                        res.send({
+                            code: 0,
+                            doc: doc,
+                            count: item,
+                            msg: '查找成功'
+                        })
+                    })
+                    .catch(err => {
+                        res.send({
+                            msg: '获取数据时服务器发生错误',
+                            error: err
+                        })
+                    })
             }
         })
         .catch(err => {
-            console.log('车辆计数时服务器发生错误')
             console.log(err)
             res.status(500).json({
-                msg: '车辆计数时服务器发生错误',
-                error: err,
-                code: 2
+                msg: '获取数据时服务器发生错误',
+                error: err
             })
         })
 }

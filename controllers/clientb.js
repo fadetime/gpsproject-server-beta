@@ -2,7 +2,21 @@
 const mongoose = require('mongoose')
 const Product = require('../models/clientb')
 
-
+exports.clientbs_get = (req, res, next) => {
+    Product.find()
+        .populate('clientbserve')
+        .then((doc) => {
+            console.log(doc)
+            res.send(doc)
+        })
+        .catch((err) => {
+            console.log(err)
+            res.status(500).json({
+                msg: '获取数据时服务器发生错误',
+                err
+            })
+        })
+}
 
 exports.clientbs_get_all = (req, res, next) => {
     Product.find()

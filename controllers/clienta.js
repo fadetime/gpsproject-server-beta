@@ -1,9 +1,22 @@
 //操作合作商交互方法
-const mongoose = require('mongoose')
 const Product = require('../models/clienta')
 const ClientB = require('../models/clientb')
 const bcrypt = require('bcryptjs')
 
+exports.clientas_get = (req, res, next) => {
+    Product.find()
+        .then((doc) => {
+            console.log(doc)
+            res.send(doc)
+        })
+        .catch((err) => {
+            console.log(err)
+            res.status(500).json({
+                msg: '获取数据时服务器发生错误',
+                err
+            })
+        })
+}
 
 exports.clientas_get_all = (req, res, next) => {
     Product.find()
@@ -269,33 +282,34 @@ exports.clientas_remove = (req, res, next) => {
             console.log(err)
             res.status(500).json({
                 msg: '获取数据时服务器发生错误',
-                err
+                error:err
             })
         })
 }
 
-exports.clientas_remove_clientB = (req, res, next) => {
-    ClientB.find({ clientbserve: '5b406b8fc02ef6214cb299dc' })
+exports.clientA_find = (req, res, next) => {
+    Product.find({ "clientaname": { $regex: req.body.word, $options: 'i' } })
+        .limit(req.body.pageSize)
+        .skip(req.body.pageSize * (req.body.pageNow - 1))
         .then((doc) => {
             if (doc.length == 0) {
                 res.send({
                     code: 1,
-                    msg: '没找着'
+                    msg: '未找到该数据'
                 })
             } else {
-                ClientB.update({ clientbserve: '5b406b8fc02ef6214cb299dc' }, { 'clientbserve': null })
+                Product.count({ "clientaname": { $regex: req.body.word, $options: 'i' } })
                     .then(item => {
-                        console.log(item)
                         res.send({
                             code: 0,
-                            msg: '牛逼了',
-                            data: item
+                            doc: doc,
+                            count: item,
+                            msg: '查找成功'
                         })
                     })
                     .catch(err => {
                         res.send({
-                            code: 2,
-                            msg: '完犊子了',
+                            msg: '获取数据时服务器发生错误',
                             error: err
                         })
                     })
@@ -305,7 +319,7 @@ exports.clientas_remove_clientB = (req, res, next) => {
             console.log(err)
             res.status(500).json({
                 msg: '获取数据时服务器发生错误',
-                err
+                error: err
             })
         })
 }

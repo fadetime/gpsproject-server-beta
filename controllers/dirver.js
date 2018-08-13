@@ -5,14 +5,43 @@ const bcrypt = require('bcryptjs')
 exports.dirvers_get_all = (req, res, next) => {
     Product.find()
         .then((doc) => {
-            console.log(doc)
             res.send(doc)
         })
         .catch((err) => {
             console.log(err)
             res.status(500).json({
                 msg: '获取数据时服务器发生错误',
-                err
+                error: err
+            })
+        })
+}
+
+exports.dirvers_post_all = (req, res, next) => {
+    Product.find()
+        .limit(req.body.pageSize)
+        .skip(req.body.pageSize * (req.body.pageNow - 1))
+        .then((doc) => {
+            Product.count()
+                .then(item => {
+                    res.send({
+                        msg: '计数成功',
+                        code: 0,
+                        count: item,
+                        doc: doc
+                    })
+                })
+                .catch(err => {
+                    res.send({
+                        msg: '计数时服务器发生错误',
+                        error: err
+                    })
+                })
+        })
+        .catch((err) => {
+            console.log(err)
+            res.status(500).json({
+                msg: '获取数据时服务器发生错误',
+                error: err
             })
         })
 }
@@ -57,7 +86,7 @@ exports.dirvers_create_product = (req, res, next) => {
                                                 res.send({
                                                     code: 2,
                                                     msg: '添加时出现错误',
-                                                    err
+                                                    error: err
                                                 })
                                             })
                                     }
@@ -67,7 +96,7 @@ exports.dirvers_create_product = (req, res, next) => {
                                     res.send({
                                         code: 2,
                                         msg: '查找用户时发生错误',
-                                        err
+                                        error: err
                                     })
                                 })
                         }
@@ -77,7 +106,7 @@ exports.dirvers_create_product = (req, res, next) => {
                         res.send({
                             code: 2,
                             msg: '查找电话时发生错误',
-                            err
+                            error: err
                         })
                     })
             }
@@ -167,7 +196,7 @@ exports.dirvers_edit = (req, res, next) => {
                                                             res.send({
                                                                 code: 2,
                                                                 msg: '修改司机信息时出现错误',
-                                                                err
+                                                                error: err
                                                             })
                                                             console.log('修改司机信息时出现错误')
                                                             console.log(err)
@@ -240,7 +269,7 @@ exports.dirvers_delete = (req, res, next) => {
                         res.send({
                             code: 2,
                             msg: '删除时出现错误',
-                            err: err
+                            error: err
                         })
                     })
             }
@@ -250,7 +279,45 @@ exports.dirvers_delete = (req, res, next) => {
             res.status(500).json({
                 msg: '获取数据时服务器发生错误',
                 code: 2,
-                err
+                error: err
+            })
+        })
+}
+
+exports.driver_find = (req, res, next) => {
+    Product.find({ "dirvername": { $regex: req.body.word, $options: 'i' } })
+        .limit(req.body.pageSize)
+        .skip(req.body.pageSize * (req.body.pageNow - 1))
+        .then((doc) => {
+            if (doc.length == 0) {
+                res.send({
+                    code: 1,
+                    msg: '未找到该数据'
+                })
+            } else {
+                Product.count({ "dirvername": { $regex: req.body.word, $options: 'i' } })
+                    .then(item => {
+                        res.send({
+                            code: 0,
+                            doc: doc,
+                            count: item,
+                            msg: '查找成功'
+                        })
+                    })
+                    .catch(err => {
+                        res.send({
+                            msg: '计数时服务器发生错误',
+                            error: err
+                        })
+                    })
+
+            }
+        })
+        .catch((err) => {
+            console.log(err)
+            res.status(500).json({
+                msg: '获取数据时服务器发生错误',
+                error: err
             })
         })
 }
