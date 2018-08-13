@@ -7,15 +7,31 @@ const bcrypt = require('bcryptjs')
 
 exports.clientas_get_all = (req, res, next) => {
     Product.find()
+        .limit(req.body.pageSize)
+        .skip(req.body.pageSize * (req.body.pageNow - 1))
         .then((doc) => {
-            console.log(doc)
-            res.send(doc)
+            Product.count()
+                .then(item => {
+                    res.send({
+                        msg: '计数成功',
+                        code: 0,
+                        count: item,
+                        doc:doc
+                    })
+                })
+                .catch(err => {
+                    res.send({
+                        msg:'计数时服务器发生错误',
+                        error:err
+                    })
+                })
+
         })
         .catch((err) => {
             console.log(err)
             res.status(500).json({
                 msg: '获取数据时服务器发生错误',
-                err
+                error: err
             })
         })
 }

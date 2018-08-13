@@ -4,7 +4,7 @@ const router = express.Router()
 const ClientAController = require('../controllers/clienta')
 
 // 加载所有数据
-router.get('/', ClientAController.clientas_get_all)
+router.post('/get', ClientAController.clientas_get_all)
 
 // 增加数据
 router.post('/', ClientAController.clientas_create_product)

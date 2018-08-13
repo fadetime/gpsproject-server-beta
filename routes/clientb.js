@@ -4,7 +4,10 @@ const router = express.Router()
 const ClientBController = require('../controllers/clientb')
 
 // 加载所有数据
-router.get('/', ClientBController.clientbs_get_all)
+router.post('/get', ClientBController.clientbs_get_all)
+
+// 查找数据
+router.post('/find', ClientBController.clientbs_find)
 
 // 增加数据
 router.post('/', ClientBController.clientbs_create_product)
