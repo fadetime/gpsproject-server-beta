@@ -61,31 +61,21 @@ exports.clientbs_create_product = (req, res, next) => {
                     msg: '此客户名称已存在'
                 })
             } else {
-                Product.find({ 'clientbpostcode': req.body.clientbpostcode })
-                    .then((item) => {
-                        if (item.length != 0) {
-                            res.send({
-                                code: 1,
-                                msg: '此客户邮编已存在'
-                            })
-                        } else {
-                            Product.create(req.body)
-                                .then((doc) => {
-                                    console.log(doc)
-                                    res.status(200).json({
-                                        code: 0,
-                                        msg: '添加成功'
-                                    })
-                                })
-                                .catch((err) => {
-                                    console.log(err)
-                                    res.send({
-                                        code: 2,
-                                        msg: '添加时出现错误',
-                                        err
-                                    })
-                                })
-                        }
+                Product.create(req.body)
+                    .then((doc) => {
+                        console.log(doc)
+                        res.status(200).json({
+                            code: 0,
+                            msg: '添加成功'
+                        })
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                        res.send({
+                            code: 2,
+                            msg: '添加时出现错误',
+                            err
+                        })
                     })
             }
         })
@@ -156,41 +146,19 @@ exports.clientbs_edit = (req, res, next) => {
                             return item._id != req.body._id
                         })
                         if (data.length === 0) {
-                            Product.find({ clientbpostcode: req.body.clientbpostcode })
-                                .then((doc2) => {
-                                    let data1 = doc2.filter((item1) => {
-                                        return item1._id != req.body._id
+                            Product.update({ _id: req.body._id }, {
+                                clientbname: req.body.clientbname,
+                                clientbaddress: req.body.clientbaddress,
+                                clientbphone: req.body.clientbphone,
+                                clientbstatus: req.body.clientbstatus,
+                                clientbpostcode: req.body.clientbpostcode,
+                                clientbserve: req.body.clientbserve
+                            })
+                                .then(() => {
+                                    res.send({
+                                        code: 0,
+                                        msg: '修改成功'
                                     })
-                                    if (data1.length === 0) {
-                                        Product.update({ _id: req.body._id }, {
-                                            clientbname: req.body.clientbname,
-                                            clientbaddress: req.body.clientbaddress,
-                                            clientbphone: req.body.clientbphone,
-                                            clientbstatus: req.body.clientbstatus,
-                                            clientbpostcode: req.body.clientbpostcode,
-                                            clientbserve: req.body.clientbserve
-                                        })
-                                            .then(() => {
-                                                res.send({
-                                                    code: 0,
-                                                    msg: '修改成功'
-                                                })
-                                            })
-                                            .catch((err) => {
-                                                console.log('查找客户邮编出错')
-                                                console.log(err)
-                                                res.send({
-                                                    code: 2,
-                                                    msg: '查找客户邮编出错',
-                                                    error: err
-                                                })
-                                            })
-                                    } else {
-                                        res.send({
-                                            code: 1,
-                                            msg: '客户邮编重复'
-                                        })
-                                    }
                                 })
                                 .catch((err) => {
                                     console.log('查找客户邮编出错')

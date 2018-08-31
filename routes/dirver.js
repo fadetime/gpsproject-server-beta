@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const DirverController = require('../controllers/dirver')
+const uploadImage = require('../middlewares/multerUse');
 
 // 加载所有数据
 router.get('/', DirverController.dirvers_get_all)
@@ -12,10 +13,10 @@ router.post('/get', DirverController.dirvers_post_all)
 router.post('/find', DirverController.driver_find)
 
 // 增加数据
-router.post('/', DirverController.dirvers_create_product)
+router.post('/', uploadImage.dataInput, DirverController.dirvers_create_product)
 
 // 修改数据
-router.post('/edit', DirverController.dirvers_edit)
+router.post('/edit', uploadImage.dataInput, DirverController.dirvers_edit)
 
 // 删除数据
 router.post('/remove', DirverController.dirvers_delete)

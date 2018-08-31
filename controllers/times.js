@@ -139,14 +139,12 @@ exports.times_eidt = (req, res, next) => {
 exports.times_remove = (req, res, next) => {
     Product.find({ _id: req.body._id })
         .then((doc) => {
-            console.log('1111111111')
             if (doc.length == 0) {
                 res.send({
                     code: 1,
                     msg: '未找到该线路'
                 })
             } else {
-                console.log('222222222')
                 Product.remove({ _id: req.body._id })
                     .then(() => {
                         res.send({

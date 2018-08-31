@@ -29,13 +29,13 @@ exports.clientas_get_all = (req, res, next) => {
                         msg: '计数成功',
                         code: 0,
                         count: item,
-                        doc:doc
+                        doc: doc
                     })
                 })
                 .catch(err => {
                     res.send({
-                        msg:'计数时服务器发生错误',
-                        error:err
+                        msg: '计数时服务器发生错误',
+                        error: err
                     })
                 })
 
@@ -119,96 +119,77 @@ exports.clientas_edit = (req, res, next) => {
                         let data = doc1.filter((item) => {
                             return item._id != req.body._id
                         })
-                        if (data.length == 0) {
-                            Product.find({ clientapostcode: req.body.clientapostcode })
-                                .then((doc2) => {
-                                    let data1 = doc2.filter((item) => {
+                        if (data.length === 0) {
+                            Product.find({ clientausername: req.body.clientausername })
+                                .then((doc3) => {
+                                    let data2 = doc3.filter((item) => {
                                         return item._id != req.body._id
                                     })
-                                    if (data1.length == 0) {
-                                        Product.find({ clientausername: req.body.clientausername })
-                                            .then((doc3) => {
-                                                let data2 = doc3.filter((item) => {
-                                                    return item._id != req.body._id
-                                                })
-                                                if (data2.length == 0) {
-                                                    let editInfo
-                                                    if (req.body.clientapsw) {
-                                                        let psw = req.body.clientapsw
-                                                        req.body.clientapsw = bcrypt.hashSync(psw)
-                                                        editInfo = {
-                                                            clientaname: req.body.clientaname,
-                                                            clientaaddress: req.body.clientaaddress,
-                                                            clientaphone: req.body.clientaphone,
-                                                            clientastatus: req.body.clientastatus,
-                                                            clientapostcode: req.body.clientapostcode,
-                                                            clientausername: req.body.clientausername,
-                                                            clientapsw: req.body.clientapsw,
-                                                            clientacontract: req.body.clientacontract,
-                                                            clientatime: req.body.clientatime,
-                                                            clientamail: req.body.clientamail
-                                                        }
-                                                    } else {
-                                                        editInfo = {
-                                                            clientaname: req.body.clientaname,
-                                                            clientaaddress: req.body.clientaaddress,
-                                                            clientaphone: req.body.clientaphone,
-                                                            clientastatus: req.body.clientastatus,
-                                                            clientapostcode: req.body.clientapostcode,
-                                                            clientausername: req.body.clientausername,
-                                                            clientacontract: req.body.clientacontract,
-                                                            clientatime: req.body.clientatime,
-                                                            clientamail: req.body.clientamail
-                                                        }
-                                                    }
+                                    if (data2.length == 0) {
+                                        let editInfo
+                                        if (req.body.clientapsw) {
+                                            let psw = req.body.clientapsw
+                                            req.body.clientapsw = bcrypt.hashSync(psw)
+                                            editInfo = {
+                                                clientaname: req.body.clientaname,
+                                                clientaaddress: req.body.clientaaddress,
+                                                clientaphone: req.body.clientaphone,
+                                                clientastatus: req.body.clientastatus,
+                                                clientapostcode: req.body.clientapostcode,
+                                                clientausername: req.body.clientausername,
+                                                clientapsw: req.body.clientapsw,
+                                                clientacontract: req.body.clientacontract,
+                                                clientatime: req.body.clientatime,
+                                                clientamail: req.body.clientamail
+                                            }
+                                        } else {
+                                            editInfo = {
+                                                clientaname: req.body.clientaname,
+                                                clientaaddress: req.body.clientaaddress,
+                                                clientaphone: req.body.clientaphone,
+                                                clientastatus: req.body.clientastatus,
+                                                clientapostcode: req.body.clientapostcode,
+                                                clientausername: req.body.clientausername,
+                                                clientacontract: req.body.clientacontract,
+                                                clientatime: req.body.clientatime,
+                                                clientamail: req.body.clientamail
+                                            }
+                                        }
 
-                                                    Product.updateMany({ _id: req.body._id }, editInfo)
-                                                        .then(() => {
-                                                            res.send({
-                                                                code: 0,
-                                                                msg: '更新合作商成功'
-                                                            })
-                                                        })
-                                                        .catch((err) => {
-                                                            console.log('更新合作商时出现错误')
-                                                            console.log(err)
-                                                            res.send({
-                                                                code: 2,
-                                                                msg: '更新合作商时出现错误',
-                                                                error: err
-                                                            })
-                                                        })
-                                                } else {
-                                                    res.send({
-                                                        code: 1,
-                                                        msg: '该合作商用户名已存在'
-                                                    })
-                                                }
+                                        Product.updateMany({ _id: req.body._id }, editInfo)
+                                            .then(() => {
+                                                res.send({
+                                                    code: 0,
+                                                    msg: '更新合作商成功'
+                                                })
                                             })
                                             .catch((err) => {
-                                                console.log('查找合作商用户名时出现错误')
+                                                console.log('更新合作商时出现错误')
                                                 console.log(err)
                                                 res.send({
                                                     code: 2,
-                                                    msg: '查找合作商用户名时出现错误',
+                                                    msg: '更新合作商时出现错误',
                                                     error: err
                                                 })
                                             })
                                     } else {
                                         res.send({
                                             code: 1,
-                                            msg: '该合作商邮编已存在'
+                                            msg: '该合作商用户名已存在'
                                         })
                                     }
                                 })
                                 .catch((err) => {
-                                    console.log('查找合作商邮编时出现错误')
+                                    console.log('查找合作商用户名时出现错误')
                                     console.log(err)
                                     res.send({
                                         code: 2,
-                                        msg: '查找合作商邮编时出现错误'
+                                        msg: '查找合作商用户名时出现错误',
+                                        error: err
                                     })
                                 })
+
+
                         } else {
                             res.send({
                                 code: 1,
@@ -282,7 +263,7 @@ exports.clientas_remove = (req, res, next) => {
             console.log(err)
             res.status(500).json({
                 msg: '获取数据时服务器发生错误',
-                error:err
+                error: err
             })
         })
 }

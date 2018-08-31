@@ -9,12 +9,4 @@ router.post('/', MissionController.client_driver_get)
 // 修改任务数据
 router.post('/update', uploadImage.dataInput, MissionController.client_driver_upload)
 
-// // 增加数据
-// router.post('/create', MissionController.mission_create)
-
-// // 删除数据
-// router.post('/remove', MissionController.mission_remove)
-
-
-
 module.exports = router

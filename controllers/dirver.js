@@ -55,57 +55,40 @@ exports.dirvers_create_product = (req, res, next) => {
                     msg: '此准证号码已存在'
                 })
             } else {
-                Product.find({ 'dirverphone': req.body.dirverphone })
-                    .then((item) => {
-                        if (item.length != 0) {
+                Product.find({ 'dirverusername': req.body.dirverusername })
+                    .then((user) => {
+                        if (user.length != 0) {
                             res.send({
                                 code: 1,
-                                msg: '此电话号已存在'
+                                msg: '此用户名已存在'
                             })
                         } else {
-                            Product.find({ 'dirverusername': req.body.dirverusername })
-                                .then((user) => {
-                                    if (user.length != 0) {
-                                        res.send({
-                                            code: 1,
-                                            msg: '此用户名已存在'
-                                        })
-                                    } else {
-                                        let psw = req.body.dirverpsw
-                                        req.body.dirverpsw = bcrypt.hashSync(psw)
-                                        Product.create(req.body)
-                                            .then((doc) => {
-                                                console.log(doc)
-                                                res.status(200).json({
-                                                    code: 0,
-                                                    msg: '添加成功'
-                                                })
-                                            })
-                                            .catch((err) => {
-                                                console.log(err)
-                                                res.send({
-                                                    code: 2,
-                                                    msg: '添加时出现错误',
-                                                    error: err
-                                                })
-                                            })
-                                    }
-                                }).catch((err) => {
-                                    console.log('查找用户时发生错误')
+                            let psw = req.body.dirverpsw
+                            req.body.dirverpsw = bcrypt.hashSync(psw)
+                            req.body.image = req.file.path
+                            Product.create(req.body)
+                                .then((doc) => {
+                                    console.log(doc)
+                                    res.status(200).json({
+                                        code: 0,
+                                        msg: '添加成功'
+                                    })
+                                })
+                                .catch((err) => {
                                     console.log(err)
                                     res.send({
                                         code: 2,
-                                        msg: '查找用户时发生错误',
+                                        msg: '添加时出现错误',
                                         error: err
                                     })
                                 })
                         }
                     }).catch((err) => {
-                        console.log('查找电话时发生错误')
+                        console.log('查找用户时发生错误')
                         console.log(err)
                         res.send({
                             code: 2,
-                            msg: '查找电话时发生错误',
+                            msg: '查找用户时发生错误',
                             error: err
                         })
                     })
@@ -140,76 +123,81 @@ exports.dirvers_edit = (req, res, next) => {
                                 msg: '该准证号码已存在!'
                             })
                         } else {
-                            Product.find({ "dirverphone": req.body.dirverphone })
-                                .then((doc3) => {
-                                    let data2 = doc3.filter((item) => {
+                            Product.find({ "dirverusername": req.body.dirverusername })
+                                .then((doc4) => {
+                                    let data3 = doc4.filter((item) => {
                                         return item._id != req.body._id
                                     })
-                                    if (data2.length != 0) {
+                                    if (data3.length != 0) {
                                         res.send({
                                             code: 1,
-                                            msg: '该电话号码已存在'
+                                            msg: '该用户名已存在'
                                         })
                                     } else {
-                                        Product.find({ "dirverusername": req.body.dirverusername })
-                                            .then((doc4) => {
-                                                let data3 = doc4.filter((item) => {
-                                                    return item._id != req.body._id
+                                        let updateInfo = {}
+                                        if (req.body.dirverpsw === undefined && req.file.path === undefined) {
+
+                                            updateInfo = {
+                                                dirvername: req.body.dirvername,
+                                                dirverid: req.body.dirverid,
+                                                dirverphone: req.body.dirverphone,
+                                                dirvercard: req.body.dirvercard,
+                                                dirverusername: req.body.dirverusername,
+                                                dirvernote: req.body.dirvernote
+                                            }
+                                        } else if (req.file.path === undefined) {
+
+                                            let psw = req.body.dirverpsw
+                                            req.body.dirverpsw = bcrypt.hashSync(psw)
+                                            updateInfo = {
+                                                dirvername: req.body.dirvername,
+                                                dirverid: req.body.dirverid,
+                                                dirverphone: req.body.dirverphone,
+                                                dirvercard: req.body.dirvercard,
+                                                dirverusername: req.body.dirverusername,
+                                                dirverpsw: req.body.dirverpsw,
+                                                dirvernote: req.body.dirvernote
+                                            }
+                                        } else if (req.body.dirverpsw === undefined) {
+
+                                            updateInfo = {
+                                                dirvername: req.body.dirvername,
+                                                dirverid: req.body.dirverid,
+                                                dirverphone: req.body.dirverphone,
+                                                dirvercard: req.body.dirvercard,
+                                                dirverusername: req.body.dirverusername,
+                                                dirvernote: req.body.dirvernote,
+                                                image: req.file.path
+                                            }
+                                        } else {
+
+                                            let psw = req.body.dirverpsw
+                                            req.body.dirverpsw = bcrypt.hashSync(psw)
+                                            updateInfo = {
+                                                dirvername: req.body.dirvername,
+                                                dirverid: req.body.dirverid,
+                                                dirverphone: req.body.dirverphone,
+                                                dirvercard: req.body.dirvercard,
+                                                dirverusername: req.body.dirverusername,
+                                                dirverpsw: req.body.dirverpsw,
+                                                dirvernote: req.body.dirvernote,
+                                                image: req.file.path
+                                            }
+                                        }
+                                        Product.updateMany({ _id: req.body._id }, updateInfo)
+                                            .then(() => {
+                                                res.send({
+                                                    code: 0,
+                                                    msg: '修改司机信息成功'
                                                 })
-                                                if (data3.length != 0) {
-                                                    res.send({
-                                                        code: 1,
-                                                        msg: '该用户名已存在'
-                                                    })
-                                                } else {
-                                                    let updateInfo
-                                                    if (req.body.dirverpsw === undefined) {
-                                                        updateInfo = {
-                                                            dirvername: req.body.dirvername,
-                                                            dirverid: req.body.dirverid,
-                                                            dirverphone: req.body.dirverphone,
-                                                            dirvercard: req.body.dirvercard,
-                                                            dirverusername: req.body.dirverusername,
-                                                            dirvernote: req.body.dirvernote
-                                                        }
-                                                    } else {
-                                                        let psw = req.body.dirverpsw
-                                                        req.body.dirverpsw = bcrypt.hashSync(psw)
-                                                        updateInfo = {
-                                                            dirvername: req.body.dirvername,
-                                                            dirverid: req.body.dirverid,
-                                                            dirverphone: req.body.dirverphone,
-                                                            dirvercard: req.body.dirvercard,
-                                                            dirverusername: req.body.dirverusername,
-                                                            dirverpsw: req.body.dirverpsw,
-                                                            dirvernote: req.body.dirvernote
-                                                        }
-                                                    }
-                                                    Product.updateMany({ _id: req.body._id }, updateInfo)
-                                                        .then(() => {
-                                                            res.send({
-                                                                code: 0,
-                                                                msg: '修改司机信息成功'
-                                                            })
-                                                        })
-                                                        .catch((err) => {
-                                                            res.send({
-                                                                code: 2,
-                                                                msg: '修改司机信息时出现错误',
-                                                                error: err
-                                                            })
-                                                            console.log('修改司机信息时出现错误')
-                                                            console.log(err)
-                                                        })
-                                                }
                                             })
-                                            .catch(err => {
+                                            .catch((err) => {
                                                 res.send({
                                                     code: 2,
-                                                    msg: '查找用户名时出错',
+                                                    msg: '修改司机信息时出现错误',
                                                     error: err
                                                 })
-                                                console.log('查找用户名时出错')
+                                                console.log('修改司机信息时出现错误')
                                                 console.log(err)
                                             })
                                     }
@@ -217,10 +205,10 @@ exports.dirvers_edit = (req, res, next) => {
                                 .catch(err => {
                                     res.send({
                                         code: 2,
-                                        msg: '查找电话号码时出错',
+                                        msg: '查找用户名时出错',
                                         error: err
                                     })
-                                    console.log('查找准证号码时出错')
+                                    console.log('查找用户名时出错')
                                     console.log(err)
                                 })
                         }
@@ -234,7 +222,6 @@ exports.dirvers_edit = (req, res, next) => {
                         console.log('查找准证号码时出错')
                         console.log(err)
                     })
-
             }
         })
         .catch((err) => {

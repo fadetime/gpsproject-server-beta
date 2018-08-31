@@ -138,7 +138,14 @@ exports.carts_create_product = (req, res, next) => {
                     msg: '此号码车辆已存在'
                 })
             } else if (doc.length === 0) {
-                Product.create(req.body)
+                Product.create({
+                    carid:req.body.carid,
+                    cartype:req.body.cartype,
+                    tailgate:req.body.tailgate,
+                    coolstore:req.body.coolstore,
+                    carnote:req.body.carnote,
+                    image:req.file.path
+                })
                     .then((doc) => {
                         console.log(doc)
                         res.status(200).json({

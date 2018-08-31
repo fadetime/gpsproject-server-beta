@@ -21,7 +21,4 @@ router.post('/edit', ClientAController.clientas_edit)
 // 删除数据
 router.post('/remove', ClientAController.clientas_remove)
 
-// 联级删除
-// router.post('/test', ClientAController.clientas_remove_clientB)
-
 module.exports = router

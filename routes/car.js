@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const CarController = require('../controllers/car')
+const uploadImage = require('../middlewares/multerUse');
 
 // 加载所有数据
 router.get('/', CarController.carts_get_all)
@@ -12,7 +13,7 @@ router.post('/get', CarController.carts_post_all)
 router.post('/find', CarController.carts_find)
 
 // 增加数据
-router.post('/', CarController.carts_create_product)
+router.post('/', uploadImage.dataInput, CarController.carts_create_product)
 
 // 更改数据
 router.post('/update', CarController.carts_update)

@@ -7,6 +7,7 @@ const dirverSchema = mongoose.Schema({
     dirvercard:{type:String},//驾照类型
     dirverusername:{type:String,required:true},//人员用户名
     dirverpsw:{type:String,required:true},//人员密码
+    image:{type:String,default: null},//司机照片
     dirvernote:{type:String}//备注
 })
 

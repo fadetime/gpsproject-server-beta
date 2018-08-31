@@ -8,7 +8,7 @@ exports.dataInput = function(req, res, next) {
       return console.log(err);
     }
     //文件信息在req.file或者req.files中显示。
-    // console.log(req);
+    // console.log(req)
     next();
   });
 };
