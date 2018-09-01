@@ -18,6 +18,9 @@ router.post('/', uploadImage.dataInput, CarController.carts_create_product)
 // 更改数据
 router.post('/update', CarController.carts_update)
 
+// 更改照片
+router.post('/update/img', uploadImage.dataInput, CarController.carts_update_img)
+
 // 删除数据
 router.post('/remove', CarController.carts_remove)
 

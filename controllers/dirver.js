@@ -135,42 +135,16 @@ exports.dirvers_edit = (req, res, next) => {
                                         })
                                     } else {
                                         let updateInfo = {}
-                                        if (req.body.dirverpsw === undefined && req.file.path === undefined) {
-
+                                          if (req.body.dirverpsw === undefined) {
                                             updateInfo = {
                                                 dirvername: req.body.dirvername,
                                                 dirverid: req.body.dirverid,
                                                 dirverphone: req.body.dirverphone,
                                                 dirvercard: req.body.dirvercard,
                                                 dirverusername: req.body.dirverusername,
-                                                dirvernote: req.body.dirvernote
-                                            }
-                                        } else if (req.file.path === undefined) {
-
-                                            let psw = req.body.dirverpsw
-                                            req.body.dirverpsw = bcrypt.hashSync(psw)
-                                            updateInfo = {
-                                                dirvername: req.body.dirvername,
-                                                dirverid: req.body.dirverid,
-                                                dirverphone: req.body.dirverphone,
-                                                dirvercard: req.body.dirvercard,
-                                                dirverusername: req.body.dirverusername,
-                                                dirverpsw: req.body.dirverpsw,
-                                                dirvernote: req.body.dirvernote
-                                            }
-                                        } else if (req.body.dirverpsw === undefined) {
-
-                                            updateInfo = {
-                                                dirvername: req.body.dirvername,
-                                                dirverid: req.body.dirverid,
-                                                dirverphone: req.body.dirverphone,
-                                                dirvercard: req.body.dirvercard,
-                                                dirverusername: req.body.dirverusername,
-                                                dirvernote: req.body.dirvernote,
-                                                image: req.file.path
+                                                dirvernote: req.body.dirvernote,       
                                             }
                                         } else {
-
                                             let psw = req.body.dirverpsw
                                             req.body.dirverpsw = bcrypt.hashSync(psw)
                                             updateInfo = {
@@ -181,7 +155,6 @@ exports.dirvers_edit = (req, res, next) => {
                                                 dirverusername: req.body.dirverusername,
                                                 dirverpsw: req.body.dirverpsw,
                                                 dirvernote: req.body.dirvernote,
-                                                image: req.file.path
                                             }
                                         }
                                         Product.updateMany({ _id: req.body._id }, updateInfo)
@@ -232,6 +205,46 @@ exports.dirvers_edit = (req, res, next) => {
                 error: err
             })
             console.log(err)
+        })
+}
+
+exports.dirver_img_edit = (req, res, next) => {
+    console.log(req.body._id)
+    Product.find({ _id: req.body._id })
+        .then((doc) => {
+            if (doc.length === 0) {
+                res.send({
+                    code: 1,
+                    msg: '修改照片时未找到该司机'
+                })
+            } else {
+                Product.updateOne({ _id: req.body._id }, {
+                    image: req.file.path
+                })
+                    .then(() => {
+                        res.send({
+                            code: 0,
+                            msg: '修改司机照片信息成功'
+                        })
+                    })
+                    .catch((err) => {
+                        res.send({
+                            code: 2,
+                            msg: '修改司机信息时出现错误',
+                            error: err
+                        })
+                        console.log('修改司机信息时出现错误')
+                        console.log(err)
+                    })
+            }
+        })
+        .catch((err) => {
+            console.log(err)
+            res.status(500).json({
+                msg: '修改照片时获取数据时服务器发生错误',
+                code: 2,
+                error: err
+            })
         })
 }
 

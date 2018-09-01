@@ -18,6 +18,9 @@ router.post('/', uploadImage.dataInput, DirverController.dirvers_create_product)
 // 修改数据
 router.post('/edit', uploadImage.dataInput, DirverController.dirvers_edit)
 
+// 修改照片
+router.post('/edit/img', uploadImage.dataInput, DirverController.dirver_img_edit)
+
 // 删除数据
 router.post('/remove', DirverController.dirvers_delete)
 
