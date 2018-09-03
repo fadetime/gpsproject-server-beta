@@ -175,29 +175,55 @@ exports.carts_create_product = (req, res, next) => {
                     msg: '此号码车辆已存在'
                 })
             } else if (doc.length === 0) {
-                Product.create({
-                    carid:req.body.carid,
-                    cartype:req.body.cartype,
-                    tailgate:req.body.tailgate,
-                    coolstore:req.body.coolstore,
-                    carnote:req.body.carnote,
-                    image:req.file.path
-                })
-                    .then((doc) => {
-                        console.log(doc)
-                        res.status(200).json({
-                            code: 0,
-                            msg: '添加成功'
-                        })
+                if(req.file){
+                    Product.create({
+                        carid:req.body.carid,
+                        cartype:req.body.cartype,
+                        tailgate:req.body.tailgate,
+                        coolstore:req.body.coolstore,
+                        carnote:req.body.carnote,
+                        image:req.file.path
                     })
-                    .catch((err) => {
-                        console.log(err)
-                        res.send({
-                            code: 2,
-                            msg: '添加时出现错误',
-                            error: err
+                        .then((doc) => {
+                            console.log(doc)
+                            res.status(200).json({
+                                code: 0,
+                                msg: '添加成功'
+                            })
                         })
+                        .catch((err) => {
+                            console.log(err)
+                            res.send({
+                                code: 2,
+                                msg: '添加时出现错误',
+                                error: err
+                            })
+                        })
+                }else{
+                    Product.create({
+                        carid:req.body.carid,
+                        cartype:req.body.cartype,
+                        tailgate:req.body.tailgate,
+                        coolstore:req.body.coolstore,
+                        carnote:req.body.carnote,
                     })
+                        .then((doc) => {
+                            console.log(doc)
+                            res.status(200).json({
+                                code: 0,
+                                msg: '添加成功'
+                            })
+                        })
+                        .catch((err) => {
+                            console.log(err)
+                            res.send({
+                                code: 2,
+                                msg: '添加时出现错误',
+                                error: err
+                            })
+                        })
+                }
+                
             } else {
                 console.log('创建车辆时服务器发生错误')
                 res.status(500).json({
