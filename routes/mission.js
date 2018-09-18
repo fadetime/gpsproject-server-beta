@@ -3,6 +3,9 @@ const router = express.Router()
 const MissionController = require('../controllers/mission')
 
 // 加载所有数据
+router.post('/one', MissionController.mission_get_one)
+
+// 加载所有数据
 router.post('/', MissionController.mission_get_today)
 
 // 增加数据

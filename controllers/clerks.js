@@ -72,7 +72,13 @@ exports.user_login = (req, res, next) => {
                                 code: 0,
                                 msg: '登陆成功',
                                 token: token,
-                                drivername: doc.dirvername
+                                drivername: doc.dirvername,
+                                drivercard: doc.dirvercard,
+                                drivercard: doc.dirvercard,
+                                driverphone: doc.dirverphone,
+                                driverid: doc.dirverid,
+                                _id:doc._id,
+                                image: doc.image
                             })
                         } else {
                             res.json({
@@ -111,36 +117,36 @@ exports.company_login = (req, res, next) => {
             } else {
                 bcrypt.compare(req.body.password, doc.clientapsw)
                     .then(item => {
-                         if (item) {
-                        console.log('######')
-                        console.log(doc)
-                        const token = jwt.sign(
-                            {
-                                clientname: doc.clientaname,
-                                clientphone: doc.clientaphone,
-                                _id: doc._id
-                            },
-                            process.env.JWT_KEY,
-                            {
-                                expiresIn: '1 days'
-                            }
-                        )
-                        res.json({
-                            code: 0,
-                            msg: '登陆成功',
-                            token: token,
-                            name: doc.clientaname,
-                            address: doc.clientaaddress,
-                            phone: doc.clientaphone,
-                            postcode: doc.clientapostcode,
-                            email: doc.clientamail
-                        })
-                         } else {
-                        res.json({
-                            status: 2,
-                            msg: '密码错误，请重试',
-                            code: 2
-                        })
+                        if (item) {
+                            console.log('######')
+                            console.log(doc)
+                            const token = jwt.sign(
+                                {
+                                    clientname: doc.clientaname,
+                                    clientphone: doc.clientaphone,
+                                    _id: doc._id
+                                },
+                                process.env.JWT_KEY,
+                                {
+                                    expiresIn: '1 days'
+                                }
+                            )
+                            res.json({
+                                code: 0,
+                                msg: '登陆成功',
+                                token: token,
+                                name: doc.clientaname,
+                                address: doc.clientaaddress,
+                                phone: doc.clientaphone,
+                                postcode: doc.clientapostcode,
+                                email: doc.clientamail
+                            })
+                        } else {
+                            res.json({
+                                status: 2,
+                                msg: '密码错误，请重试',
+                                code: 2
+                            })
                         }
                     })
                     .catch(err => {
@@ -154,9 +160,9 @@ exports.company_login = (req, res, next) => {
         })
         .catch(err => {
             res.json({
-                msg:'查找账户时发生错误',
-                code:2,
-                error:err
+                msg: '查找账户时发生错误',
+                code: 2,
+                error: err
             })
         })
 }

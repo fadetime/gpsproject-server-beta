@@ -21,4 +21,10 @@ router.post('/edit', ClientAController.clientas_edit)
 // 删除数据
 router.post('/remove', ClientAController.clientas_remove)
 
+// 查找SMS数据
+router.post('/sms', ClientAController.client_SMS_findOne)
+
+// 删除SMS数据
+router.post('/sms/remove', ClientAController.client_SMS_remove)
+
 module.exports = router

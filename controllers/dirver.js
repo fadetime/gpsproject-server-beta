@@ -1,4 +1,3 @@
-const mongoose = require('mongoose')
 const Product = require('../models/dirver')
 const bcrypt = require('bcryptjs')
 
@@ -65,7 +64,9 @@ exports.dirvers_create_product = (req, res, next) => {
                         } else {
                             let psw = req.body.dirverpsw
                             req.body.dirverpsw = bcrypt.hashSync(psw)
-                            req.body.image = req.file.path
+                            if (req.file) {
+                                req.body.image = req.file.path
+                            }
                             Product.create(req.body)
                                 .then((doc) => {
                                     console.log(doc)
@@ -135,14 +136,14 @@ exports.dirvers_edit = (req, res, next) => {
                                         })
                                     } else {
                                         let updateInfo = {}
-                                          if (req.body.dirverpsw === undefined) {
+                                        if (req.body.dirverpsw === undefined) {
                                             updateInfo = {
                                                 dirvername: req.body.dirvername,
                                                 dirverid: req.body.dirverid,
                                                 dirverphone: req.body.dirverphone,
                                                 dirvercard: req.body.dirvercard,
                                                 dirverusername: req.body.dirverusername,
-                                                dirvernote: req.body.dirvernote,       
+                                                dirvernote: req.body.dirvernote,
                                             }
                                         } else {
                                             let psw = req.body.dirverpsw

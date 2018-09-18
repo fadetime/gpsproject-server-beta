@@ -1,6 +1,6 @@
 {
   "name": "gpsserver",
-  "version": "0.0.1",
+  "version": "0.6.4",
   "description": "provide GPS project front end serve\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b front end serve for GPS project",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,7 @@
     "mongoose": "^5.2.12",
     "morgan": "^1.9.0",
     "mquery": "^3.2.0",
-    "multer": "^1.3.1"
+    "multer": "^1.3.1",
+    "nexmo": "^2.3.2"
   }
 }

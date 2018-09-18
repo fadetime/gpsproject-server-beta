@@ -9,6 +9,7 @@ const clientBSchema = mongoose.Schema({
     clientbpostcode:{type:String},//客户邮编
     clientbline:{type:String,default:''},//客户线路
     clientbserve:{type:mongoose.Schema.Types.ObjectId,ref:'ClientA'},//服务商信息
+    image:{type:String,default:null}//客户图片
 })
 
 module.exports = mongoose.model('ClientB', clientBSchema)

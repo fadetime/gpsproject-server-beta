@@ -1,5 +1,4 @@
 //操作客户交互方法
-const mongoose = require('mongoose')
 const Product = require('../models/clientb')
 
 exports.clientbs_get = (req, res, next) => {
@@ -61,22 +60,56 @@ exports.clientbs_create_product = (req, res, next) => {
                     msg: '此客户名称已存在'
                 })
             } else {
-                Product.create(req.body)
-                    .then((doc) => {
-                        console.log(doc)
-                        res.status(200).json({
-                            code: 0,
-                            msg: '添加成功'
-                        })
+                if (req.file) {
+                    Product.create({
+                        clientbname: req.body.clientbname,
+                        clientbaddress: req.body.clientbaddress,
+                        clientbphone: req.body.clientbphone,
+                        clientbstatus: req.body.clientbstatus,
+                        clientbpostcode: req.body.clientbpostcode,
+                        clientbserve: req.body.clientbserve,
+                        image: req.file.path
                     })
-                    .catch((err) => {
-                        console.log(err)
-                        res.send({
-                            code: 2,
-                            msg: '添加时出现错误',
-                            err
+                        .then((doc) => {
+                            console.log(doc)
+                            res.status(200).json({
+                                code: 0,
+                                msg: '添加成功'
+                            })
                         })
+                        .catch((err) => {
+                            console.log(err)
+                            res.send({
+                                code: 2,
+                                msg: '添加时出现错误',
+                                err
+                            })
+                        })
+                } else {
+                    Product.create({
+                        clientbname: req.body.clientbname,
+                        clientbaddress: req.body.clientbaddress,
+                        clientbphone: req.body.clientbphone,
+                        clientbstatus: req.body.clientbstatus,
+                        clientbpostcode: req.body.clientbpostcode,
+                        clientbserve: req.body.clientbserve
                     })
+                        .then((doc) => {
+                            console.log(doc)
+                            res.status(200).json({
+                                code: 0,
+                                msg: '添加成功'
+                            })
+                        })
+                        .catch((err) => {
+                            console.log(err)
+                            res.send({
+                                code: 2,
+                                msg: '添加时出现错误',
+                                err
+                            })
+                        })
+                }
             }
         })
         .catch((err) => {
@@ -131,6 +164,45 @@ exports.clientbs_update_line = (req, res, next) => {
     }
 }
 
+exports.clientbs_edit_img = (req, res, next) => {
+    Product.findOne({ '_id': req.body._id })
+        .then(doc => {
+            if (doc.length = 0) {
+                res.send({
+                    code: 1,
+                    msg: '更改照片时未找到该客户'
+                })
+            } else {
+                Product.updateOne({ '_id': req.body._id }, {
+                    image: req.file.path
+                })
+                    .then(() => {
+                        res.send({
+                            code: 0,
+                            msg: '更新照片信息成功'
+                        })
+                    })
+                    .catch(error => {
+                        res.send({
+                            code: 2,
+                            msg: '更新照片时出现问题',
+                            error: error
+                        })
+                        console.log(error)
+                    })
+            }
+        })
+        .catch((err) => {
+            console.log(err)
+            console.log('查找客户时服务器发生错误')
+            res.send({
+                msg: '查找客户时服务器发生错误',
+                code: 2,
+                error: err
+            })
+        })
+}
+
 exports.clientbs_edit = (req, res, next) => {
     Product.find({ _id: req.body._id })
         .then((doc) => {
@@ -146,7 +218,7 @@ exports.clientbs_edit = (req, res, next) => {
                             return item._id != req.body._id
                         })
                         if (data.length === 0) {
-                            Product.update({ _id: req.body._id }, {
+                            Product.updateOne({ _id: req.body._id }, {
                                 clientbname: req.body.clientbname,
                                 clientbaddress: req.body.clientbaddress,
                                 clientbphone: req.body.clientbphone,

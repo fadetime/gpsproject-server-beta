@@ -2,6 +2,22 @@ const Product = require('../models/mission')
 const CarModels = require('../models/car')
 const LineModels = require('../models/times')
 
+exports.mission_get_one = (req, res, next) => {
+    console.log(req.body)
+    Product.findOne({ "_id": req.body._id })
+        .then((doc) => {
+            res.send(doc)
+            console.log(doc)
+        })
+        .catch((err) => {
+            console.log(err)
+            res.status(500).json({
+                msg: '获取数据时服务器发生错误',
+                error: err
+            })
+        })
+}
+
 exports.mission_get_today = (req, res, next) => {
     let startdate = new Date(req.body.startdate).getTime()
     let enddate = startdate + 86400000
@@ -26,14 +42,14 @@ exports.mission_create = (req, res, next) => {
             CarModels.findOne({ 'carid': req.body.missioncar })
                 .then(doc2 => {
                     let carCount = doc2.cartimes + 1
-                    CarModels.update({ 'carid': req.body.missioncar }, {
+                    CarModels.updateOne({ 'carid': req.body.missioncar }, {
                         cartimes: carCount
                     })
                         .then(() => {
                             LineModels.findOne({ 'timesname': req.body.missionline })
                                 .then(doc4 => {
                                     let lineCount = doc4.timescount + 1
-                                    LineModels.update({ 'timesname': req.body.missionline }, {
+                                    LineModels.updateOne({ 'timesname': req.body.missionline }, {
                                         timescount: lineCount
                                     })
                                         .then(() => {
@@ -110,11 +126,11 @@ exports.mission_remove = (req, res, next) => {
                                 LineModels.findOne({ 'timesname': doc.missionline })
                                     .then(doc2 => {
                                         let lineCount = doc2.timescount - 1
-                                        LineModels.update({ 'timesname': doc.missionline }, {
+                                        LineModels.updateOne({ 'timesname': doc.missionline }, {
                                             timescount: lineCount
                                         })
                                             .then(() => {
-                                                Product.remove({ _id: req.body.missionid })
+                                                Product.deleteOne({ _id: req.body.missionid })
                                                     .then(() => {
                                                         res.send({
                                                             code: 0,
