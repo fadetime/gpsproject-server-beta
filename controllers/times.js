@@ -7,6 +7,7 @@ exports.times_get_all = (req, res, next) => {
         .populate('timescar')
         .populate('timesdirver')
         .populate({ path: 'timesclientb', populate: { path: 'clientbserve' } })
+        .populate({ path: 'timesclientb', populate: { path: 'clientbarea' } })
         .then((doc) => {
             console.log(doc)
             res.send({
@@ -31,6 +32,7 @@ exports.times_post_all = (req, res, next) => {
         .populate('timescar')
         .populate('timesdirver')
         .populate({ path: 'timesclientb', populate: { path: 'clientbserve' } })
+        .populate({ path: 'timesclientb', populate: { path: 'clientbarea' } })
         .then((doc) => {
             Product.count()
                 .then(item => {

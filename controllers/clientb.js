@@ -4,6 +4,7 @@ const Product = require('../models/clientb')
 exports.clientbs_get = (req, res, next) => {
     Product.find()
         .populate('clientbserve')
+        .populate('clientbarea')
         .then((doc) => {
             console.log(doc)
             res.send(doc)
@@ -20,6 +21,7 @@ exports.clientbs_get = (req, res, next) => {
 exports.clientbs_get_all = (req, res, next) => {
     Product.find()
         .populate('clientbserve')
+        .populate('clientbarea')
         .limit(req.body.pageSize)
         .skip(req.body.pageSize * (req.body.pageNow - 1))
         .then((doc) => {
@@ -68,6 +70,7 @@ exports.clientbs_create_product = (req, res, next) => {
                         clientbstatus: req.body.clientbstatus,
                         clientbpostcode: req.body.clientbpostcode,
                         clientbserve: req.body.clientbserve,
+                        clientbarea: req.body.clientbarea,
                         image: req.file.path
                     })
                         .then((doc) => {
@@ -92,7 +95,8 @@ exports.clientbs_create_product = (req, res, next) => {
                         clientbphone: req.body.clientbphone,
                         clientbstatus: req.body.clientbstatus,
                         clientbpostcode: req.body.clientbpostcode,
-                        clientbserve: req.body.clientbserve
+                        clientbserve: req.body.clientbserve,
+                        clientbarea: req.body.clientbarea,
                     })
                         .then((doc) => {
                             console.log(doc)
@@ -224,7 +228,8 @@ exports.clientbs_edit = (req, res, next) => {
                                 clientbphone: req.body.clientbphone,
                                 clientbstatus: req.body.clientbstatus,
                                 clientbpostcode: req.body.clientbpostcode,
-                                clientbserve: req.body.clientbserve
+                                clientbserve: req.body.clientbserve,
+                                clientbarea: req.body.clientbarea
                             })
                                 .then(() => {
                                     res.send({

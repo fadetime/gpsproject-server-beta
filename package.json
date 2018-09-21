@@ -1,6 +1,6 @@
 {
   "name": "gpsserver",
-  "version": "0.6.4",
+  "version": "0.7.4",
   "description": "provide GPS project front end serve\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b front end serve for GPS project",
   "main": "index.js",
   "scripts": {

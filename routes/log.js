@@ -1,9 +1,9 @@
 const express = require('express')
 const router = express.Router()
-const TimesController = require('../controllers/log')
+const logController = require('../controllers/log')
 
-// 加载所有数据
-// router.get('/', TimesController.times_get_all)
+// 加载当日数据
+router.post('/', logController.log_get_today)
 
 // 增加数据
 // router.post('/', TimesController.times_create_product)
