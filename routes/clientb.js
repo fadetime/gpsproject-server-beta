@@ -10,6 +10,15 @@ router.get('/', ClientBController.clientbs_get)
 // 分页加载所有数据
 router.post('/get', ClientBController.clientbs_get_all)
 
+// 加载所有活动数据
+router.post('/active', ClientBController.clientbs_get_active)
+
+// 分页加载活动数据
+router.post('/page', ClientBController.clientbs_active_Apage)
+
+//分页加载过滤后的活动数据
+router.post('/filterpage', ClientBController.clientbs_active_filter_Apage)
+
 // 查找数据
 router.post('/find', ClientBController.clientbs_find)
 

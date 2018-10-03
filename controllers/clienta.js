@@ -138,12 +138,14 @@ exports.clientas_edit = (req, res, next) => {
                                                             endDate: req.body.endDate,
                                                             orderDate: new Date(),
                                                         })
-                                                            .then(doc5 => {
+                                                            .then(() => {
+                                                                let endDate = req.body.endDate.toLocaleString()
+
                                                                 logControllers.create({
                                                                     logDate: new Date(),
                                                                     logPlace: 'SMS',
                                                                     logMode: 'edit',
-                                                                    logInfo: '客户ID:' + req.body._id + ';客户名:' + req.body.clientaname + ';结束时间:' + req.body.endDate
+                                                                    logInfo: '客户ID:' + req.body._id + ';客户名:' + req.body.clientaname + ';结束时间:' + endDate
                                                                 })
                                                                 let editInfo
                                                                 if (req.body.clientapsw) {
@@ -200,8 +202,6 @@ exports.clientas_edit = (req, res, next) => {
                                                                 })
                                                             })
                                                     } else {
-                                                        console.log('###')
-                                                        console.log('enter config create')
                                                         smsControllers.create({
                                                             orderDate: new Date(),
                                                             clientId: req.body._id,
@@ -210,11 +210,14 @@ exports.clientas_edit = (req, res, next) => {
                                                             endDate: req.body.endDate,
                                                         })
                                                             .then(() => {
+                                                                let startDate = req.body.startDate.toLocaleString()
+                                                                let endDate = req.body.endDate.toLocaleString()
+
                                                                 logControllers.create({
                                                                     logDate: new Date(),
                                                                     logPlace: 'SMS',
                                                                     logMode: 'create',
-                                                                    logInfo: '客户ID:' + req.body._id + ';客户名:' + req.body.clientaname + ';开始时间:' + req.body.startDate + ';结束时间:' + req.body.endDate
+                                                                    logInfo: '客户ID:' + req.body._id + ';客户名:' + req.body.clientaname + ';开始时间:' + startDate + ';结束时间:' + endDate
                                                                 })
                                                                 let editInfo
                                                                 if (req.body.clientapsw) {
@@ -490,11 +493,13 @@ exports.client_SMS_findOne = (req, res, next) => {
 exports.client_SMS_remove = (req, res, next) => {
     smsControllers.findOne({ 'clientId': req.body._id })
         .then(doc => {
+            let startDate = new Date(doc.startDate).toLocaleString()
+            let endDate = new Date(doc.endDate).toLocaleString()
             logControllers.create({
                 logDate: new Date(),
                 logPlace: 'SMS',
                 logMode: 'remove',
-                logInfo: '客户ID:' + req.body._id + ';客户名:' + doc.clientName + ';开始时间:' + doc.startDate.toISOString() + ';结束时间:' + doc.endDate.toISOString()
+                logInfo: '原始信息（'+'客户ID:' + req.body._id + ';客户名:' + doc.clientName + ';开始时间:' + startDate + ';结束时间:' + endDate+'）'
             })
                 .then(() => {
                     smsControllers.remove({ 'clientId': req.body._id })
