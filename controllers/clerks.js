@@ -118,8 +118,6 @@ exports.company_login = (req, res, next) => {
                 bcrypt.compare(req.body.password, doc.clientapsw)
                     .then(item => {
                         if (item) {
-                            console.log('######')
-                            console.log(doc)
                             const token = jwt.sign(
                                 {
                                     clientname: doc.clientaname,
@@ -139,7 +137,8 @@ exports.company_login = (req, res, next) => {
                                 address: doc.clientaaddress,
                                 phone: doc.clientaphone,
                                 postcode: doc.clientapostcode,
-                                email: doc.clientamail
+                                email: doc.clientamail,
+                                _id:doc._id
                             })
                         } else {
                             res.json({

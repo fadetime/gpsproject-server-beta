@@ -1,5 +1,6 @@
 const Product = require('../models/dirver')
 const bcrypt = require('bcryptjs')
+const fs = require('fs')
 
 exports.dirvers_get_all = (req, res, next) => {
     Product.find()
@@ -211,7 +212,7 @@ exports.dirvers_edit = (req, res, next) => {
 
 exports.dirver_img_edit = (req, res, next) => {
     console.log(req.body._id)
-    Product.find({ _id: req.body._id })
+    Product.findOne({ _id: req.body._id })
         .then((doc) => {
             if (doc.length === 0) {
                 res.send({
@@ -219,6 +220,16 @@ exports.dirver_img_edit = (req, res, next) => {
                     msg: '修改照片时未找到该司机'
                 })
             } else {
+                if (doc.image) {
+                    let fileName = doc.image.slice(8)
+                    fs.unlink('./uploads/'+fileName, err => {
+                        if (err) {
+                            return console.log(err)
+                        } else {
+                            console.log('image del done')
+                        }
+                    })
+                }
                 Product.updateOne({ _id: req.body._id }, {
                     image: req.file.path
                 })
@@ -250,7 +261,7 @@ exports.dirver_img_edit = (req, res, next) => {
 }
 
 exports.dirvers_delete = (req, res, next) => {
-    Product.find({ _id: req.body._id })
+    Product.findOne({ _id: req.body._id })
         .then((doc) => {
             if (doc.length == 0) {
                 res.send({
@@ -258,8 +269,18 @@ exports.dirvers_delete = (req, res, next) => {
                     msg: '未找到该司机'
                 })
             } else {
-                Product.remove({ _id: req.body._id })
-                    .then((docc) => {
+                if (doc.image) {
+                    let fileName = doc.image.slice(8)
+                    fs.unlink('./uploads/'+fileName, err => {
+                        if (err) {
+                            return console.log(err)
+                        } else {
+                            console.log('image del done')
+                        }
+                    })
+                }
+                Product.deleteOne({ _id: req.body._id })
+                    .then(() => {
                         res.send({
                             code: 0,
                             msg: '删除成功'

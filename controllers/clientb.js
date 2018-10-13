@@ -1,6 +1,7 @@
 //操作客户交互方法
 const Product = require('../models/clientb')
-const _ = require('lodash');
+const _ = require('lodash')
+const fs = require('fs')
 
 exports.clientbs_get = (req, res, next) => {
     Product.find()
@@ -317,6 +318,16 @@ exports.clientbs_edit_img = (req, res, next) => {
                     msg: '更改照片时未找到该客户'
                 })
             } else {
+                if (doc.image) {
+                    let fileName = doc.image.slice(8)
+                    fs.unlink('./uploads/'+fileName, err => {
+                        if (err) {
+                            return console.log(err)
+                        } else {
+                            console.log('image del done')
+                        }
+                    })
+                }
                 Product.updateOne({ '_id': req.body._id }, {
                     image: req.file.path
                 })
@@ -414,7 +425,7 @@ exports.clientbs_edit = (req, res, next) => {
 }
 
 exports.clientbs_remove = (req, res, next) => {
-    Product.find({ _id: req.body._id })
+    Product.findOne({ _id: req.body._id })
         .then((doc) => {
             if (doc.length == 0) {
                 res.send({
@@ -422,7 +433,17 @@ exports.clientbs_remove = (req, res, next) => {
                     msg: '未找到该数据'
                 })
             } else {
-                Product.remove({ _id: req.body._id })
+                if (doc.image) {
+                    let fileName = doc.image.slice(8)
+                    fs.unlink('./uploads/'+fileName, err => {
+                        if (err) {
+                            return console.log(err)
+                        } else {
+                            console.log('image del done')
+                        }
+                    })
+                }
+                Product.deleteOne({ _id: req.body._id })
                     .then(() => {
                         res.send({
                             code: 0,

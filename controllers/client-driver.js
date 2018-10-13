@@ -8,13 +8,15 @@ const Nexmo = require('nexmo')
 const nexmo = new Nexmo({ apiKey: 'add855d7', apiSecret: '3t4Rz2GI67DGtgw2' });
 const from = 'Ebuy Inc'
 
-const text = 'this is your fucking number'
+const text = '您的货品已送达'
 
 exports.client_driver_get = (req, res, next) => {
     let startdate = new Date(req.body.startdate).getTime()
     let enddate = startdate + 86400000
     startdate = new Date(startdate).toISOString()
     enddate = new Date(enddate).toISOString()
+    console.log(startdate)
+    console.log(enddate)
     Product.find({ "missiondirver": req.body.drivername, "missiondate": { "$gte": startdate, "$lt": enddate } })
         .then(doc => {
             if (!doc) {
@@ -149,7 +151,6 @@ exports.client_driver_upload = (req, res, next) => {
 exports.client_driver_changepsw = (req, res, next) => {
     driverInfo.findOne({ _id: req.body._id })
         .then((doc) => {
-            console.log(doc)
             bcrypt.compare(req.body.oldpassword, doc.dirverpsw)
                 .then(bcdoc => {
                     if (bcdoc) {

@@ -1,4 +1,5 @@
 const Product = require('../models/car')
+const fs = require('fs')
 
 exports.carts_get_all = (req, res, next) => {
     Product.find()
@@ -131,39 +132,49 @@ exports.carts_update = (req, res, next) => {
 
 exports.carts_update_img = (req, res, next) => {
     Product.findOne({ '_id': req.body._id })
-    .then(doc => {
-        if (doc.length = 0) {
-            res.send({
-                code: 1,
-                msg: '更改照片时未找到该车辆'
-            })
-        } else{
-            Product.updateOne({'_id':req.body._id},{
-                image:req.file.path
-            })
-            .then(() => {
+        .then(doc => {
+            if (doc.length = 0) {
                 res.send({
-                    code: 0,
-                    msg: '更新照片信息成功'
+                    code: 1,
+                    msg: '更改照片时未找到该车辆'
                 })
-            })
-            .catch(error => {
-                res.send({
-                    code: 2,
-                    msg: '更新照片时出现问题',
-                    error: error
+            } else {
+                if (doc.image) {
+                    let fileName = doc.image.slice(8)
+                    fs.unlink('./uploads/'+fileName, err => {
+                        if (err) {
+                            return console.log(err)
+                        } else {
+                            console.log('image del done')
+                        }
+                    })
+                }
+                Product.updateOne({ '_id': req.body._id }, {
+                    image: req.file.path
                 })
-                console.log(error)
-            })
-        }
-    })
-    .catch((err) => {
-        console.log(err)
-        console.log('查找车辆时服务器发生错误')
-        res.status(500).json({
-            msg: '查找车辆时服务器发生错误'
+                    .then(() => {
+                        res.send({
+                            code: 0,
+                            msg: '更新照片信息成功'
+                        })
+                    })
+                    .catch(error => {
+                        res.send({
+                            code: 2,
+                            msg: '更新照片时出现问题',
+                            error: error
+                        })
+                        console.log(error)
+                    })
+            }
         })
-    })
+        .catch((err) => {
+            console.log(err)
+            console.log('查找车辆时服务器发生错误')
+            res.status(500).json({
+                msg: '查找车辆时服务器发生错误'
+            })
+        })
 }
 
 exports.carts_create_product = (req, res, next) => {
@@ -175,14 +186,14 @@ exports.carts_create_product = (req, res, next) => {
                     msg: '此号码车辆已存在'
                 })
             } else if (doc.length === 0) {
-                if(req.file){
+                if (req.file) {
                     Product.create({
-                        carid:req.body.carid,
-                        cartype:req.body.cartype,
-                        tailgate:req.body.tailgate,
-                        coolstore:req.body.coolstore,
-                        carnote:req.body.carnote,
-                        image:req.file.path
+                        carid: req.body.carid,
+                        cartype: req.body.cartype,
+                        tailgate: req.body.tailgate,
+                        coolstore: req.body.coolstore,
+                        carnote: req.body.carnote,
+                        image: req.file.path
                     })
                         .then((doc) => {
                             console.log(doc)
@@ -199,13 +210,13 @@ exports.carts_create_product = (req, res, next) => {
                                 error: err
                             })
                         })
-                }else{
+                } else {
                     Product.create({
-                        carid:req.body.carid,
-                        cartype:req.body.cartype,
-                        tailgate:req.body.tailgate,
-                        coolstore:req.body.coolstore,
-                        carnote:req.body.carnote,
+                        carid: req.body.carid,
+                        cartype: req.body.cartype,
+                        tailgate: req.body.tailgate,
+                        coolstore: req.body.coolstore,
+                        carnote: req.body.carnote,
                     })
                         .then((doc) => {
                             console.log(doc)
@@ -223,7 +234,7 @@ exports.carts_create_product = (req, res, next) => {
                             })
                         })
                 }
-                
+
             } else {
                 console.log('创建车辆时服务器发生错误')
                 res.status(500).json({
@@ -237,7 +248,7 @@ exports.carts_create_product = (req, res, next) => {
 }
 
 exports.carts_remove = (req, res, next) => {
-    Product.find({ '_id': req.body._id })
+    Product.findOne({ '_id': req.body._id })
         .then((doc) => {
             if (doc.length == 0) {
                 res.send({
@@ -245,7 +256,19 @@ exports.carts_remove = (req, res, next) => {
                     msg: '未找到此车辆信息'
                 })
             } else {
-                Product.remove({ _id: req.body._id })
+                //如果有图片
+                if (doc.image) {
+                    let fileName = doc.image.slice(8)
+                    fs.unlink('./uploads/'+fileName, err => {
+                        if (err) {
+                            return console.log(err)
+                        } else {
+                            console.log('image del done')
+                        }
+                    })
+                }
+
+                Product.deleteOne({ _id: req.body._id })
                     .then((doc) => {
                         console.log(doc)
                         res.status(200).json({

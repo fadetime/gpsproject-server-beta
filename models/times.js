@@ -9,7 +9,12 @@ const timesSchema = mongoose.Schema({
     timesstart: { type: String },//出车时间
     timesend: { type: String },//抵达时间
     timesclienta: { type: String },//包含服务商
-    timesclientb: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ClientB' }],//包含客户
+    timesclientb: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ClientB' }],//包含客户(旧版死车马，版本过度用)
+    // lineClient: [{
+    //     clientID: { type: mongoose.Schema.Types.ObjectId, ref: 'ClientB' },
+    //     clientNO: { type: Number, default: 999 }
+    // }],
+    //包含客户（新版本线路中的客户模型）
     timesclientnumber: { type: Number },//客户总数
     timesclientfinsh: { type: Number },//完成总数
     timesnote: { type: String },//线路备注
