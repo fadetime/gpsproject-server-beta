@@ -1,6 +1,6 @@
 {
   "name": "gpsserver",
-  "version": "0.7.5",
+  "version": "0.8.5",
   "description": "provide GPS project front end serve for GPS project",
   "main": "index.js",
   "scripts": {
@@ -15,6 +15,7 @@
     "express": "^4.16.3",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.11",
+    "log4js": "^3.0.6",
     "mongoose": "^5.2.12",
     "morgan": "^1.9.0",
     "mquery": "^3.2.0",

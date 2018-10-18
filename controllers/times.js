@@ -4,6 +4,7 @@ const Product = require('../models/times')
 
 exports.times_get_all = (req, res, next) => {
     Product.find()
+        .sort({lineIndexNumber:1})
         .populate('timescar')
         .populate('timesdirver')
         .populate({ path: 'timesclientb', populate: { path: 'clientbserve' } })
@@ -27,6 +28,7 @@ exports.times_get_all = (req, res, next) => {
 
 exports.times_post_all = (req, res, next) => {
     Product.find()
+        .sort({lineIndexNumber:1})
         .limit(req.body.pageSize)
         .skip(req.body.pageSize * (req.body.pageNow - 1))
         .populate('timescar')
@@ -175,7 +177,7 @@ exports.times_remove = (req, res, next) => {
 }
 
 exports.times_find = (req, res, next) => {
-    Product.find({'timesname':{ $regex: req.body.word, $options: 'i' }})
+    Product.find({ 'timesname': { $regex: req.body.word, $options: 'i' } })
         .limit(req.body.pageSize)
         .skip(req.body.pageSize * (req.body.pageNow - 1))
         .populate('timescar')
@@ -187,22 +189,22 @@ exports.times_find = (req, res, next) => {
                     code: 1,
                     msg: '未找到该数据'
                 })
-            }else{
-                Product.count({'timesname':{ $regex: req.body.word, $options: 'i' }})
-                .then(item => {
-                    res.send({
-                        msg: '计数成功',
-                        code: 0,
-                        count: item,
-                        doc: doc
+            } else {
+                Product.count({ 'timesname': { $regex: req.body.word, $options: 'i' } })
+                    .then(item => {
+                        res.send({
+                            msg: '计数成功',
+                            code: 0,
+                            count: item,
+                            doc: doc
+                        })
                     })
-                })
-                .catch(err => {
-                    res.send({
-                        msg: '计数时服务器发生错误',
-                        error: err
+                    .catch(err => {
+                        res.send({
+                            msg: '计数时服务器发生错误',
+                            error: err
+                        })
                     })
-                })
             }
         })
         .catch((err) => {
@@ -210,6 +212,54 @@ exports.times_find = (req, res, next) => {
             res.status(500).json({
                 msg: '获取数据时服务器发生错误',
                 err
+            })
+        })
+}
+
+exports.times_sort = (req, res, next) => {
+
+    Product.find()
+        .then((doc) => {
+            let tempIndex = 0
+            let success = 0
+            if (req.body.array) {
+                req.body.array.forEach(elementx => {
+                    console.log(elementx)
+                    doc.forEach(elementy => {
+                        if (elementx == elementy._id) {
+                            Product.updateOne({ _id: elementx }, {
+                                lineIndexNumber: tempIndex
+                            })
+                                .then(
+                                    success += 1
+                                )
+                                .catch(err => {
+                                    console.log(err)
+                                })
+                            tempIndex += 1
+                        }
+                    });
+                });
+            }
+            if (req.body.array.length == success) {
+                res.send({
+                    code: 0,
+                    msg: '数据修改成功',
+                    successNum: success
+                })
+            } else {
+                res.send({
+                    code: 1,
+                    msg: '数据就该失败，请联系管理员',
+                    successNum: success
+                })
+            }
+        })
+        .catch((err) => {
+            console.log(err)
+            res.status(500).json({
+                msg: '获取数据时服务器发生错误',
+                error: err
             })
         })
 }

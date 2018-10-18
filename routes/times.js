@@ -20,4 +20,7 @@ router.post('/edit', TimesController.times_eidt)
 // 删除数据
 router.post('/remove', TimesController.times_remove)
 
+// 线路排序
+router.post('/sort', TimesController.times_sort)
+
 module.exports = router

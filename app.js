@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 
 // 连接MongoDB by using mongoose
-mongoose.connect('mongodb://192.168.1.70:27017/test', { useNewUrlParser: true })
+mongoose.connect('mongodb://192.168.1.70/test', { useNewUrlParser: true })
 mongoose.Promise = global.Promise
 
 // 创建Routes实例
@@ -23,6 +23,27 @@ const logRoutes = require('./routes/log')
 const areaRoutes = require('./routes/area')
 
 // **************************一系列的middleware************************
+//log
+var log4js = require('log4js');
+log4js.configure({
+	appenders: {
+		// out: { type: 'stdout' },
+		app: {
+			type: 'dateFile', 
+			filename: 'logs/',
+			pattern:'yyyy-MM-dd.log',
+			alwaysIncludePattern: true
+		}
+	},
+	categories: {
+		default: { appenders: [ 'app'], level: 'debug' }
+	},
+	replaceConsole: true
+});
+var logger = log4js.getLogger('app');
+logger.level = 'debug'
+app.use(log4js.connectLogger(logger));
+
 
 // 打印请求状态
 app.use(morgan('dev'))
