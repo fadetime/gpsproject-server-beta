@@ -31,7 +31,7 @@ exports.login = (req, res, next) => {
                             status: 0,
                             msg: '登陆成功',
                             token: token,
-                            payload: doc
+                            userName: doc.name
                         })
                     } else {
                         res.json({
@@ -77,7 +77,7 @@ exports.user_login = (req, res, next) => {
                                 drivercard: doc.dirvercard,
                                 driverphone: doc.dirverphone,
                                 driverid: doc.dirverid,
-                                _id:doc._id,
+                                _id: doc._id,
                                 image: doc.image
                             })
                         } else {
@@ -138,7 +138,7 @@ exports.company_login = (req, res, next) => {
                                 phone: doc.clientaphone,
                                 postcode: doc.clientapostcode,
                                 email: doc.clientamail,
-                                _id:doc._id
+                                _id: doc._id
                             })
                         } else {
                             res.json({

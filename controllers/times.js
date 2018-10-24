@@ -1,10 +1,10 @@
 const Product = require('../models/times')
-
+const logControllers = require('../models/log')
 
 
 exports.times_get_all = (req, res, next) => {
     Product.find()
-        .sort({lineIndexNumber:1})
+        .sort({ lineIndexNumber: 1 })
         .populate('timescar')
         .populate('timesdirver')
         .populate({ path: 'timesclientb', populate: { path: 'clientbserve' } })
@@ -28,7 +28,7 @@ exports.times_get_all = (req, res, next) => {
 
 exports.times_post_all = (req, res, next) => {
     Product.find()
-        .sort({lineIndexNumber:1})
+        .sort({ lineIndexNumber: 1 })
         .limit(req.body.pageSize)
         .skip(req.body.pageSize * (req.body.pageNow - 1))
         .populate('timescar')
@@ -62,35 +62,53 @@ exports.times_post_all = (req, res, next) => {
 }
 
 exports.times_create_product = (req, res, next) => {
-    Product.find({ 'timesname': req.body.timesname })
+    Product.findOne({ 'timesname': req.body.timesname })
         .then((doc) => {
-            if (doc.length != 0) {
+            if (doc) {
                 res.send({
                     code: 1,
                     msg: '此车次名已存在'
                 })
-            } else if (doc.length === 0) {
+            } else {
                 Product.create(req.body)
-                    .then((doc) => {
-                        console.log(doc)
-                        res.status(200).json({
-                            code: 0,
-                            msg: '添加成功'
+                    .then(() => {
+                        let logOperator
+                        if (req.body.logOperator) {
+                            logOperator = req.body.logOperator
+                        } else {
+                            logOperator = 'name error'
+                        }
+                        logControllers.create({
+                            logDate: new Date().toISOString(),
+                            logOperator: logOperator,
+                            logPlace: 'line',
+                            logMode: 'create',
+                            logInfo: '信息(' + '名称' + req.body.timesclientb + ')'
                         })
+                            .then(() => {
+                                res.send({
+                                    code: 0,
+                                    msg: '添加车次成功'
+                                })
+                            })
+                            .catch(err => {
+                                console.log('catch an error while write log')
+                                res.send({
+                                    code: 2,
+                                    msg: '添加车次时出现问题',
+                                    error: err
+                                })
+                                console.log(err)
+                            })
                     })
                     .catch((err) => {
                         console.log(err)
                         res.send({
                             code: 2,
                             msg: '添加时出现错误',
-                            err
+                            error: err
                         })
                     })
-            } else {
-                console.log('添加车次时服务器发生错误')
-                res.status(500).json({
-                    msg: '添加车次时服务器发生错误'
-                })
             }
         })
         .catch((err) => {
@@ -99,15 +117,15 @@ exports.times_create_product = (req, res, next) => {
 }
 
 exports.times_eidt = (req, res, next) => {
-    Product.find({ _id: req.body._id })
+    Product.findById(req.body._id)
         .then((doc) => {
-            if (doc.length == 0) {
+            if (!doc) {
                 res.send({
                     code: 1,
                     msg: '未找到该线路'
                 })
             } else {
-                Product.updateMany({ _id: req.body._id }, {
+                Product.updateOne({ _id: req.body._id }, {
                     timesname: req.body.timesname,
                     timescar: req.body.timescar,
                     timesdirver: req.body.timesdirver,
@@ -116,10 +134,34 @@ exports.times_eidt = (req, res, next) => {
                     timesnote: req.body.timesnote
                 })
                     .then(() => {
-                        res.send({
-                            code: 0,
-                            msg: '更新成功'
+                        let logOperator
+                        if (req.body.logOperator) {
+                            logOperator = req.body.logOperator
+                        } else {
+                            logOperator = 'name error'
+                        }
+                        logControllers.create({
+                            logDate: new Date().toISOString(),
+                            logOperator: logOperator,
+                            logPlace: 'line',
+                            logMode: 'edit',
+                            logInfo: '信息：(' + '名称' + req.body.timesname + '；准证' + req.body.timesnote + ';)'
                         })
+                            .then(() => {
+                                res.send({
+                                    code: 0,
+                                    msg: '添加司机成功'
+                                })
+                            })
+                            .catch(err => {
+                                console.log('catch an error while write log')
+                                res.send({
+                                    code: 2,
+                                    msg: '添加司机时出现问题',
+                                    error: err
+                                })
+                                console.log(err)
+                            })
                     })
                     .catch((err) => {
                         console.log('更新时出现问题')
@@ -141,20 +183,44 @@ exports.times_eidt = (req, res, next) => {
 }
 
 exports.times_remove = (req, res, next) => {
-    Product.find({ _id: req.body._id })
+    Product.findById( req.body._id )
         .then((doc) => {
-            if (doc.length == 0) {
+            if (!doc) {
                 res.send({
                     code: 1,
                     msg: '未找到该线路'
                 })
             } else {
-                Product.remove({ _id: req.body._id })
+                Product.deleteOne({ _id: req.body._id })
                     .then(() => {
-                        res.send({
-                            code: 0,
-                            msg: '删除成功'
+                        let logOperator
+                        if (req.body.logOperator) {
+                            logOperator = req.body.logOperator
+                        } else {
+                            logOperator = 'name error'
+                        }
+                        logControllers.create({
+                            logDate: new Date().toISOString(),
+                            logOperator: logOperator,
+                            logPlace: 'line',
+                            logMode: 'remove',
+                            logInfo: '信息(' + doc + ')'
                         })
+                            .then(() => {
+                                res.send({
+                                    code: 0,
+                                    msg: '删除车次成功'
+                                })
+                            })
+                            .catch(err => {
+                                console.log('catch an error while write log')
+                                res.send({
+                                    code: 2,
+                                    msg: '删除车次时出现问题',
+                                    error: err
+                                })
+                                console.log(err)
+                            })
                     })
                     .catch((err) => {
                         console.log('删除时发生错误')

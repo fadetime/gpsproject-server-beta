@@ -100,7 +100,7 @@ exports.area_update = (req, res, next) => {
 }
 
 exports.area_remove = (req, res, next) => {
-    Product.remove({_id:req.body._id})
+    Product.deleteOne({_id:req.body._id})
     .then(() => {
         res.send({
             code: 0

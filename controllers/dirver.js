@@ -1,6 +1,7 @@
 const Product = require('../models/dirver')
 const bcrypt = require('bcryptjs')
 const fs = require('fs')
+const logControllers = require('../models/log')
 
 exports.dirvers_get_all = (req, res, next) => {
     Product.find()
@@ -69,12 +70,35 @@ exports.dirvers_create_product = (req, res, next) => {
                                 req.body.image = req.file.path
                             }
                             Product.create(req.body)
-                                .then((doc) => {
-                                    console.log(doc)
-                                    res.status(200).json({
-                                        code: 0,
-                                        msg: '添加成功'
+                                .then(() => {
+                                    let logOperator
+                                    if (req.body.logOperator) {
+                                        logOperator = req.body.logOperator
+                                    } else {
+                                        logOperator = 'name error'
+                                    }
+                                    logControllers.create({
+                                        logDate: new Date().toISOString(),
+                                        logOperator: logOperator,
+                                        logPlace: 'driver',
+                                        logMode: 'create',
+                                        logInfo: '信息：(' + '姓名' + req.body.dirvername + '；准证' + req.body.dirverid + '；电话' + req.body.dirverphone + '；驾照' + req.body.dirvercard + '；用户名' + req.body.dirverusername + '；备注' + req.body.dirvernote + ';)'
                                     })
+                                        .then(() => {
+                                            res.send({
+                                                code: 0,
+                                                msg: '添加司机成功'
+                                            })
+                                        })
+                                        .catch(err => {
+                                            console.log('catch an error while write log')
+                                            res.send({
+                                                code: 2,
+                                                msg: '添加司机时出现问题',
+                                                error: err
+                                            })
+                                            console.log(err)
+                                        })
                                 })
                                 .catch((err) => {
                                     console.log(err)
@@ -106,9 +130,9 @@ exports.dirvers_create_product = (req, res, next) => {
 }
 
 exports.dirvers_edit = (req, res, next) => {
-    Product.find({ _id: req.body._id })
+    Product.findOne({ _id: req.body._id })
         .then((doc) => {
-            if (doc.length == 0) {
+            if (!doc) {
                 res.send({
                     code: 1,
                     msg: '未找到此司机信息'
@@ -159,12 +183,37 @@ exports.dirvers_edit = (req, res, next) => {
                                                 dirvernote: req.body.dirvernote,
                                             }
                                         }
-                                        Product.updateMany({ _id: req.body._id }, updateInfo)
+                                        Product.updateOne({ _id: req.body._id }, updateInfo)
                                             .then(() => {
-                                                res.send({
-                                                    code: 0,
-                                                    msg: '修改司机信息成功'
+                                                let logOperator
+                                                if (req.body.logOperator) {
+                                                    logOperator = req.body.logOperator
+                                                } else {
+                                                    logOperator = 'name error'
+                                                }
+                                                logControllers.create({
+                                                    logDate: new Date().toISOString(),
+                                                    logOperator: logOperator,
+                                                    logPlace: 'driver',
+                                                    logMode: 'update',
+                                                    logInfo: '原始信息(' + doc + ')'
+                                                        + '更新信息：(' + '姓名' + updateInfo.dirvername + '；准证' + updateInfo.dirverid + '；电话' + updateInfo.dirverphone + '；驾照' + updateInfo.dirvercard + '；用户名' + updateInfo.dirverusername + '；备注' + updateInfo.dirvernote + ';)'
                                                 })
+                                                    .then(() => {
+                                                        res.send({
+                                                            code: 0,
+                                                            msg: '添加司机成功'
+                                                        })
+                                                    })
+                                                    .catch(err => {
+                                                        console.log('catch an error while write log')
+                                                        res.send({
+                                                            code: 2,
+                                                            msg: '添加司机时出现问题',
+                                                            error: err
+                                                        })
+                                                        console.log(err)
+                                                    })
                                             })
                                             .catch((err) => {
                                                 res.send({
@@ -222,7 +271,7 @@ exports.dirver_img_edit = (req, res, next) => {
             } else {
                 if (doc.image) {
                     let fileName = doc.image.slice(8)
-                    fs.unlink('./uploads/'+fileName, err => {
+                    fs.unlink('./uploads/' + fileName, err => {
                         if (err) {
                             return console.log(err)
                         } else {
@@ -271,7 +320,7 @@ exports.dirvers_delete = (req, res, next) => {
             } else {
                 if (doc.image) {
                     let fileName = doc.image.slice(8)
-                    fs.unlink('./uploads/'+fileName, err => {
+                    fs.unlink('./uploads/' + fileName, err => {
                         if (err) {
                             return console.log(err)
                         } else {
@@ -281,10 +330,34 @@ exports.dirvers_delete = (req, res, next) => {
                 }
                 Product.deleteOne({ _id: req.body._id })
                     .then(() => {
-                        res.send({
-                            code: 0,
-                            msg: '删除成功'
+                        let logOperator
+                        if (req.body.logOperator) {
+                            logOperator = req.body.logOperator
+                        } else {
+                            logOperator = 'name error'
+                        }
+                        logControllers.create({
+                            logDate: new Date().toISOString(),
+                            logOperator: logOperator,
+                            logPlace: 'driver',
+                            logMode: 'delete',
+                            logInfo: '信息：(' + '姓名:' + doc.dirvername + ';准证:' + doc.dirverid + ';电话:' + doc.dirverphone + ';驾照:' + doc.dirvercard + ';用户名:' + doc.dirverusername + ';备注:' + doc.dirvernote + ';)'
                         })
+                            .then(() => {
+                                res.send({
+                                    code: 0,
+                                    msg: '添加司机成功'
+                                })
+                            })
+                            .catch(err => {
+                                console.log('catch an error while write log')
+                                res.send({
+                                    code: 2,
+                                    msg: '添加司机时出现问题',
+                                    error: err
+                                })
+                                console.log(err)
+                            })
                     })
                     .catch((err) => {
                         console.log(err)

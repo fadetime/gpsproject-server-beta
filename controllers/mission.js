@@ -1,6 +1,7 @@
 const Product = require('../models/mission')
 const CarModels = require('../models/car')
 const LineModels = require('../models/times')
+const logControllers = require('../models/log')
 
 exports.mission_get_one = (req, res, next) => {
     console.log(req.body)
@@ -55,10 +56,34 @@ exports.mission_create = (req, res, next) => {
                                         timescount: lineCount
                                     })
                                         .then(() => {
-                                            res.send({
-                                                code: 0,
-                                                msg: '创建任务成功'
+                                            let logOperator
+                                            if (req.body.logOperator) {
+                                                logOperator = req.body.logOperator
+                                            } else {
+                                                logOperator = 'name error'
+                                            }
+                                            logControllers.create({
+                                                logDate: new Date().toISOString(),
+                                                logOperator: logOperator,
+                                                logPlace: 'mission',
+                                                logMode: 'create',
+                                                logInfo: '信息(' + '日期：' + req.body.missiondate + '名称：' + req.body.missionline + '备注：' + req.body.missionnote + ')'
                                             })
+                                                .then(() => {
+                                                    res.send({
+                                                        code: 0,
+                                                        msg: '创建任务成功'
+                                                    })
+                                                })
+                                                .catch(err => {
+                                                    console.log('catch an error while write log')
+                                                    res.send({
+                                                        code: 2,
+                                                        msg: '创建任务时出现问题',
+                                                        error: err
+                                                    })
+                                                    console.log(err)
+                                                })
                                         })
                                         .catch(err => {
                                             console.log('更新路线信息时服务器发生错误')
@@ -110,7 +135,7 @@ exports.mission_create = (req, res, next) => {
 }
 
 exports.mission_remove = (req, res, next) => {
-    Product.findOne({ _id: req.body.missionid })
+    Product.findById(req.body.missionid)
         .then(doc => {
             if (!doc) {
                 res.send({
@@ -134,10 +159,34 @@ exports.mission_remove = (req, res, next) => {
                                             .then(() => {
                                                 Product.deleteOne({ _id: req.body.missionid })
                                                     .then(() => {
-                                                        res.send({
-                                                            code: 0,
-                                                            msg: '删除任务成功'
+                                                        let logOperator
+                                                        if (req.body.logOperator) {
+                                                            logOperator = req.body.logOperator
+                                                        } else {
+                                                            logOperator = 'name error'
+                                                        }
+                                                        logControllers.create({
+                                                            logDate: new Date().toISOString(),
+                                                            logOperator: logOperator,
+                                                            logPlace: 'mission',
+                                                            logMode: 'remove',
+                                                            logInfo: '信息(' + doc + ')'
                                                         })
+                                                            .then(() => {
+                                                                res.send({
+                                                                    code: 0,
+                                                                    msg: '删除任务成功'
+                                                                })
+                                                            })
+                                                            .catch(err => {
+                                                                console.log('catch an error while write log')
+                                                                res.send({
+                                                                    code: 2,
+                                                                    msg: '删除任务时出现问题',
+                                                                    error: err
+                                                                })
+                                                                console.log(err)
+                                                            })
                                                     })
                                                     .catch((err) => {
                                                         console.log(err)

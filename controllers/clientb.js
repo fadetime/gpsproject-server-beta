@@ -2,6 +2,7 @@
 const Product = require('../models/clientb')
 const _ = require('lodash')
 const fs = require('fs')
+const logControllers = require('../models/log')
 
 exports.clientbs_get = (req, res, next) => {
     Product.find()
@@ -93,7 +94,6 @@ exports.clientbs_active_Apage = (req, res, next) => {
                         })
                     })
             }
-
         })
         .catch(err => {
             console.log('an error be catch while looking up the user')
@@ -119,24 +119,24 @@ exports.clientbs_active_filter_Apage = (req, res, next) => {
                 Product.count({ 'clientbstatus': 'active' })
                     .then(countNum => {
                         let newArray = []
-                        if(req.body.clientArea){
+                        if (req.body.clientArea) {
                             newArray = doc.filter(filterItem => {
                                 return filterItem.clientbarea._id == req.body.clientArea
                             })//获取需要过滤的数据
-                        }else{
+                        } else {
                             newArray = doc.filter(filterItem => {
                                 return filterItem.clientbserve._id == req.body.clientServe
                             })//获取需要过滤的数据
                         }
                         let longArray = _.concat(newArray, doc);//重新结合
                         let payloadArray = _.uniq(longArray);//去重
-                        let startData = (req.body.pageNow-1) * req.body.pageSize
+                        let startData = (req.body.pageNow - 1) * req.body.pageSize
                         let endData = req.body.pageNow * req.body.pageSize
-                        let sliceArray = payloadArray.slice(startData,endData)
+                        let sliceArray = payloadArray.slice(startData, endData)
                         res.send({
                             code: 0,
                             doc: sliceArray,
-                            countNum:countNum
+                            countNum: countNum
                         })
                     })
                     .catch(err => {
@@ -203,8 +203,9 @@ exports.clientbs_create_product = (req, res, next) => {
                     msg: '此客户名称已存在'
                 })
             } else {
+                let tempData
                 if (req.file) {
-                    Product.create({
+                    tempData = {
                         clientbname: req.body.clientbname,
                         clientbaddress: req.body.clientbaddress,
                         clientbphone: req.body.clientbphone,
@@ -213,48 +214,57 @@ exports.clientbs_create_product = (req, res, next) => {
                         clientbserve: req.body.clientbserve,
                         clientbarea: req.body.clientbarea,
                         image: req.file.path
-                    })
-                        .then((doc) => {
-                            console.log(doc)
-                            res.status(200).json({
-                                code: 0,
-                                msg: '添加成功'
-                            })
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                            res.send({
-                                code: 2,
-                                msg: '添加时出现错误',
-                                err
-                            })
-                        })
+                    }
                 } else {
-                    Product.create({
+                    tempData = {
                         clientbname: req.body.clientbname,
                         clientbaddress: req.body.clientbaddress,
                         clientbphone: req.body.clientbphone,
                         clientbstatus: req.body.clientbstatus,
                         clientbpostcode: req.body.clientbpostcode,
                         clientbserve: req.body.clientbserve,
-                        clientbarea: req.body.clientbarea,
-                    })
-                        .then((doc) => {
-                            console.log(doc)
-                            res.status(200).json({
-                                code: 0,
-                                msg: '添加成功'
-                            })
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                            res.send({
-                                code: 2,
-                                msg: '添加时出现错误',
-                                err
-                            })
-                        })
+                        clientbarea: req.body.clientbarea
+                    }
                 }
+                Product.create(tempData)
+                    .then(() => {
+                        let logOperator
+                        if (req.body.logOperator) {
+                            logOperator = req.body.logOperator
+                        } else {
+                            logOperator = 'name error'
+                        }
+                        logControllers.create({
+                            logDate: new Date().toISOString(),
+                            logOperator: logOperator,
+                            logPlace: 'client_B',
+                            logMode: 'create',
+                            logInfo: '信息：(' + '姓名' + req.body.clientbname + '；准证' + req.body.clientbaddress + '；电话' + req.body.clientbphone + '；驾照' + req.body.clientbpostcode + ';)'
+                        })
+                            .then(() => {
+                                res.send({
+                                    code: 0,
+                                    msg: '添加客户成功'
+                                })
+                            })
+                            .catch(err => {
+                                console.log('catch an error while write log')
+                                res.send({
+                                    code: 2,
+                                    msg: '添加客户时出现问题',
+                                    error: err
+                                })
+                                console.log(err)
+                            })
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        res.send({
+                            code: 2,
+                            msg: '添加时出现错误',
+                            err
+                        })
+                    })
             }
         })
         .catch((err) => {
@@ -320,7 +330,7 @@ exports.clientbs_edit_img = (req, res, next) => {
             } else {
                 if (doc.image) {
                     let fileName = doc.image.slice(8)
-                    fs.unlink('./uploads/'+fileName, err => {
+                    fs.unlink('./uploads/' + fileName, err => {
                         if (err) {
                             return console.log(err)
                         } else {
@@ -383,10 +393,35 @@ exports.clientbs_edit = (req, res, next) => {
                                 clientbarea: req.body.clientbarea
                             })
                                 .then(() => {
-                                    res.send({
-                                        code: 0,
-                                        msg: '修改成功'
+                                    let logOperator
+                                    if (req.body.logOperator) {
+                                        logOperator = req.body.logOperator
+                                    } else {
+                                        logOperator = 'name error'
+                                    }
+                                    logControllers.create({
+                                        logDate: new Date().toISOString(),
+                                        logOperator: logOperator,
+                                        logPlace: 'client_B',
+                                        logMode: 'edit',
+                                        logInfo: '原始信息(' + doc + ');' +
+                                            '更改信息：(' + '餐厅:' + doc.clientbname + ';地址:' + doc.clientbaddress + ';电话:' + doc.clientbphone + ';邮编:' + doc.clientbpostcode + ';)'
                                     })
+                                        .then(() => {
+                                            res.send({
+                                                code: 0,
+                                                msg: '修改客户成功'
+                                            })
+                                        })
+                                        .catch(err => {
+                                            console.log('catch an error while write log')
+                                            res.send({
+                                                code: 2,
+                                                msg: '修改客户时出现问题',
+                                                error: err
+                                            })
+                                            console.log(err)
+                                        })
                                 })
                                 .catch((err) => {
                                     console.log('查找客户邮编出错')
@@ -427,7 +462,7 @@ exports.clientbs_edit = (req, res, next) => {
 exports.clientbs_remove = (req, res, next) => {
     Product.findOne({ _id: req.body._id })
         .then((doc) => {
-            if (doc.length == 0) {
+            if (!doc) {
                 res.send({
                     code: 1,
                     msg: '未找到该数据'
@@ -435,7 +470,7 @@ exports.clientbs_remove = (req, res, next) => {
             } else {
                 if (doc.image) {
                     let fileName = doc.image.slice(8)
-                    fs.unlink('./uploads/'+fileName, err => {
+                    fs.unlink('./uploads/' + fileName, err => {
                         if (err) {
                             return console.log(err)
                         } else {
@@ -445,10 +480,34 @@ exports.clientbs_remove = (req, res, next) => {
                 }
                 Product.deleteOne({ _id: req.body._id })
                     .then(() => {
-                        res.send({
-                            code: 0,
-                            msg: '删除成功'
+                        let logOperator
+                        if (req.body.logOperator) {
+                            logOperator = req.body.logOperator
+                        } else {
+                            logOperator = 'name error'
+                        }
+                        logControllers.create({
+                            logDate: new Date().toISOString(),
+                            logOperator: logOperator,
+                            logPlace: 'client_B',
+                            logMode: 'delete',
+                            logInfo: '信息：(' + '餐厅:' + doc.clientbname + ';地址:' + doc.clientbaddress + ';电话:' + doc.clientbphone + ';邮编:' + doc.clientbpostcode + ';)'
                         })
+                            .then(() => {
+                                res.send({
+                                    code: 0,
+                                    msg: '删除客户成功'
+                                })
+                            })
+                            .catch(err => {
+                                console.log('catch an error while write log')
+                                res.send({
+                                    code: 2,
+                                    msg: '删除客户时出现问题',
+                                    error: err
+                                })
+                                console.log(err)
+                            })
                     })
                     .catch((err) => {
                         res.send({
@@ -472,6 +531,7 @@ exports.clientbs_remove = (req, res, next) => {
 exports.clientbs_find = (req, res, next) => {
     Product.find({ "clientbname": { $regex: req.body.word, $options: 'i' } })
         .populate('clientbserve')
+        .populate('clientbarea')
         .limit(req.body.pageSize)
         .skip(req.body.pageSize * (req.body.pageNow - 1))
         .then((doc) => {

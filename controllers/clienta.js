@@ -52,17 +52,17 @@ exports.clientas_get_all = (req, res, next) => {
 }
 
 exports.clientas_create_product = (req, res, next) => {
-    Product.find({ 'clientaname': req.body.clientaname })
+    Product.findOne({ 'clientaname': req.body.clientaname })
         .then((doc) => {
-            if (doc.length != 0) {
+            if (doc) {
                 res.send({
                     code: 1,
                     msg: '此合作商名称已存在'
                 })
             } else {
-                Product.find({ 'clientapostcode': req.body.clientapostcode })
+                Product.findOne({ 'clientapostcode': req.body.clientapostcode })
                     .then((item) => {
-                        if (item.length != 0) {
+                        if (item) {
                             res.send({
                                 code: 1,
                                 msg: '此合作商邮编已存在'
@@ -71,12 +71,35 @@ exports.clientas_create_product = (req, res, next) => {
                             let psw = req.body.clientapsw
                             req.body.clientapsw = bcrypt.hashSync(psw)
                             Product.create(req.body)
-                                .then((doc) => {
-                                    console.log(doc)
-                                    res.status(200).json({
-                                        code: 0,
-                                        msg: '添加成功'
+                                .then(() => {
+                                    let logOperator
+                                    if (req.body.logOperator) {
+                                        logOperator = req.body.logOperator
+                                    } else {
+                                        logOperator = 'name error'
+                                    }
+                                    logControllers.create({
+                                        logDate: new Date().toISOString(),
+                                        logOperator: logOperator,
+                                        logPlace: 'client_A',
+                                        logMode: 'create',
+                                        logInfo: '信息：(' + req.body + ';)'
                                     })
+                                        .then(() => {
+                                            res.send({
+                                                code: 0,
+                                                msg: '添加合作商成功'
+                                            })
+                                        })
+                                        .catch(err => {
+                                            console.log('catch an error while write log')
+                                            res.send({
+                                                code: 2,
+                                                msg: '添加合作商时出现问题',
+                                                error: err
+                                            })
+                                            console.log(err)
+                                        })
                                 })
                                 .catch((err) => {
                                     console.log(err)
@@ -108,9 +131,9 @@ exports.clientas_create_product = (req, res, next) => {
 }
 
 exports.clientas_edit = (req, res, next) => {
-    Product.find({ _id: req.body._id })
+    Product.findOne({ _id: req.body._id })
         .then((doc) => {
-            if (doc.length == 0) {
+            if (!doc) {
                 res.send({
                     code: 1,
                     msg: '未找到该信息'
@@ -177,12 +200,37 @@ exports.clientas_edit = (req, res, next) => {
                                                                     }
                                                                 }
 
-                                                                Product.updateMany({ _id: req.body._id }, editInfo)
+                                                                Product.updateOne({ _id: req.body._id }, editInfo)
                                                                     .then(() => {
-                                                                        res.send({
-                                                                            code: 0,
-                                                                            msg: '更新合作商成功'
+                                                                        let logOperator
+                                                                        if (req.body.logOperator) {
+                                                                            logOperator = req.body.logOperator
+                                                                        } else {
+                                                                            logOperator = 'name error'
+                                                                        }
+                                                                        logControllers.create({
+                                                                            logDate: new Date().toISOString(),
+                                                                            logOperator: logOperator,
+                                                                            logPlace: 'client_A',
+                                                                            logMode: 'update',
+                                                                            logInfo: '原始信息(' + doc + ')'
+                                                                                + '更新信息：(' + editInfo + ';)'
                                                                         })
+                                                                            .then(() => {
+                                                                                res.send({
+                                                                                    code: 0,
+                                                                                    msg: '更新合作商成功'
+                                                                                })
+                                                                            })
+                                                                            .catch(err => {
+                                                                                console.log('catch an error while write log')
+                                                                                res.send({
+                                                                                    code: 2,
+                                                                                    msg: '更新合作商时出现问题',
+                                                                                    error: err
+                                                                                })
+                                                                                console.log(err)
+                                                                            })
                                                                     })
                                                                     .catch((err) => {
                                                                         console.log('更新合作商时出现错误')
@@ -249,12 +297,37 @@ exports.clientas_edit = (req, res, next) => {
                                                                     }
                                                                 }
 
-                                                                Product.updateMany({ _id: req.body._id }, editInfo)
+                                                                Product.updateOne({ _id: req.body._id }, editInfo)
                                                                     .then(() => {
-                                                                        res.send({
-                                                                            code: 0,
-                                                                            msg: '更新合作商成功'
+                                                                        let logOperator
+                                                                        if (req.body.logOperator) {
+                                                                            logOperator = req.body.logOperator
+                                                                        } else {
+                                                                            logOperator = 'name error'
+                                                                        }
+                                                                        logControllers.create({
+                                                                            logDate: new Date().toISOString(),
+                                                                            logOperator: logOperator,
+                                                                            logPlace: 'client_A',
+                                                                            logMode: 'update',
+                                                                            logInfo: '原始信息(' + doc + ')'
+                                                                                + '更新信息：(' + editInfo + ';)'
                                                                         })
+                                                                            .then(() => {
+                                                                                res.send({
+                                                                                    code: 0,
+                                                                                    msg: '更新合作商成功'
+                                                                                })
+                                                                            })
+                                                                            .catch(err => {
+                                                                                console.log('catch an error while write log')
+                                                                                res.send({
+                                                                                    code: 2,
+                                                                                    msg: '更新合作商时出现问题',
+                                                                                    error: err
+                                                                                })
+                                                                                console.log(err)
+                                                                            })
                                                                     })
                                                                     .catch((err) => {
                                                                         console.log('更新合作商时出现错误')
@@ -314,10 +387,35 @@ exports.clientas_edit = (req, res, next) => {
 
                                             Product.updateMany({ _id: req.body._id }, editInfo)
                                                 .then(() => {
-                                                    res.send({
-                                                        code: 0,
-                                                        msg: '更新合作商成功'
+                                                    let logOperator
+                                                    if (req.body.logOperator) {
+                                                        logOperator = req.body.logOperator
+                                                    } else {
+                                                        logOperator = 'name error'
+                                                    }
+                                                    logControllers.create({
+                                                        logDate: new Date().toISOString(),
+                                                        logOperator: logOperator,
+                                                        logPlace: 'client_A',
+                                                        logMode: 'update',
+                                                        logInfo: '原始信息(' + doc + ')'
+                                                            + '更新信息：(' + editInfo + ';)'
                                                     })
+                                                        .then(() => {
+                                                            res.send({
+                                                                code: 0,
+                                                                msg: '添加司机成功'
+                                                            })
+                                                        })
+                                                        .catch(err => {
+                                                            console.log('catch an error while write log')
+                                                            res.send({
+                                                                code: 2,
+                                                                msg: '添加司机时出现问题',
+                                                                error: err
+                                                            })
+                                                            console.log(err)
+                                                        })
                                                 })
                                                 .catch((err) => {
                                                     console.log('更新合作商时出现错误')
@@ -329,9 +427,6 @@ exports.clientas_edit = (req, res, next) => {
                                                     })
                                                 })
                                         }
-
-
-
                                     } else {
                                         res.send({
                                             code: 1,
@@ -378,22 +473,43 @@ exports.clientas_edit = (req, res, next) => {
 }
 
 exports.clientas_remove = (req, res, next) => {
-    Product.find({ _id: req.body._id })
+    Product.findOne({ _id: req.body._id })
         .then((doc) => {
-            if (doc.length != 0) {
-                Product.remove({ _id: req.body._id })
-                    .then((item) => {
-                        console.log('###########')
-                        console.log(item)
-                        console.log(req.body._id)
+            if (doc) {
+                Product.deleteOne({ _id: req.body._id })
+                    .then(() => {
                         ClientB.updateMany({ clientbserve: req.body._id }, {
                             'clientbserve': null
                         })
                             .then(() => {
-                                res.send({
-                                    code: 0,
-                                    msg: '删除成功'
+                                let logOperator
+                                if (req.body.logOperator) {
+                                    logOperator = req.body.logOperator
+                                } else {
+                                    logOperator = 'name error'
+                                }
+                                logControllers.create({
+                                    logDate: new Date().toISOString(),
+                                    logOperator: logOperator,
+                                    logPlace: 'client_A',
+                                    logMode: 'remove',
+                                    logInfo: '原始信息(' + doc + ')'
                                 })
+                                    .then(() => {
+                                        res.send({
+                                            code: 0,
+                                            msg: '删除司机成功'
+                                        })
+                                    })
+                                    .catch(err => {
+                                        console.log('catch an error while write log')
+                                        res.send({
+                                            code: 2,
+                                            msg: '删除时出现问题',
+                                            error: err
+                                        })
+                                        console.log(err)
+                                    })
                             })
                             .catch((err) => {
                                 res.send({
@@ -499,10 +615,10 @@ exports.client_SMS_remove = (req, res, next) => {
                 logDate: new Date(),
                 logPlace: 'SMS',
                 logMode: 'remove',
-                logInfo: '原始信息（'+'客户ID:' + req.body._id + ';客户名:' + doc.clientName + ';开始时间:' + startDate + ';结束时间:' + endDate+'）'
+                logInfo: '原始信息（' + '客户ID:' + req.body._id + ';客户名:' + doc.clientName + ';开始时间:' + startDate + ';结束时间:' + endDate + '）'
             })
                 .then(() => {
-                    smsControllers.remove({ 'clientId': req.body._id })
+                    smsControllers.deleteOne({ 'clientId': req.body._id })
                         .then(() => {
                             res.send({
                                 code: 0
