@@ -14,9 +14,10 @@ const missionSchema = mongoose.Schema({
             clientbphone: { type: String },
             clientbpostcode: { type: String },
             clientbserve: { type: String },
+            isNeedPic: { type: Boolean, default: false },//拍照是否必要
             finishphoto: { type: String, default: null },//送货结束后的照片
             finishdate: { type: Date, default: null },//送货结束后的时间
-            image:{type:String,default:null}//客户图片
+            image: { type: String, default: null }//客户图片
         }
     ]//线路客户
 })

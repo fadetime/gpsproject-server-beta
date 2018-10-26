@@ -150,14 +150,14 @@ exports.times_eidt = (req, res, next) => {
                             .then(() => {
                                 res.send({
                                     code: 0,
-                                    msg: '添加司机成功'
+                                    msg: '修改线路成功'
                                 })
                             })
                             .catch(err => {
                                 console.log('catch an error while write log')
                                 res.send({
                                     code: 2,
-                                    msg: '添加司机时出现问题',
+                                    msg: '修改线路时出现问题',
                                     error: err
                                 })
                                 console.log(err)
@@ -329,3 +329,4 @@ exports.times_sort = (req, res, next) => {
             })
         })
 }
+

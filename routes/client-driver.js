@@ -12,4 +12,7 @@ router.post('/update', uploadImage.dataInput, MissionController.client_driver_up
 // 司机修改密码
 router.post('/change', MissionController.client_driver_changepsw)
 
+// 司机修改密码
+router.post('/exupdate', MissionController.driver_upload_checkPic)
+
 module.exports = router

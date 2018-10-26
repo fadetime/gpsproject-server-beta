@@ -15,7 +15,8 @@ const clientDriverSchema = mongoose.Schema({
             clientbpostcode: { type: String },
             clientbserve: { type: String },
             finishphoto: { type: String, default: null },//送货结束后的照片
-            finishdate: { type: Date, default: null }//送货结束后的时间
+            finishdate: { type: Date, default: null },//送货结束后的时间
+            isNeedPic:{ type :Boolean , default :false} //照片必要
         }
     ]//线路客户
 })

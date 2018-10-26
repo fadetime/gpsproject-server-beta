@@ -213,6 +213,7 @@ exports.clientbs_create_product = (req, res, next) => {
                         clientbpostcode: req.body.clientbpostcode,
                         clientbserve: req.body.clientbserve,
                         clientbarea: req.body.clientbarea,
+                        isNeedPic:req.body.isNeedPic,
                         image: req.file.path
                     }
                 } else {
@@ -223,6 +224,7 @@ exports.clientbs_create_product = (req, res, next) => {
                         clientbstatus: req.body.clientbstatus,
                         clientbpostcode: req.body.clientbpostcode,
                         clientbserve: req.body.clientbserve,
+                        isNeedPic:req.body.isNeedPic,
                         clientbarea: req.body.clientbarea
                     }
                 }
@@ -390,7 +392,8 @@ exports.clientbs_edit = (req, res, next) => {
                                 clientbstatus: req.body.clientbstatus,
                                 clientbpostcode: req.body.clientbpostcode,
                                 clientbserve: req.body.clientbserve,
-                                clientbarea: req.body.clientbarea
+                                clientbarea: req.body.clientbarea,
+                                isNeedPic:req.body.isNeedPic
                             })
                                 .then(() => {
                                     let logOperator
@@ -565,4 +568,27 @@ exports.clientbs_find = (req, res, next) => {
                 error: err
             })
         })
+}
+
+exports.client_change_needpic = (req, res, next) => {
+    Product.findByIdAndUpdate(req.body._id,{
+        isNeedPic:req.body.isNeedPic
+    })
+    .then(doc => {
+        console.log('#######')
+        console.log(doc)
+        console.log('#######')
+        res.send({
+            code:0
+        })
+    })
+    .catch(err => {
+        console.log('catch an error while update needpic')
+        console.log(err)
+        res.send({
+            error:err,
+            smg:'更新状态时发生错误',
+            code:2
+        })
+    })
 }

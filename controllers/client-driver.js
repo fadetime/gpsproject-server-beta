@@ -67,7 +67,7 @@ exports.client_driver_upload = (req, res, next) => {
                                 smsControllers.findOne({ 'clientId': doc2.clientbserve._id })
                                     .then(doc3 => {
                                         if (doc3) {
-                                            let to ='65' + doc2.clientbserve.clientaphone
+                                            let to = '65' + doc2.clientbserve.clientaphone
                                             nexmo.message.sendSms(from, to, text, (err, result) => {
                                                 if (err) {
 
@@ -183,6 +183,54 @@ exports.client_driver_changepsw = (req, res, next) => {
             console.log(err)
             res.status(500).json({
                 msg: '修改数据时服务器发生错误',
+                error: err
+            })
+        })
+}
+
+exports.driver_upload_checkPic = (req, res, next) => {
+    Product.findOne({ _id: req.body._id })
+        .then(doc => {
+            let clientArray = doc.missionclient
+            let checkClient //is need pic check
+            clientArray.forEach(client => {
+                if (client.clientbname == req.body.clientName) {
+                    checkClient = client
+                }
+            })
+            if (checkClient.isNeedPic) {
+                res.send({
+                    code:1,
+                    msg:'需要照片'
+                })
+            } else {
+                Product.updateOne({
+                    _id: req.body._id,
+                    missionclient: {
+                        $elemMatch: { clientbname: req.body.clientName }
+                    }
+                }, {
+                        $set: { 'missionclient.$.finishdate': new Date() },
+                    })
+                    .then(doc => {
+                        res.send({
+                            code: 0,
+                            info: doc
+                        })
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        res.send({
+                            code: 2,
+                            error: err
+                        })
+                    })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code: 2,
                 error: err
             })
         })

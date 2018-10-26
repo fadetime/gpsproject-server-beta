@@ -37,4 +37,7 @@ router.post('/remove', ClientBController.clientbs_remove)
 // 修改客户线路
 router.post('/changeline', ClientBController.clientbs_update_line)
 
+// 修改客户必传照片
+router.post('/needpic', ClientBController.client_change_needpic)
+
 module.exports = router
