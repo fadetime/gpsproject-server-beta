@@ -24,7 +24,7 @@ exports.mission_get_today = (req, res, next) => {
     let enddate = startdate + 86400000
     startdate = new Date(startdate).toISOString()
     enddate = new Date(enddate).toISOString()
-    console.log(startdate)
+    console.log(startdate + '###')
     console.log(enddate)
     Product.find({ "missiondate": { "$gte": startdate, "$lt": enddate } })
         .then((doc) => {

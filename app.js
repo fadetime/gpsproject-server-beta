@@ -21,6 +21,7 @@ const clientCompanyRoutes = require('./routes/client-company')
 const adminRoutes = require('./routes/admin')
 const logRoutes = require('./routes/log')
 const areaRoutes = require('./routes/area')
+const checkCar = require('./routes/checkCar')
 
 // **************************一系列的middleware************************
 //log
@@ -85,7 +86,7 @@ app.use('/client-company', clientCompanyRoutes)
 app.use('/admin', adminRoutes)
 app.use('/log', logRoutes)
 app.use('/area', areaRoutes)
-
+app.use('/checkcar', checkCar)
 //定期清理短信提醒
 const smsControllers = require('./models/openSMS')
 let startTime = 0

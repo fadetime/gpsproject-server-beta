@@ -44,6 +44,7 @@ exports.login = (req, res, next) => {
         })
 }
 
+//司机登录
 exports.user_login = (req, res, next) => {
     Driver.findOne({ dirverusername: req.body.username })
         .then(doc => {
@@ -105,6 +106,7 @@ exports.user_login = (req, res, next) => {
         })
 }
 
+//合作商登录
 exports.company_login = (req, res, next) => {
     Client.findOne({ clientausername: req.body.username })
         .then(doc => {
@@ -162,6 +164,69 @@ exports.company_login = (req, res, next) => {
                 msg: '查找账户时发生错误',
                 code: 2,
                 error: err
+            })
+        })
+}
+
+//操作员注册
+exports.operator_create = (req, res, next) => {
+    Clerk.findOne({ name: req.body.name })
+        .then(doc => {
+            if (doc) {
+                res.send({
+                    code: 1,
+                    msg: '用户名重复'
+                })
+            } else {
+                Clerk.findOne({ email: req.body.email })
+                    .then(doc2 => {
+                        if (doc2) {
+                            res.send({
+                                code: 1,
+                                msg: '用户名账户重复'
+                            })
+                        } else {
+                            Clerk.create({
+                                name:req.body.name,
+                                phone:req.body.phone,
+                                email:req.body.email,
+                                password:req.body.password
+                            })
+                                .then(()=> {
+                                    res.send({
+                                        msg: '查找用户账户发生错误',
+                                        code:0
+                                    })
+                                })
+                                .catch(err => {
+                                    console.log('catch an error while create admin user')
+                                    console.log(err)
+                                    res.send({
+                                        msg: '查找用户账户发生错误',
+                                        error: err,
+                                        code:2
+                                    })
+                                })
+                        }
+                    })
+                    .catch(err => {
+                        console.log('catch an error while find admin user email')
+                        console.log(err)
+                        res.send({
+                            msg: '查找用户账户发生错误',
+                            error: err,
+                            code:2
+                        })
+                    })
+            }
+        })
+        .catch(err => {
+            console.log('catch an error while find admin user name')
+            console.log(err)
+            res.send({
+                msg: '查找用户账户发生错误',
+                error: err,
+                code:2
             })
         })
 }

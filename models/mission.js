@@ -7,6 +7,8 @@ const missionSchema = mongoose.Schema({
     missiondirver: { type: String },//线路司机
     missionphone: { type: String },//线路电话-司机
     missioncar: { type: String },//线路车辆
+    Car_id:{ type: String },//车辆_id
+    CarCheck: { type: Boolean, default: false },//车辆检查
     missionclient: [
         {
             clientbname: { type: String },
@@ -15,6 +17,7 @@ const missionSchema = mongoose.Schema({
             clientbpostcode: { type: String },
             clientbserve: { type: String },
             isNeedPic: { type: Boolean, default: false },//拍照是否必要
+            timeLimit: { type: String }, //要求时间
             finishphoto: { type: String, default: null },//送货结束后的照片
             finishdate: { type: Date, default: null },//送货结束后的时间
             image: { type: String, default: null }//客户图片

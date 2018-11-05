@@ -11,6 +11,7 @@ const from = 'Ebuy Inc'
 const text = '您的货品已送达'
 
 exports.client_driver_get = (req, res, next) => {
+    console.log(req.body.startdate)
     let startdate = new Date(req.body.startdate).getTime()
     let enddate = startdate + 86400000
     startdate = new Date(startdate).toISOString()

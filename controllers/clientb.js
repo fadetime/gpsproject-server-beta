@@ -214,6 +214,7 @@ exports.clientbs_create_product = (req, res, next) => {
                         clientbserve: req.body.clientbserve,
                         clientbarea: req.body.clientbarea,
                         isNeedPic:req.body.isNeedPic,
+                        timeLimit:req.body.timeLimit,
                         image: req.file.path
                     }
                 } else {
@@ -225,6 +226,7 @@ exports.clientbs_create_product = (req, res, next) => {
                         clientbpostcode: req.body.clientbpostcode,
                         clientbserve: req.body.clientbserve,
                         isNeedPic:req.body.isNeedPic,
+                        timeLimit:req.body.timeLimit,
                         clientbarea: req.body.clientbarea
                     }
                 }
@@ -393,6 +395,7 @@ exports.clientbs_edit = (req, res, next) => {
                                 clientbpostcode: req.body.clientbpostcode,
                                 clientbserve: req.body.clientbserve,
                                 clientbarea: req.body.clientbarea,
+                                timeLimit:req.body.timeLimit,
                                 isNeedPic:req.body.isNeedPic
                             })
                                 .then(() => {

@@ -11,7 +11,9 @@ const clientBSchema = mongoose.Schema({
     clientbserve:{type:mongoose.Schema.Types.ObjectId,ref:'ClientA'},//服务商信息
     clientbarea:{type:mongoose.Schema.Types.ObjectId,ref:'areas'},//所属区域信息
     image:{type:String,default:null},//客户图片
-    isNeedPic:{type:Boolean,default:false}//必要拍照
+    isNeedPic:{type:Boolean,default:false},//必要拍照
+    timeLimit:{type:String}//限时
+
 })
 
 module.exports = mongoose.model('ClientB', clientBSchema)
