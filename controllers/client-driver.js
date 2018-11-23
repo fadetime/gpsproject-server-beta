@@ -26,6 +26,7 @@ exports.client_driver_get = (req, res, next) => {
                     msg: '未找到该任务信息'
                 })
             } else {
+                console.log(doc)
                 res.send({
                     code: 0,
                     msg: '查找任务成功',
@@ -190,6 +191,9 @@ exports.client_driver_changepsw = (req, res, next) => {
 }
 
 exports.driver_upload_checkPic = (req, res, next) => {
+    console.log('##################')
+    console.log(req.body.position)
+    console.log('##################')
     Product.findOne({ _id: req.body._id })
         .then(doc => {
             let clientArray = doc.missionclient
@@ -211,7 +215,7 @@ exports.driver_upload_checkPic = (req, res, next) => {
                         $elemMatch: { clientbname: req.body.clientName }
                     }
                 }, {
-                        $set: { 'missionclient.$.finishdate': new Date() },
+                        $set: { 'missionclient.$.finishdate': new Date(),'missionclient.$.position': req.body.position },
                     })
                     .then(doc => {
                         res.send({

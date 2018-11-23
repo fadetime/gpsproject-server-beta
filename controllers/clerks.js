@@ -78,6 +78,7 @@ exports.user_login = (req, res, next) => {
                                 drivercard: doc.dirvercard,
                                 driverphone: doc.dirverphone,
                                 driverid: doc.dirverid,
+                                role: doc.role,
                                 _id: doc._id,
                                 image: doc.image
                             })

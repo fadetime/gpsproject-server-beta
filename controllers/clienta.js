@@ -6,7 +6,7 @@ const logControllers = require('../models/log')
 const bcrypt = require('bcryptjs')
 
 exports.clientas_get = (req, res, next) => {
-    Product.find()
+    Product.find({invisible:{$nin:true}})
         .then((doc) => {
             console.log(doc)
             res.send(doc)
@@ -21,7 +21,7 @@ exports.clientas_get = (req, res, next) => {
 }
 
 exports.clientas_get_all = (req, res, next) => {
-    Product.find()
+    Product.find({invisible:{$nin:true}})
         .limit(req.body.pageSize)
         .skip(req.body.pageSize * (req.body.pageNow - 1))
         .then((doc) => {

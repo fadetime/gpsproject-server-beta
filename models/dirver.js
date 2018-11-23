@@ -8,7 +8,8 @@ const dirverSchema = mongoose.Schema({
     dirverusername:{type:String,required:true},//人员用户名
     dirverpsw:{type:String,required:true},//人员密码
     image:{type:String,default: null},//司机照片
-    dirvernote:{type:String}//备注
+    dirvernote:{type:String},//备注
+    role:{type:String,default:'user'}//司机权限
 })
 
 module.exports = mongoose.model('Dirver', dirverSchema)

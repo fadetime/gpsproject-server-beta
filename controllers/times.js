@@ -131,7 +131,8 @@ exports.times_eidt = (req, res, next) => {
                     timesdirver: req.body.timesdirver,
                     timesclientb: req.body.timesclientb,
                     timesclientnumber: req.body.timesclientnumber,
-                    timesnote: req.body.timesnote
+                    timesnote: req.body.timesnote,
+                    NcNumber:req.body.NcNumber
                 })
                     .then(() => {
                         let logOperator
@@ -183,7 +184,7 @@ exports.times_eidt = (req, res, next) => {
 }
 
 exports.times_remove = (req, res, next) => {
-    Product.findById( req.body._id )
+    Product.findById(req.body._id)
         .then((doc) => {
             if (!doc) {
                 res.send({
@@ -330,3 +331,108 @@ exports.times_sort = (req, res, next) => {
         })
 }
 
+exports.usedDriver_add = (req, res, next) => {
+    if (req.body.usedDriver) {
+        Product.findById(req.body._id)
+            .then(doc => {
+                let tempArray = []
+                if (doc.usedDriver.length != 0) {
+                    tempArray = doc.usedDriver
+                    let flag = false
+                    tempArray.forEach(element => {
+                        if (element === req.body.usedDriver) {
+                            flag = true
+                        }
+                    })
+                    if (flag) {
+                        res.send({
+                            code: 0
+                        })
+                    } else {
+                        tempArray.push(req.body.usedDriver)
+                        Product.updateOne({ _id: req.body._id }, {
+                            usedDriver: tempArray
+                        })
+                            .then(() => {
+                                res.send({
+                                    code: 0
+                                })
+                            })
+                            .catch(err => {
+                                console.log('catch an error while update used driver')
+                                console.log(err)
+                                res.send({
+                                    code: 2,
+                                    error: err
+                                })
+                            })
+                    }
+                } else {
+                    tempArray.push(req.body.usedDriver)
+                    Product.updateOne({ _id: req.body._id }, {
+                        usedDriver: tempArray
+                    })
+                        .then(() => {
+                            res.send({
+                                code: 0
+                            })
+                        })
+                        .catch(err => {
+                            console.log('catch an error while update used driver')
+                            console.log(err)
+                            res.send({
+                                code: 2,
+                                error: err
+                            })
+                        })
+                }
+
+            })
+            .catch(err => {
+                console.log('catch an error while find used driver')
+                console.log(err)
+                res.send({
+                    code: 2,
+                    error: err
+                })
+            })
+
+    } else {
+        res.send({
+            code: 1,
+            msg: '非法操作'
+        })
+    }
+}
+
+exports.usedDriver_remove = (req, res, next) => {
+    Product.findById(req.body._id)
+        .then(doc => {
+            console.log(req.body)
+            doc.usedDriver.remove(req.body.usedDriver)
+            Product.updateOne({ _id: req.body._id }, {
+                usedDriver: doc.usedDriver
+            })
+                .then(() => {
+                    res.send({
+                        code: 0
+                    })
+                })
+                .catch(err => {
+                    console.log('catch an error while remove used driver')
+                    console.log(err)
+                    res.send({
+                        code: 2,
+                        error: err
+                    })
+                })
+        })
+        .catch(err => {
+            console.log('catch an error while find used driver')
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}

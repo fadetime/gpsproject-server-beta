@@ -3,6 +3,8 @@ const Product = require('../models/clientb')
 const _ = require('lodash')
 const fs = require('fs')
 const logControllers = require('../models/log')
+const myArea = require('../models/area')
+const mycompany = require('../models/clienta')
 
 exports.clientbs_get = (req, res, next) => {
     Product.find()
@@ -213,24 +215,69 @@ exports.clientbs_create_product = (req, res, next) => {
                         clientbpostcode: req.body.clientbpostcode,
                         clientbserve: req.body.clientbserve,
                         clientbarea: req.body.clientbarea,
-                        isNeedPic:req.body.isNeedPic,
-                        timeLimit:req.body.timeLimit,
+                        isNeedPic: req.body.isNeedPic,
+                        timeLimit: req.body.timeLimit,
                         image: req.file.path
                     }
                 } else {
-                    tempData = {
-                        clientbname: req.body.clientbname,
-                        clientbaddress: req.body.clientbaddress,
-                        clientbphone: req.body.clientbphone,
-                        clientbstatus: req.body.clientbstatus,
-                        clientbpostcode: req.body.clientbpostcode,
-                        clientbserve: req.body.clientbserve,
-                        isNeedPic:req.body.isNeedPic,
-                        timeLimit:req.body.timeLimit,
-                        clientbarea: req.body.clientbarea
-                    }
-                }
-                Product.create(tempData)
+                    if (!req.body.clientbserve || !req.body.clientbarea) {//ebuy平台建立数据
+                        myArea.findOne({ areaName: '无区域' })
+                            .then(areaDoc => {
+                                mycompany.findOne({ clientaname: '无合作商' })
+                                    .then(companyDoc => {
+                                        tempData = {
+                                            clientbname: req.body.clientbname,
+                                            clientbaddress: req.body.clientbaddress,
+                                            clientbphone: req.body.clientbphone,
+                                            clientbpostcode: req.body.clientbpostcode,
+                                            clientbserve: companyDoc._id,
+                                            clientbarea: areaDoc._id
+                                        }
+                                        Product.create(tempData)
+                                        .then(()=> {
+                                            res.send({
+                                                code: 0
+                                            })
+                                        })
+                                        .catch(err => {
+                                            console.log('catch an error while find company')
+                                            console.log(err)
+                                            res.send({
+                                                code: 2,
+                                                error: err
+                                            })
+                                        })
+                                    })
+                                    .catch(err => {
+                                        console.log('catch an error while find company')
+                                        console.log(err)
+                                        res.send({
+                                            code: 2,
+                                            error: err
+                                        })
+                                    })
+                            })
+                            .catch(err => {
+                                console.log('catch an error while find area')
+                                console.log(err)
+                                res.send({
+                                    code: 2,
+                                    error: err
+                                })
+                            })
+                    } else {
+                        tempData = {
+                            clientbname: req.body.clientbname,
+                            clientbaddress: req.body.clientbaddress,
+                            clientbphone: req.body.clientbphone,
+                            clientbstatus: req.body.clientbstatus,
+                            clientbpostcode: req.body.clientbpostcode,
+                            clientbserve: req.body.clientbserve,
+                            isNeedPic: req.body.isNeedPic,
+                            timeLimit: req.body.timeLimit,
+                            clientbarea: req.body.clientbarea
+                        }
+                        Product.create(tempData)
                     .then(() => {
                         let logOperator
                         if (req.body.logOperator) {
@@ -269,6 +316,9 @@ exports.clientbs_create_product = (req, res, next) => {
                             err
                         })
                     })
+                    }
+                }
+                
             }
         })
         .catch((err) => {
@@ -372,6 +422,100 @@ exports.clientbs_edit_img = (req, res, next) => {
         })
 }
 
+exports.clientbs_other_edit = (req, res, next) => {//用于ebuy后台修改
+    Product.findOne({ clientbname: req.body.oldname })
+        .then((doc) => {
+            if (!doc) {
+                res.send({
+                    code: 1,
+                    msg: '未找到该客户'
+                })
+            } else {
+                Product.count({ clientbname: req.body.oldname })
+                    .then((doc1) => {
+                        if (doc1 === 1) {
+                            myArea.findOne({ areaName: '无区域' })
+                                .then(areaDoc => {
+                                    mycompany.findOne({ clientaname: '无合作商' })
+                                        .then(companyDoc => {
+                                            let tempData
+                                            if (req.body.clientbphone) {
+                                                tempData = {
+                                                    clientbname: req.body.clientbname,
+                                                    clientbaddress: req.body.clientbaddress,
+                                                    clientbphone: req.body.clientbphone,
+                                                    clientbpostcode: req.body.clientbpostcode,
+                                                    clientbserve: companyDoc._id,
+                                                    clientbarea: areaDoc._id
+                                                }
+                                            } else {
+                                                tempData = {
+                                                    clientbname: req.body.clientbname,
+                                                    clientbserve: companyDoc._id,
+                                                    clientbarea: areaDoc._id
+                                                }
+                                            }
+                                            Product.updateOne({ _id: doc._id }, tempData)
+                                                .then(() => {
+                                                    res.send({
+                                                        code: 0,
+                                                        msg: '修改客户成功'
+                                                    })
+                                                })
+                                                .catch((err) => {
+                                                    console.log('查找客户邮编出错')
+                                                    console.log(err)
+                                                    res.send({
+                                                        code: 2,
+                                                        msg: '查找客户邮编出错',
+                                                        error: err
+                                                    })
+                                                })
+                                        })
+                                        .catch(err => {
+                                            console.log('catch an error while find company')
+                                            console.log(err)
+                                            res.send({
+                                                code: 2,
+                                                error: err
+                                            })
+                                        })
+                                })
+                                .catch(err => {
+                                    console.log('catch an error while find area')
+                                    console.log(err)
+                                    res.send({
+                                        code: 2,
+                                        error: err
+                                    })
+                                })
+                        } else {
+                            res.send({
+                                code: 1,
+                                msg: '客户名称重复'
+                            })
+                        }
+                    })
+                    .catch((err) => {
+                        console.log('查找客户名称出错')
+                        console.log(err)
+                        res.send({
+                            code: 2,
+                            msg: '查找客户名称出错',
+                            error: err
+                        })
+                    })
+            }
+        })
+        .catch((err) => {
+            console.log(err)
+            res.status(500).json({
+                msg: '获取数据时服务器发生错误',
+                err
+            })
+        })
+}
+
 exports.clientbs_edit = (req, res, next) => {
     Product.find({ _id: req.body._id })
         .then((doc) => {
@@ -395,8 +539,8 @@ exports.clientbs_edit = (req, res, next) => {
                                 clientbpostcode: req.body.clientbpostcode,
                                 clientbserve: req.body.clientbserve,
                                 clientbarea: req.body.clientbarea,
-                                timeLimit:req.body.timeLimit,
-                                isNeedPic:req.body.isNeedPic
+                                timeLimit: req.body.timeLimit,
+                                isNeedPic: req.body.isNeedPic
                             })
                                 .then(() => {
                                     let logOperator
@@ -574,24 +718,24 @@ exports.clientbs_find = (req, res, next) => {
 }
 
 exports.client_change_needpic = (req, res, next) => {
-    Product.findByIdAndUpdate(req.body._id,{
-        isNeedPic:req.body.isNeedPic
+    Product.findByIdAndUpdate(req.body._id, {
+        isNeedPic: req.body.isNeedPic
     })
-    .then(doc => {
-        console.log('#######')
-        console.log(doc)
-        console.log('#######')
-        res.send({
-            code:0
+        .then(doc => {
+            console.log('#######')
+            console.log(doc)
+            console.log('#######')
+            res.send({
+                code: 0
+            })
         })
-    })
-    .catch(err => {
-        console.log('catch an error while update needpic')
-        console.log(err)
-        res.send({
-            error:err,
-            smg:'更新状态时发生错误',
-            code:2
+        .catch(err => {
+            console.log('catch an error while update needpic')
+            console.log(err)
+            res.send({
+                error: err,
+                smg: '更新状态时发生错误',
+                code: 2
+            })
         })
-    })
 }

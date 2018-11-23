@@ -12,6 +12,7 @@ const clientASchema = mongoose.Schema({
     clientacontract:{type:Number},//合作期限
     clientatime:{type:Date, default:Date.now()},//合作商起始时间
     clientamail:{type:String},//合作商邮件
+    invisible:{type:Boolean,default:false} //数据隐藏
 })
 
 module.exports = mongoose.model('ClientA', clientASchema)

@@ -1,7 +1,7 @@
 const Product = require('../models/area')
 
 exports.area_get_all = (req, res, next) => {
-    Product.find()
+    Product.find({invisible:{$nin:true}})
         .then(doc => {
             res.send({
                 code: 0,

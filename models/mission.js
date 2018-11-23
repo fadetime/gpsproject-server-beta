@@ -7,8 +7,10 @@ const missionSchema = mongoose.Schema({
     missiondirver: { type: String },//线路司机
     missionphone: { type: String },//线路电话-司机
     missioncar: { type: String },//线路车辆
-    Car_id:{ type: String },//车辆_id
-    CarCheck: { type: Boolean, default: false },//车辆检查
+    Car_id: { type: String },//车辆_id
+    carCheck_id: { type: String },//检查记录id
+    carCheckFirst: { type: Boolean, default: false },//出车检查
+    carCheckFinish: { type: Boolean, default: false },//收车检查
     missionclient: [
         {
             clientbname: { type: String },

@@ -23,4 +23,10 @@ router.post('/remove', TimesController.times_remove)
 // 线路排序
 router.post('/sort', TimesController.times_sort)
 
+// 增加常用司机
+router.post('/useddriveradd', TimesController.usedDriver_add)
+
+// 删除常用司机
+router.post('/useddriverdel', TimesController.usedDriver_remove)
+
 module.exports = router

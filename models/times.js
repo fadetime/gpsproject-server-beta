@@ -14,7 +14,11 @@ const timesSchema = mongoose.Schema({
     timesclientfinsh: { type: Number },//完成总数
     timesnote: { type: String },//线路备注
     timescount: { type: Number, default: 0 },//线路出车次数
-    lineIndexNumber:{ type:Number,default:999}//线路排序序号
+    lineIndexNumber:{ type:Number,default:999},//线路排序序号
+    NcNumber:{ type:Number,default:0},//对应新后台车次
+    usedDriver:[
+        {type:String} //常用司机
+    ],
 })
 
 module.exports = mongoose.model('Times', timesSchema)
