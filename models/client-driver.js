@@ -12,6 +12,7 @@ const clientDriverSchema = mongoose.Schema({
     missionclient: [
         {
             clientbname: { type: String },
+            clientbnameEN: { type: String },
             clientbaddress: { type: String },
             clientbphone: { type: String },
             clientbpostcode: { type: String },

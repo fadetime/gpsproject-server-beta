@@ -209,6 +209,7 @@ exports.clientbs_create_product = (req, res, next) => {
                 if (req.file) {
                     tempData = {
                         clientbname: req.body.clientbname,
+                        clientbnameEN: req.body.clientbnameEN,
                         clientbaddress: req.body.clientbaddress,
                         clientbphone: req.body.clientbphone,
                         clientbstatus: req.body.clientbstatus,
@@ -227,6 +228,7 @@ exports.clientbs_create_product = (req, res, next) => {
                                     .then(companyDoc => {
                                         tempData = {
                                             clientbname: req.body.clientbname,
+                                            clientbnameEN: req.body.clientbnameEN,
                                             clientbaddress: req.body.clientbaddress,
                                             clientbphone: req.body.clientbphone,
                                             clientbpostcode: req.body.clientbpostcode,
@@ -268,6 +270,7 @@ exports.clientbs_create_product = (req, res, next) => {
                     } else {
                         tempData = {
                             clientbname: req.body.clientbname,
+                            clientbnameEN: req.body.clientbnameEN,
                             clientbaddress: req.body.clientbaddress,
                             clientbphone: req.body.clientbphone,
                             clientbstatus: req.body.clientbstatus,
@@ -533,6 +536,7 @@ exports.clientbs_edit = (req, res, next) => {
                         if (data.length === 0) {
                             Product.updateOne({ _id: req.body._id }, {
                                 clientbname: req.body.clientbname,
+                                clientbnameEN: req.body.clientbnameEN,
                                 clientbaddress: req.body.clientbaddress,
                                 clientbphone: req.body.clientbphone,
                                 clientbstatus: req.body.clientbstatus,
