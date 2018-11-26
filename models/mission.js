@@ -23,6 +23,10 @@ const missionSchema = mongoose.Schema({
             timeLimit: { type: String }, //要求时间
             finishphoto: { type: String, default: null },//送货结束后的照片
             finishdate: { type: Date, default: null },//送货结束后的时间
+            position: {//送货结束后的位置
+                lat: { type: Number, default: null },
+                lng: { type: Number, default: null }
+            },
             image: { type: String, default: null }//客户图片
         }
     ]//线路客户

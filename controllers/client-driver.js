@@ -11,13 +11,10 @@ const from = 'Ebuy Inc'
 const text = '您的货品已送达'
 
 exports.client_driver_get = (req, res, next) => {
-    console.log(req.body.startdate)
     let startdate = new Date(req.body.startdate).getTime()
     let enddate = startdate + 86400000
     startdate = new Date(startdate).toISOString()
     enddate = new Date(enddate).toISOString()
-    console.log(startdate)
-    console.log(enddate)
     Product.find({ "missiondirver": req.body.drivername, "missiondate": { "$gte": startdate, "$lt": enddate } })
         .then(doc => {
             if (!doc) {
@@ -26,7 +23,6 @@ exports.client_driver_get = (req, res, next) => {
                     msg: '未找到该任务信息'
                 })
             } else {
-                console.log(doc)
                 res.send({
                     code: 0,
                     msg: '查找任务成功',
