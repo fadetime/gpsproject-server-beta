@@ -11,6 +11,7 @@ const missionSchema = mongoose.Schema({
     carCheck_id: { type: String },//检查记录id
     carCheckFirst: { type: Boolean, default: false },//出车检查
     carCheckFinish: { type: Boolean, default: false },//收车检查
+    complete: {type: Boolean,default:false},//任务完成标签
     missionclient: [
         {
             clientbname: { type: String },

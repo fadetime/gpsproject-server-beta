@@ -9,6 +9,9 @@ router.post('/', MissionController.client_driver_get)
 // 修改任务数据
 router.post('/update', uploadImage.dataInput, MissionController.client_driver_upload)
 
+// 完成任务
+router.post('/complete', uploadImage.dataInput, MissionController.driver_missionComplete)
+
 // 司机修改密码
 router.post('/change', MissionController.client_driver_changepsw)
 

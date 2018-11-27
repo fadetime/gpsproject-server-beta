@@ -11,8 +11,11 @@ const from = 'Ebuy Inc'
 const text = '您的货品已送达'
 
 exports.client_driver_get = (req, res, next) => {
-    let startdate = new Date(req.body.startdate).getTime()
-    let enddate = startdate + 86400000
+    let tempdate = new Date().getTime()
+    let startdate = tempdate - 86400000
+    console.log(startdate)
+    let enddate = tempdate + 86400000
+    console.log(enddate)
     startdate = new Date(startdate).toISOString()
     enddate = new Date(enddate).toISOString()
     Product.find({ "missiondirver": req.body.drivername, "missiondate": { "$gte": startdate, "$lt": enddate } })
@@ -201,8 +204,8 @@ exports.driver_upload_checkPic = (req, res, next) => {
             })
             if (checkClient.isNeedPic) {
                 res.send({
-                    code:1,
-                    msg:'需要照片'
+                    code: 1,
+                    msg: '需要照片'
                 })
             } else {
                 Product.updateOne({
@@ -211,7 +214,7 @@ exports.driver_upload_checkPic = (req, res, next) => {
                         $elemMatch: { clientbname: req.body.clientName }
                     }
                 }, {
-                        $set: { 'missionclient.$.finishdate': new Date(),'missionclient.$.position': req.body.position },
+                        $set: { 'missionclient.$.finishdate': new Date(), 'missionclient.$.position': req.body.position },
                     })
                     .then(doc => {
                         res.send({
@@ -229,6 +232,50 @@ exports.driver_upload_checkPic = (req, res, next) => {
             }
         })
         .catch(err => {
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}
+
+exports.driver_missionComplete = (req, res, next) => {
+    Product.findById(req.body.mission_id)
+        .then(doc => {
+            let canFinish = true
+            doc.missionclient.some(element => {
+                if (!element.finishdate) {
+                    canFinish = false
+                    return true
+                }
+            })
+            if (canFinish) {
+                Product.updateOne({ _id: req.body.mission_id }, {
+                    complete: true
+                })
+                    .then(() => {
+                        res.send({
+                            code: 0
+                        })
+                    })
+                    .catch(err => {
+                        console.log('catch an error while update mission')
+                        console.log(err)
+                        res.send({
+                            code: 2,
+                            error: err
+                        })
+                    })
+            }else{
+                res.send({
+                    code: 1,
+                    msg:'please refresh page'
+                })
+            }
+        })
+        .catch(err => {
+            console.log('catch an error while find mission')
             console.log(err)
             res.send({
                 code: 2,
