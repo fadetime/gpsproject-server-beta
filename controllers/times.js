@@ -1,6 +1,33 @@
 const Product = require('../models/times')
 const logControllers = require('../models/log')
 
+exports.times_get_one = (req, res, next) => {
+    Product.findById(req.body.line_id)
+    .populate('timescar')
+    .populate('timesdirver')
+    .populate({ path: 'timesclientb', populate: { path: 'clientbserve' } })
+    .populate({ path: 'timesclientb', populate: { path: 'clientbarea' } })
+    .then(doc => {
+        if(doc){
+            res.send({
+                code:0,
+                doc:doc
+            })
+        }else{
+            res.send({
+                code:1
+            })
+        }
+    })
+    .catch(err => {
+        console.log('catch an error while find a line info')
+        console.log(err)
+        res.send({
+            code:2,
+            err:error
+        })
+    })
+}
 
 exports.times_get_all = (req, res, next) => {
     Product.find()

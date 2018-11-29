@@ -218,6 +218,7 @@ exports.clientbs_create_product = (req, res, next) => {
                         clientbarea: req.body.clientbarea,
                         isNeedPic: req.body.isNeedPic,
                         timeLimit: req.body.timeLimit,
+                        note: req.body.note,
                         image: req.file.path
                     }
                 } else {
@@ -236,19 +237,19 @@ exports.clientbs_create_product = (req, res, next) => {
                                             clientbarea: areaDoc._id
                                         }
                                         Product.create(tempData)
-                                        .then(()=> {
-                                            res.send({
-                                                code: 0
+                                            .then(() => {
+                                                res.send({
+                                                    code: 0
+                                                })
                                             })
-                                        })
-                                        .catch(err => {
-                                            console.log('catch an error while find company')
-                                            console.log(err)
-                                            res.send({
-                                                code: 2,
-                                                error: err
+                                            .catch(err => {
+                                                console.log('catch an error while find company')
+                                                console.log(err)
+                                                res.send({
+                                                    code: 2,
+                                                    error: err
+                                                })
                                             })
-                                        })
                                     })
                                     .catch(err => {
                                         console.log('catch an error while find company')
@@ -278,50 +279,51 @@ exports.clientbs_create_product = (req, res, next) => {
                             clientbserve: req.body.clientbserve,
                             isNeedPic: req.body.isNeedPic,
                             timeLimit: req.body.timeLimit,
-                            clientbarea: req.body.clientbarea
+                            clientbarea: req.body.clientbarea,
+                            note: req.body.note,
                         }
                         Product.create(tempData)
-                    .then(() => {
-                        let logOperator
-                        if (req.body.logOperator) {
-                            logOperator = req.body.logOperator
-                        } else {
-                            logOperator = 'name error'
-                        }
-                        logControllers.create({
-                            logDate: new Date().toISOString(),
-                            logOperator: logOperator,
-                            logPlace: 'client_B',
-                            logMode: 'create',
-                            logInfo: '信息：(' + '姓名' + req.body.clientbname + '；准证' + req.body.clientbaddress + '；电话' + req.body.clientbphone + '；驾照' + req.body.clientbpostcode + ';)'
-                        })
                             .then(() => {
-                                res.send({
-                                    code: 0,
-                                    msg: '添加客户成功'
+                                let logOperator
+                                if (req.body.logOperator) {
+                                    logOperator = req.body.logOperator
+                                } else {
+                                    logOperator = 'name error'
+                                }
+                                logControllers.create({
+                                    logDate: new Date().toISOString(),
+                                    logOperator: logOperator,
+                                    logPlace: 'client_B',
+                                    logMode: 'create',
+                                    logInfo: '信息：(' + '姓名' + req.body.clientbname + '；准证' + req.body.clientbaddress + '；电话' + req.body.clientbphone + '；驾照' + req.body.clientbpostcode + ';)'
                                 })
+                                    .then(() => {
+                                        res.send({
+                                            code: 0,
+                                            msg: '添加客户成功'
+                                        })
+                                    })
+                                    .catch(err => {
+                                        console.log('catch an error while write log')
+                                        res.send({
+                                            code: 2,
+                                            msg: '添加客户时出现问题',
+                                            error: err
+                                        })
+                                        console.log(err)
+                                    })
                             })
                             .catch(err => {
-                                console.log('catch an error while write log')
+                                console.log(err)
                                 res.send({
                                     code: 2,
-                                    msg: '添加客户时出现问题',
-                                    error: err
+                                    msg: '添加时出现错误',
+                                    err
                                 })
-                                console.log(err)
                             })
-                    })
-                    .catch(err => {
-                        console.log(err)
-                        res.send({
-                            code: 2,
-                            msg: '添加时出现错误',
-                            err
-                        })
-                    })
                     }
                 }
-                
+
             }
         })
         .catch((err) => {
@@ -544,6 +546,7 @@ exports.clientbs_edit = (req, res, next) => {
                                 clientbserve: req.body.clientbserve,
                                 clientbarea: req.body.clientbarea,
                                 timeLimit: req.body.timeLimit,
+                                note:req.body.note,
                                 isNeedPic: req.body.isNeedPic
                             })
                                 .then(() => {

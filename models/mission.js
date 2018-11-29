@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const missionSchema = mongoose.Schema({
     missiondate: { type: Date, default: Date.now },//线路时间
     missionline: { type: String, required: true },//线路名称
+    line_id: { type: String },//线路id
     missionnote: { type: String },//线路备注
     missiondirver: { type: String },//线路司机
     missionphone: { type: String },//线路电话-司机
@@ -11,7 +12,7 @@ const missionSchema = mongoose.Schema({
     carCheck_id: { type: String },//检查记录id
     carCheckFirst: { type: Boolean, default: false },//出车检查
     carCheckFinish: { type: Boolean, default: false },//收车检查
-    complete: {type: Boolean,default:false},//任务完成标签
+    complete: { type: Boolean, default: false },//任务完成标签
     missionclient: [
         {
             clientbname: { type: String },
@@ -28,6 +29,7 @@ const missionSchema = mongoose.Schema({
                 lat: { type: Number, default: null },
                 lng: { type: Number, default: null }
             },
+            note: { type: String },
             image: { type: String, default: null }//客户图片
         }
     ]//线路客户

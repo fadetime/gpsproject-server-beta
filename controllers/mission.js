@@ -134,6 +134,46 @@ exports.mission_create = (req, res, next) => {
         })
 }
 
+exports.mission_addClient = (req, res, next) => {
+    Product.updateOne({_id:req.body.mission_id},{
+        "$addToSet":{"missionclient":req.body.obj}
+    })
+    .then(doc => {
+        console.log(doc)
+        res.send({
+            code:0
+        })
+    })
+    .catch(err => {
+        console.log('catch an error while update mission')
+        console.log(err)
+        res.send({
+            code:2,
+            error:err
+        })
+    })
+}
+
+exports.mission_delClient = (req, res, next) => {
+    Product.updateOne({_id:req.body.mission_id},{
+        "$pull":{"missionclient":req.body.obj}
+    })
+    .then(doc => {
+        console.log(doc)
+        res.send({
+            code:0
+        })
+    })
+    .catch(err => {
+        console.log('catch an error while update mission')
+        console.log(err)
+        res.send({
+            code:2,
+            error:err
+        })
+    })
+}
+
 exports.mission_remove = (req, res, next) => {
     Product.findById(req.body.missionid)
         .then(doc => {

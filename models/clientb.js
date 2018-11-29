@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const clientBSchema = mongoose.Schema({
     clientbname: { type: String, required: true },//客户名称
     clientbnameEN: { type: String },//英文名称
+    note: {type:String},//备注
     clientbaddress: { type: String },//客户地址
     clientbphone: { type: String },//客户电话
     clientbstatus: { type: String, default: 'active' },//客户状态
