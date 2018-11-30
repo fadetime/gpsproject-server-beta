@@ -2,7 +2,7 @@
 const express = require('express')
 const router = express.Router()
 const ClientBController = require('../controllers/clientb')
-const uploadImage = require('../middlewares/clientImgUse');
+const uploadImage = require('../middlewares/clientImgUse')
 
 // 加载所有数据
 router.get('/', ClientBController.clientbs_get)
