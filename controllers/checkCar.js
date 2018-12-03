@@ -69,11 +69,57 @@ exports.checkCar_get = (req, res, next) => {
         })
 }
 
+exports.checkCar_getLastOne = (req, res, next) => {
+    checkCar.findOne({car_id: req.body.car_id})
+    .sort({'date':-1})
+    .then(doc => {
+        if(doc){
+            res.send({
+                code:0,
+                doc:doc
+            })
+        }else{
+            res.send({
+                code:1
+            })
+        }
+        
+    })
+    .catch(err => {
+        console.log('catch an error while error')
+        console.log(err)
+        res.send({
+            code:2,
+            error:err
+        })
+    })
+}
+
+exports.checkCar_getOne = (req, res, next) => {
+    checkCar.findById(req.body.checkCar_id)
+    .then(doc => {
+        if(doc){
+            res.send({
+                code:0,
+                doc:doc
+            })
+        }else{
+            res.send({
+                code:1
+            })
+        }
+    })
+    .catch(err => {
+        console.log('catch an error while find one')
+        console.log(err)
+    })
+}
+
 exports.checkCar_edit = (req, res, next) => {
     checkCar.updateOne({ _id: req.body.carCheck_id }, {
         boxNumAgain: req.body.boxNumAgain,
         clean: req.body.clean,
-
+        finishDate:req.body.finishDate
     })
         .then(() => {
             mission.updateOne({ _id: req.body.mission_id }, {

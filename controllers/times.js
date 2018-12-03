@@ -1,32 +1,33 @@
 const Product = require('../models/times')
 const logControllers = require('../models/log')
+const myClient = require('../models/clientb')
 
 exports.times_get_one = (req, res, next) => {
     Product.findById(req.body.line_id)
-    .populate('timescar')
-    .populate('timesdirver')
-    .populate({ path: 'timesclientb', populate: { path: 'clientbserve' } })
-    .populate({ path: 'timesclientb', populate: { path: 'clientbarea' } })
-    .then(doc => {
-        if(doc){
-            res.send({
-                code:0,
-                doc:doc
-            })
-        }else{
-            res.send({
-                code:1
-            })
-        }
-    })
-    .catch(err => {
-        console.log('catch an error while find a line info')
-        console.log(err)
-        res.send({
-            code:2,
-            err:error
+        .populate('timescar')
+        .populate('timesdirver')
+        .populate({ path: 'timesclientb', populate: { path: 'clientbserve' } })
+        .populate({ path: 'timesclientb', populate: { path: 'clientbarea' } })
+        .then(doc => {
+            if (doc) {
+                res.send({
+                    code: 0,
+                    doc: doc
+                })
+            } else {
+                res.send({
+                    code: 1
+                })
+            }
         })
-    })
+        .catch(err => {
+            console.log('catch an error while find a line info')
+            console.log(err)
+            res.send({
+                code: 2,
+                err: error
+            })
+        })
 }
 
 exports.times_get_all = (req, res, next) => {
@@ -99,6 +100,7 @@ exports.times_create_product = (req, res, next) => {
             } else {
                 Product.create(req.body)
                     .then(() => {
+
                         let logOperator
                         if (req.body.logOperator) {
                             logOperator = req.body.logOperator
@@ -159,7 +161,7 @@ exports.times_eidt = (req, res, next) => {
                     timesclientb: req.body.timesclientb,
                     timesclientnumber: req.body.timesclientnumber,
                     timesnote: req.body.timesnote,
-                    NcNumber:req.body.NcNumber
+                    NcNumber: req.body.NcNumber
                 })
                     .then(() => {
                         let logOperator
@@ -318,7 +320,6 @@ exports.times_sort = (req, res, next) => {
             let success = 0
             if (req.body.array) {
                 req.body.array.forEach(elementx => {
-                    console.log(elementx)
                     doc.forEach(elementy => {
                         if (elementx == elementy._id) {
                             Product.updateOne({ _id: elementx }, {
@@ -462,4 +463,29 @@ exports.usedDriver_remove = (req, res, next) => {
                 error: err
             })
         })
+}
+
+exports.usedDriver_editClientSort = (req, res, next) => {
+    //客户排序 start
+    let index = 0
+    let sortSuccess = 0
+    req.body.clientId.forEach(element => {
+        index += 1
+        console.log(element)
+        myClient.updateOne({ _id: element }, {
+            NcSortNum: index
+        })
+            .then(() => {
+                sortSuccess += 1
+                console.log('成功排序客户数量:' + sortSuccess)
+            })
+            .catch(err => {
+                console.log('catch an error while sort client')
+                console.log(err)
+            })
+    })
+    res.send({
+        code:0
+    })
+    //客户排序 end
 }
