@@ -26,8 +26,11 @@ router.post('/remove', TimesController.times_remove)
 // 线路排序
 router.post('/sort', TimesController.times_sort)
 
-// 客户排序
+// 客户排序-客服次序
 router.post('/clientsort', TimesController.usedDriver_editClientSort)
+
+// 客户排序-司机次序
+router.post('/driversort', TimesController.usedDriver_editDriverSort)
 
 // 增加常用司机
 router.post('/useddriveradd', TimesController.usedDriver_add)

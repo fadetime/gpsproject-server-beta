@@ -471,9 +471,33 @@ exports.usedDriver_editClientSort = (req, res, next) => {
     let sortSuccess = 0
     req.body.clientId.forEach(element => {
         index += 1
-        console.log(element)
         myClient.updateOne({ _id: element }, {
             NcSortNum: index
+        })
+            .then(() => {
+                sortSuccess += 1
+                console.log('成功排序客户数量:' + sortSuccess)
+            })
+            .catch(err => {
+                console.log('catch an error while sort client')
+                console.log(err)
+            })
+    })
+    res.send({
+        code:0
+    })
+    //客户排序 end
+}
+
+exports.usedDriver_editDriverSort = (req, res, next) => {
+    //客户排序 start
+    let index = 0
+    let sortSuccess = 0
+    req.body.clientId.forEach(element => {
+        index += 1
+        console.log(element)
+        myClient.updateOne({ _id: element }, {
+            driverSortNum: index
         })
             .then(() => {
                 sortSuccess += 1
