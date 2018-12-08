@@ -2,7 +2,7 @@
 const mongoose = require('mongoose')
 
 const openSMSSchema = mongoose.Schema({
-    orderDate: { type: Date, default: new Date() },//创建时间
+    orderDate: { type: Date, default: Date.now },//创建时间
     clientId: { type: String, required: true },//客户唯一标识
     clientName: { type: String },//客户名称
     startDate: { type: Date, required: true },//通知开始时间

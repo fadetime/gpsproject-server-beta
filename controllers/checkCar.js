@@ -2,6 +2,9 @@ const checkCar = require('../models/checkCar')
 const mission = require('../models/mission')
 
 exports.checkCar_create = (req, res, next) => {
+    console.log('##########')
+    console.log(req.body)
+    console.log('##########')
     checkCar.create(req.body)
         .then((item) => {
             mission.updateOne({ _id: req.body.mission_id }, {
