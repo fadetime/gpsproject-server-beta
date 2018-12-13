@@ -161,7 +161,9 @@ exports.times_eidt = (req, res, next) => {
                     timesclientb: req.body.timesclientb,
                     timesclientnumber: req.body.timesclientnumber,
                     timesnote: req.body.timesnote,
-                    NcNumber: req.body.NcNumber
+                    NcNumber: req.body.NcNumber,
+                    goTime:req.body.goTime,
+                    backTime:req.body.backTime
                 })
                     .then(() => {
                         let logOperator

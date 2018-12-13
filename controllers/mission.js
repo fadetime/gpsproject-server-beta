@@ -4,11 +4,24 @@ const LineModels = require('../models/times')
 const logControllers = require('../models/log')
 
 exports.mission_get_one = (req, res, next) => {
-    console.log(req.body)
     Product.findOne({ "_id": req.body._id })
         .then((doc) => {
             res.send(doc)
             console.log(doc)
+        })
+        .catch((err) => {
+            console.log(err)
+            res.status(500).json({
+                msg: '获取数据时服务器发生错误',
+                error: err
+            })
+        })
+}
+
+exports.mission_getOne_missionDateByid = (req, res, next) => {
+    Product.findOne({ "_id": req.body._id })
+        .then((doc) => {
+            res.send(doc.missiondate)
         })
         .catch((err) => {
             console.log(err)
@@ -132,6 +145,33 @@ exports.mission_create = (req, res, next) => {
                 err
             })
         })
+}
+
+exports.mission_editOne_missionDateByid = (req, res, next) => {
+    Product.updateOne({_id:req.body._id},{
+        missiondate:req.body.dateEdit
+    })
+    .then(doc => {
+        console.log(doc)
+        if(doc.ok === 1){
+            res.send({
+                code:0
+            })
+        }else{
+            res.send({
+                code:1,
+                doc:doc
+            })
+        }
+    })
+    .catch(err => {
+        console.log('catch an error while update mission date')
+        console.log(err)
+        res.send({
+            code:2,
+            error:err
+        })
+    })
 }
 
 exports.mission_addClient = (req, res, next) => {

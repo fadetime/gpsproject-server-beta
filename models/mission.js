@@ -13,6 +13,8 @@ const missionSchema = mongoose.Schema({
     carCheckFirst: { type: Boolean, default: false },//出车检查
     carCheckFinish: { type: Boolean, default: false },//收车检查
     complete: { type: Boolean, default: false },//任务完成标签
+    goTime:{type: String, default: null },//固定发车时间
+    backTime:{type: String, default: null },//固定收车时间
     missionclient: [
         {
             clientbname: { type: String },
