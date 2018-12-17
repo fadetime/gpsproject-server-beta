@@ -24,6 +24,7 @@ const areaRoutes = require('./routes/area')
 const checkCar = require('./routes/checkCar')
 const fixCar = require('./routes/fixCar')
 const report = require('./routes/report')
+const dayShiftMission = require('./routes/dayShiftMission')
 
 // **************************一系列的middleware************************
 //log
@@ -91,6 +92,8 @@ app.use('/area', areaRoutes)
 app.use('/checkcar', checkCar)
 app.use('/fixcar', fixCar)
 app.use('/report', report)
+app.use('/dayShiftmission', dayShiftMission)
+
 
 //定期清理短信提醒
 const smsControllers = require('./models/openSMS')

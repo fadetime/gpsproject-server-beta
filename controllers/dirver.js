@@ -169,6 +169,7 @@ exports.dirvers_edit = (req, res, next) => {
                                                 dirvercard: req.body.dirvercard,
                                                 dirverusername: req.body.dirverusername,
                                                 dirvernote: req.body.dirvernote,
+                                                role:req.body.role
                                             }
                                         } else {
                                             let psw = req.body.dirverpsw
@@ -181,6 +182,7 @@ exports.dirvers_edit = (req, res, next) => {
                                                 dirverusername: req.body.dirverusername,
                                                 dirverpsw: req.body.dirverpsw,
                                                 dirvernote: req.body.dirvernote,
+                                                role:req.body.role
                                             }
                                         }
                                         Product.updateOne({ _id: req.body._id }, updateInfo)

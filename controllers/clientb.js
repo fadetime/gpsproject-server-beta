@@ -11,14 +11,13 @@ exports.clientbs_get = (req, res, next) => {
         .populate('clientbserve')
         .populate('clientbarea')
         .then((doc) => {
-            console.log(doc)
             res.send(doc)
         })
         .catch((err) => {
             console.log(err)
             res.status(500).json({
                 msg: '获取数据时服务器发生错误',
-                err
+                error:err
             })
         })
 }

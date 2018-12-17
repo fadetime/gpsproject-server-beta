@@ -7,7 +7,6 @@ exports.mission_get_one = (req, res, next) => {
     Product.findOne({ "_id": req.body._id })
         .then((doc) => {
             res.send(doc)
-            console.log(doc)
         })
         .catch((err) => {
             console.log(err)
