@@ -98,9 +98,7 @@ exports.findMissionByDate = (req, res, next) => {
     let startdate = new Date(req.body.orderDate).getTime() - 86400000
     let enddate = new Date(req.body.orderDate).getTime() + 86400000
     startdate = new Date(startdate).toISOString()
-    console.log(startdate)
     enddate = new Date(enddate).toISOString()
-    console.log(enddate)
     myDayShiftMission.find({"isRemoved":false, "driverName": req.body.driverName, "orderDate": { "$gte": startdate, "$lt": enddate } })
         .then(doc => {
             if (doc.length === 0) {
@@ -122,4 +120,30 @@ exports.findMissionByDate = (req, res, next) => {
                 code: 2
             })
         })
+}
+
+exports.findMissionByActive = (req, res, next) => {
+    let startdate = new Date(req.body.startDate).toISOString()
+    let enddate = new Date(req.body.endDate).toISOString()
+    myDayShiftMission.find({"isRemoved":false, "orderDate": { "$gte": startdate, "$lt": enddate } })
+    .then(doc => {
+        if (doc.length === 0) {
+            res.send({
+                code: 1
+            })
+        } else {
+            res.send({
+                code: 0,
+                doc: doc
+            })
+        }
+    })
+    .catch(err => {
+        console.log('catch an error while find a mission by the date')
+            console.log(err)
+            res.send({
+                error: err,
+                code: 2
+            })
+    })
 }

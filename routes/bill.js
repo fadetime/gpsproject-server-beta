@@ -11,4 +11,7 @@ router.post('/edit', billController.billEdit)
 // 获取账单统计
 router.post('/find', billController.billFind)
 
+// 获取所有账单
+router.post('/findall', billController.billFindByDate)
+
 module.exports = router

@@ -18,4 +18,7 @@ router.post('/end', dayShiftMissionController.endMIssion)
 //查找白班任务
 router.post('/find', dayShiftMissionController.findMissionByDate)
 
+//查找未删除的白班任务
+router.post('/findall', dayShiftMissionController.findMissionByActive)
+
 module.exports = router
