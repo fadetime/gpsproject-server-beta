@@ -25,6 +25,7 @@ const checkCar = require('./routes/checkCar')
 const fixCar = require('./routes/fixCar')
 const report = require('./routes/report')
 const dayShiftMission = require('./routes/dayShiftMission')
+const bill = require('./routes/bill')
 
 // **************************一系列的middleware************************
 //log
@@ -93,6 +94,7 @@ app.use('/checkcar', checkCar)
 app.use('/fixcar', fixCar)
 app.use('/report', report)
 app.use('/dayShiftmission', dayShiftMission)
+app.use('/bill', bill)
 
 
 //定期清理短信提醒
