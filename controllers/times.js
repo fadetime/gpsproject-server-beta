@@ -1,6 +1,7 @@
 const Product = require('../models/times')
 const logControllers = require('../models/log')
 const myClient = require('../models/clientb')
+const mongoose = require('mongoose')
 
 exports.times_get_one = (req, res, next) => {
     Product.findById(req.body.line_id)
@@ -162,8 +163,8 @@ exports.times_eidt = (req, res, next) => {
                     timesclientnumber: req.body.timesclientnumber,
                     timesnote: req.body.timesnote,
                     NcNumber: req.body.NcNumber,
-                    goTime:req.body.goTime,
-                    backTime:req.body.backTime
+                    goTime: req.body.goTime,
+                    backTime: req.body.backTime
                 })
                     .then(() => {
                         let logOperator
@@ -310,6 +311,68 @@ exports.times_find = (req, res, next) => {
             res.status(500).json({
                 msg: '获取数据时服务器发生错误',
                 err
+            })
+        })
+}
+
+exports.advanced_find_title = (req, res, next) => {
+    myClient.find({ "clientbname": { $regex: req.body.keyWord, $options: 'i' } }, { clientbname: 1 })
+        .limit(5)
+        .then(doc => {
+            if (doc.length === 0) {
+                res.send({
+                    code: 1
+                })
+            } else {
+                res.send({
+                    code: 0,
+                    doc: doc
+                })
+            }
+
+        })
+        .catch(err => {
+            console.log('catch an error while find client name')
+            console.log(err)
+            res.status(500).json({
+                msg: '获取数据时服务器发生错误',
+                error: err
+            })
+        })
+}
+
+exports.advanced_find_clientAndLine = (req, res, next) => {
+    myClient.findOne({ "_id": req.body._id })
+        .then(clientInfo => {
+            if(clientInfo){
+                Product.findOne({ "timesclientb": mongoose.Types.ObjectId(req.body._id) })
+                .then(lineInfo => {
+                    res.send({
+                        clientInfo:clientInfo,
+                        lineInfo:lineInfo,
+                        code:0
+                    })
+                })
+                .catch(err => {
+                    console.log('catch an error while find line infomation')
+                    console.log(err)
+                    res.status(500).json({
+                        msg: '获取数据时服务器发生错误',
+                        error: err
+                    })
+                })
+            }else{
+                res.send({
+                    code:1
+                })
+            }
+        })
+        .catch(err => {
+            console.log('catch an error while find client infomation')
+            console.log(err)
+            res.status(500).json({
+                msg: '获取数据时服务器发生错误',
+                error: err
             })
         })
 }
@@ -486,7 +549,7 @@ exports.usedDriver_editClientSort = (req, res, next) => {
             })
     })
     res.send({
-        code:0
+        code: 0
     })
     //客户排序 end
 }
@@ -511,7 +574,7 @@ exports.usedDriver_editDriverSort = (req, res, next) => {
             })
     })
     res.send({
-        code:0
+        code: 0
     })
     //客户排序 end
 }

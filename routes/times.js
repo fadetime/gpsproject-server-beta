@@ -38,4 +38,9 @@ router.post('/useddriveradd', TimesController.usedDriver_add)
 // 删除常用司机
 router.post('/useddriverdel', TimesController.usedDriver_remove)
 
+// 高级搜索-搜索提示
+router.post('/find-tips', TimesController.advanced_find_title)
+
+// 高级搜索-搜索结果
+router.post('/finda', TimesController.advanced_find_clientAndLine)
 module.exports = router
