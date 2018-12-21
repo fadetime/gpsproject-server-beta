@@ -26,6 +26,8 @@ const fixCar = require('./routes/fixCar')
 const report = require('./routes/report')
 const dayShiftMission = require('./routes/dayShiftMission')
 const bill = require('./routes/bill')
+const checkWorkerCar = require('./routes/checkWorkerCar')//管理检查员需要检查的车辆
+const checkWorker = require('./routes/checkWorker')//检查员使用API
 
 // **************************一系列的middleware************************
 //log
@@ -95,6 +97,8 @@ app.use('/fixcar', fixCar)
 app.use('/report', report)
 app.use('/dayShiftmission', dayShiftMission)
 app.use('/bill', bill)
+app.use('/workercar', checkWorkerCar)//管理检查员需要检查的车辆
+app.use('/checkworker', checkWorker)//检查员使用API
 
 
 //定期清理短信提醒
