@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 
 // 连接MongoDB by using mongoose
-mongoose.connect('mongodb://127.0.0.1/drivertool', { useNewUrlParser: true })
+mongoose.connect('mongodb://192.168.1.70/test', { useNewUrlParser: true })
 mongoose.Promise = global.Promise
 
 // 创建Routes实例
@@ -28,6 +28,7 @@ const dayShiftMission = require('./routes/dayShiftMission')
 const bill = require('./routes/bill')
 const checkWorkerCar = require('./routes/checkWorkerCar')//管理检查员需要检查的车辆
 const checkWorker = require('./routes/checkWorker')//检查员使用API
+const carWash = require('./routes/carWash')
 
 // **************************一系列的middleware************************
 //log
@@ -99,7 +100,7 @@ app.use('/dayShiftmission', dayShiftMission)
 app.use('/bill', bill)
 app.use('/workercar', checkWorkerCar)//管理检查员需要检查的车辆
 app.use('/checkworker', checkWorker)//检查员使用API
-
+app.use('/carwash', carWash)
 
 //定期清理短信提醒
 const smsControllers = require('./models/openSMS')

@@ -16,6 +16,29 @@ exports.carts_get_all = (req, res, next) => {
         })
 }
 
+exports.carts_get_allPlate = (req, res, next) => {
+    Product.find({}, { carid: 1 })
+        .then((doc) => {
+            if (doc.length != 0) {
+                res.send({
+                    code: 0,
+                    doc: doc
+                })
+            }else{
+                res.send({
+                    code: 1
+                })
+            }
+        })
+        .catch((err) => {
+            console.log(err)
+            res.status(500).json({
+                msg: '获取数据时服务器发生错误',
+                error: err
+            })
+        })
+}
+
 exports.carts_post_all = (req, res, next) => {
     Product.find()
         .limit(req.body.pageSize)
@@ -204,33 +227,33 @@ exports.carts_update_img = (req, res, next) => {
                 })
                     .then(() => {
                         let logOperator
-                            if (req.body.logOperator) {
-                                logOperator = req.body.logOperator
-                            } else {
-                                logOperator = 'name error'
-                            }
-                            logControllers.create({
-                                logDate: new Date().toISOString(),
-                                logOperator: logOperator,
-                                logPlace: 'car',
-                                logMode: 'image',
-                                logInfo: '信息：(' + '新照' + req.file.path + ';)'
+                        if (req.body.logOperator) {
+                            logOperator = req.body.logOperator
+                        } else {
+                            logOperator = 'name error'
+                        }
+                        logControllers.create({
+                            logDate: new Date().toISOString(),
+                            logOperator: logOperator,
+                            logPlace: 'car',
+                            logMode: 'image',
+                            logInfo: '信息：(' + '新照' + req.file.path + ';)'
+                        })
+                            .then(() => {
+                                res.send({
+                                    code: 0,
+                                    msg: '更新照片成功'
+                                })
                             })
-                                .then(() => {
-                                    res.send({
-                                        code: 0,
-                                        msg: '更新照片成功'
-                                    })
+                            .catch(err => {
+                                console.log('catch an error while write log')
+                                res.send({
+                                    code: 2,
+                                    msg: '更新照片时出现问题',
+                                    error: err
                                 })
-                                .catch(err => {
-                                    console.log('catch an error while write log')
-                                    res.send({
-                                        code: 2,
-                                        msg: '更新照片时出现问题',
-                                        error: err
-                                    })
-                                    console.log(err)
-                                })
+                                console.log(err)
+                            })
                     })
                     .catch(error => {
                         res.send({
@@ -391,33 +414,33 @@ exports.carts_remove = (req, res, next) => {
                 Product.deleteOne({ _id: req.body._id })
                     .then(() => {
                         let logOperator
-                            if (req.body.logOperator) {
-                                logOperator = req.body.logOperator
-                            } else {
-                                logOperator = 'name error'
-                            }
-                            logControllers.create({
-                                logDate: new Date().toISOString(),
-                                logOperator: logOperator,
-                                logPlace: 'car',
-                                logMode: 'delete',
-                                logInfo: '信息：(' + doc + ';)'
+                        if (req.body.logOperator) {
+                            logOperator = req.body.logOperator
+                        } else {
+                            logOperator = 'name error'
+                        }
+                        logControllers.create({
+                            logDate: new Date().toISOString(),
+                            logOperator: logOperator,
+                            logPlace: 'car',
+                            logMode: 'delete',
+                            logInfo: '信息：(' + doc + ';)'
+                        })
+                            .then(() => {
+                                res.send({
+                                    code: 0,
+                                    msg: '删除车辆成功'
+                                })
                             })
-                                .then(() => {
-                                    res.send({
-                                        code: 0,
-                                        msg: '删除车辆成功'
-                                    })
+                            .catch(err => {
+                                console.log('catch an error while write log')
+                                res.send({
+                                    code: 2,
+                                    msg: '删除车辆时出现问题',
+                                    error: err
                                 })
-                                .catch(err => {
-                                    console.log('catch an error while write log')
-                                    res.send({
-                                        code: 2,
-                                        msg: '删除车辆时出现问题',
-                                        error: err
-                                    })
-                                    console.log(err)
-                                })
+                                console.log(err)
+                            })
                     })
                     .catch((err) => {
                         console.log(err)

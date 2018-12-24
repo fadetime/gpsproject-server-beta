@@ -6,6 +6,9 @@ const uploadImage = require('../middlewares/multerUse');
 // 加载所有数据
 router.get('/', CarController.carts_get_all)
 
+// 加载所有车牌
+router.get('/allplate', CarController.carts_get_allPlate)
+
 // 分页加载所有数据
 router.post('/get', CarController.carts_post_all)
 
