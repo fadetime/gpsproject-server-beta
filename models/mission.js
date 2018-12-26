@@ -32,6 +32,7 @@ const missionSchema = mongoose.Schema({
                 lng: { type: Number, default: null }
             },
             note: { type: String },
+            noteEN: { type: String },
             image: { type: String, default: null }//客户图片
         }
     ]//线路客户

@@ -218,6 +218,7 @@ exports.clientbs_create_product = (req, res, next) => {
                         isNeedPic: req.body.isNeedPic,
                         timeLimit: req.body.timeLimit,
                         note: req.body.note,
+                        noteEN: req.body.noteEN,
                         image: req.file.path
                     }
                 } else {
@@ -280,6 +281,7 @@ exports.clientbs_create_product = (req, res, next) => {
                             timeLimit: req.body.timeLimit,
                             clientbarea: req.body.clientbarea,
                             note: req.body.note,
+                            noteEN: req.body.noteEN,
                         }
                         Product.create(tempData)
                             .then(() => {
@@ -546,6 +548,7 @@ exports.clientbs_edit = (req, res, next) => {
                                 clientbarea: req.body.clientbarea,
                                 timeLimit: req.body.timeLimit,
                                 note:req.body.note,
+                                noteEN:req.body.noteEN,
                                 isNeedPic: req.body.isNeedPic
                             })
                                 .then(() => {
