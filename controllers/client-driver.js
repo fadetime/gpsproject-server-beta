@@ -1,8 +1,9 @@
-const Product = require('../models/client-driver')
+const Product = require('../models/mission')
 const driverInfo = require('../models/dirver')
 const smsControllers = require('../models/openSMS')
 const clientbControllers = require('../models/clientb')
 const logControllers = require('../models/log')
+const myBasketModel = require('../models/basket')
 const bcrypt = require('bcryptjs')
 const Nexmo = require('nexmo')
 const nexmo = new Nexmo({ apiKey: 'add855d7', apiSecret: '3t4Rz2GI67DGtgw2' });
@@ -190,9 +191,6 @@ exports.client_driver_changepsw = (req, res, next) => {
 }
 
 exports.driver_upload_checkPic = (req, res, next) => {
-    console.log('##################')
-    console.log(req.body.position)
-    console.log('##################')
     Product.findOne({ _id: req.body._id })
         .then(doc => {
             let clientArray = doc.missionclient
@@ -217,9 +215,57 @@ exports.driver_upload_checkPic = (req, res, next) => {
                         $set: { 'missionclient.$.finishdate': new Date(), 'missionclient.$.position': req.body.position },
                     })
                     .then(doc => {
-                        res.send({
-                            code: 0,
-                            info: doc
+                        let tempNum = req.body.outBasket - req.body.inBasket
+                        clientbControllers.findOne({clientbname:req.body.clientName},{basket:1})
+                        .then(oldNum => {
+                            if(oldNum.basket){
+                                tempNum = oldNum.basket + tempNum
+                            }
+                            clientbControllers.updateOne({clientbname:req.body.clientName},{
+                                basket:tempNum
+                            })
+                            .then(updateInfo => {
+                                console.log(req.body)
+                                myBasketModel.create({
+                                    date: req.body.date,//生成时间
+                                    lineName: req.body.lineName,//线路名称
+                                    clientName: req.body.clientName,
+                                    driverName: req.body.driverName,//生成司机
+                                    outBasket: req.body.outBasket,//拿给客户的框数
+                                    inBasket: req.body.inBasket,//拿回的框数
+                                })
+                                .then(()=> {
+                                    res.send({
+                                        code: 0,
+                                        info: doc
+                                    })
+                                })
+                                .catch(err => {
+                                    console.log('catch an error while create basket info')
+                                    console.log(err)
+                                    res.send({
+                                        code: 2,
+                                        error: err
+                                    })
+                                })
+                                
+                            })
+                            .catch(err => {
+                                console.log('catch an error while update client basket info')
+                                console.log(err)
+                                res.send({
+                                    code: 2,
+                                    error: err
+                                })
+                            })
+                        })
+                        .catch(err => {
+                            console.log('catch an error while find client old basket number')
+                                console.log(err)
+                                res.send({
+                                    code: 2,
+                                    error: err
+                                })
                         })
                     })
                     .catch(err => {

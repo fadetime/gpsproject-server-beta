@@ -2,6 +2,7 @@ const Product = require('../models/admin')
 const bcrypt = require('bcryptjs')
 const myArea = require('../models/area')
 const mycompany = require('../models/clienta')
+const myRemainBillNumber = require('../models/remainBillNumber')
 
 exports.admin_changePSW = (req, res, next) => {
     Product.findOne({ 'name': 'admin' })
@@ -50,7 +51,7 @@ exports.admin_setInitPart1 = (req, res, next) => {
                 myArea.create({
                     areaName: '无区域',
                     areaDescription: '无区域',
-                    invisible:true
+                    invisible: true
                 })
                     .then(() => {
                         res.send({
@@ -94,7 +95,7 @@ exports.admin_setInitPart2 = (req, res, next) => {
                     clientapostcode: '无合作商',
                     clientacontract: 999,
                     clientamail: '无合作商',
-                    invisible:true
+                    invisible: true
                 })
                     .then(() => {
                         res.send({
@@ -114,6 +115,48 @@ exports.admin_setInitPart2 = (req, res, next) => {
                 res.send({
                     code: 1,
                     msg: '默认合作商创建已存在'
+                })
+            }
+        })
+        .catch(err => {
+            console.log('catch an error while count company')
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}
+
+exports.admin_setInitPart3 = (req, res, next) => {
+    myRemainBillNumber.countDocuments({})
+        .then(doc => {
+            if (doc === 0) {
+                myRemainBillNumber.create()
+                    .then(doc => {
+                        if (doc) {
+                            res.send({
+                                code: 0
+                            })
+                        } else {
+                            res.send({
+                                code: 1,
+                                doc: doc
+                            })
+                        }
+                    })
+                    .catch(err => {
+                        console.log('catch an error while create remain bill number')
+                        console.log(err)
+                        res.send({
+                            code: 2,
+                            error: err
+                        })
+                    })
+            } else {
+                res.send({
+                    code: 1,
+                    msg: '默认剩余订单计数已存在'
                 })
             }
         })

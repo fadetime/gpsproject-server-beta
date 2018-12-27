@@ -17,7 +17,8 @@ const clientBSchema = mongoose.Schema({
     isNeedPic: { type: Boolean, default: false },//必要拍照
     timeLimit: { type: String },//限时
     NcSortNum: { type: Number, default: 999 },//客服后台顺序
-    driverSortNum: { type: Number, default: 999 }//司机送货顺序
+    driverSortNum: { type: Number, default: 999 },//司机送货顺序
+    basket: { type: Number, default: 0 }//用户所欠框数
 })
 
 module.exports = mongoose.model('ClientB', clientBSchema)
