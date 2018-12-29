@@ -15,4 +15,7 @@ router.post('/finish',checkWorkerController.checkWorker_finish)
 //查询车辆检查数据
 router.get('/',checkWorkerController.checkWorker_get)
 
+//查询车辆检查数据-根据时间段
+router.post('/find',checkWorkerController.checkWorker_findByDate)
+
 module.exports = router

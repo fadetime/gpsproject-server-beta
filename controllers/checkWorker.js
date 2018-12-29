@@ -89,7 +89,7 @@ exports.checkWorker_finish = (req, res, next) => {
         .then(doc => {
             console.log(doc)
             res.send({
-                code:0
+                code: 0
             })
         })
         .catch(err => {
@@ -118,6 +118,33 @@ exports.checkWorker_get = (req, res, next) => {
         })
         .catch(err => {
             console.log('##catch an error while find checkwork')
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}
+
+exports.checkWorker_findByDate = (req, res, next) => {
+    let startdate = new Date(req.body.startDate).toISOString()
+    let enddate = new Date(req.body.endDate).toISOString()
+
+    checkWorkerModel.find({ "createDate": { "$gte": startdate, "$lt": enddate } })
+        .then(doc => {
+            if(doc.length === 0){
+                res.send({
+                    code:1
+                })
+            }else{
+                res.send({
+                    code:0,
+                    doc:doc
+                })
+            }
+        })
+        .catch(err => {
+            console.log('##catch an error while find check info by the date')
             console.log(err)
             res.send({
                 code: 2,
