@@ -85,9 +85,8 @@ exports.report_getByDateOfdriverFindMission = (req, res, next) => {
 }
 
 exports.report_getBasketTop = (req, res, next) => {
-    myClientModels.find({})
+    myClientModels.find({basket:{"$gt":0}})
         .sort({ basket: -1 })
-        .limit(5)
         .then(doc => {
             if (doc.length === 0) {
                 res.send({

@@ -44,4 +44,7 @@ router.post('/changeline', ClientBController.clientbs_update_line)
 // 修改客户必传照片
 router.post('/needpic', ClientBController.client_change_needpic)
 
+// 修改客户拖欠框数
+router.post('/basket', ClientBController.client_change_basketNum)
+
 module.exports = router

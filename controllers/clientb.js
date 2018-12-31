@@ -731,12 +731,36 @@ exports.client_change_needpic = (req, res, next) => {
         isNeedPic: req.body.isNeedPic
     })
         .then(doc => {
-            console.log('#######')
             console.log(doc)
-            console.log('#######')
             res.send({
                 code: 0
             })
+        })
+        .catch(err => {
+            console.log('catch an error while update needpic')
+            console.log(err)
+            res.send({
+                error: err,
+                smg: '更新状态时发生错误',
+                code: 2
+            })
+        })
+}
+
+exports.client_change_basketNum = (req, res, next) => {
+    Product.findOneAndUpdate({_id:req.body._id}, {
+        basket: req.body.basket
+    })
+        .then(doc => {
+            if(doc){
+                res.send({
+                    code: 0
+                })
+            }else{
+                res.send({
+                    code: 1
+                })
+            }
         })
         .catch(err => {
             console.log('catch an error while update needpic')
