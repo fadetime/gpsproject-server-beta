@@ -54,7 +54,7 @@ exports.client_driver_upload = (req, res, next) => {
                     msg: '未找到该任务信息'
                 })
             } else {
-                Product.update({
+                Product.updateOne({
                     _id: req.body._id,
                     missionclient: {
                         $elemMatch: { clientbname: req.body.dialogClientName }
@@ -66,69 +66,83 @@ exports.client_driver_upload = (req, res, next) => {
                         clientbControllers.findOne({ clientbname: req.body.dialogClientName })
                             .populate('clientbserve')
                             .then(doc2 => {
-                                smsControllers.findOne({ 'clientId': doc2.clientbserve._id })
-                                    .then(doc3 => {
-                                        if (doc3) {
-                                            let to = '65' + doc2.clientbserve.clientaphone
-                                            nexmo.message.sendSms(from, to, text, (err, result) => {
-                                                if (err) {
+                                let tempNum = req.body.outBasket - req.body.inBasket
+                                if (doc2.basket) {
+                                    tempNum = doc2.basket + tempNum
+                                }
+                                clientbControllers.updateOne({ _id: doc2._id }, {
+                                    basket: tempNum
+                                })
+                                    .then(() => {
+                                        smsControllers.findOne({ 'clientId': doc2.clientbserve._id })
+                                            .then(doc3 => {
+                                                if (doc3) {
+                                                    let to = '65' + doc2.clientbserve.clientaphone
+                                                    nexmo.message.sendSms(from, to, text, (err, result) => {
+                                                        if (err) {
 
-                                                    logControllers.create({
-                                                        logDate: new Date(),
-                                                        logPlace: 'SMS send',
-                                                        logMode: 'send error',
-                                                        logInfo: '客户ID:' + doc2.clientbserve._id + ';客户名:' + doc2.clientbserve.clientaname + ';错误信息:' + err
-                                                    })
-                                                        .then(() => {
-                                                            console.log('发生错误:')
-                                                            console.log(err)
-                                                            res.send({
-                                                                code: 1,
-                                                                error: err,
-                                                                SMS: 'true'
+                                                            logControllers.create({
+                                                                logDate: new Date(),
+                                                                logPlace: 'SMS send',
+                                                                logMode: 'send error',
+                                                                logInfo: '客户ID:' + doc2.clientbserve._id + ';客户名:' + doc2.clientbserve.clientaname + ';错误信息:' + err
                                                             })
-                                                        })
-                                                        .catch(err => {
-                                                            console.log('生成日志时发生错误:')
-                                                            console.log(err)
-                                                        })
+                                                                .then(() => {
+                                                                    console.log('发生错误:')
+                                                                    console.log(err)
+                                                                    res.send({
+                                                                        code: 1,
+                                                                        error: err,
+                                                                        SMS: 'true'
+                                                                    })
+                                                                })
+                                                                .catch(err => {
+                                                                    console.log('生成日志时发生错误:')
+                                                                    console.log(err)
+                                                                })
 
+                                                        } else {
+                                                            logControllers.create({
+                                                                logDate: new Date(),
+                                                                logPlace: 'SMS send',
+                                                                logMode: 'send succes',
+                                                                logInfo: '客户ID:' + doc2.clientbserve._id + ';客户名:' + doc2.clientbserve.clientaname + ';发送号码:' + result.messages[0].to + ';status' + result.messages[0].status + ';network' + result.messages[0].network
+                                                            })
+                                                                .then(() => {
+                                                                    res.send({
+                                                                        code: 0,
+                                                                        msg: '任务状态更新成功',
+                                                                        SMS: 'true'
+                                                                    })
+                                                                })
+                                                                .catch(err => {
+                                                                    console.log('生成日志时发生错误:')
+                                                                    console.log(err)
+                                                                })
+                                                        }
+                                                    })
                                                 } else {
-                                                    logControllers.create({
-                                                        logDate: new Date(),
-                                                        logPlace: 'SMS send',
-                                                        logMode: 'send succes',
-                                                        logInfo: '客户ID:' + doc2.clientbserve._id + ';客户名:' + doc2.clientbserve.clientaname + ';发送号码:' + result.messages[0].to + ';status' + result.messages[0].status + ';network' + result.messages[0].network
+                                                    res.send({
+                                                        code: 0,
+                                                        msg: '任务状态更新成功',
+                                                        SMS: 'false'
                                                     })
-                                                        .then(() => {
-                                                            res.send({
-                                                                code: 0,
-                                                                msg: '任务状态更新成功',
-                                                                SMS: 'true'
-                                                            })
-                                                        })
-                                                        .catch(err => {
-                                                            console.log('生成日志时发生错误:')
-                                                            console.log(err)
-                                                        })
                                                 }
                                             })
-                                        } else {
-                                            res.send({
-                                                code: 0,
-                                                msg: '任务状态更新成功',
-                                                SMS: 'false'
+                                            .catch(err => {
+                                                console.log('查找SMS时发生错误')
+                                                console.log(err)
+                                                res.send({
+                                                    code: 2,
+                                                    error: err
+                                                })
                                             })
-                                        }
                                     })
                                     .catch(err => {
-                                        console.log('查找SMS时发生错误')
-                                        console.log(err)
-                                        res.send({
-                                            code: 2,
-                                            error: err
-                                        })
+                                        console.log('catch an error while count basket number')
+                                        console(err)
                                     })
+
                             })
                             .catch(err => {
                                 console.log(err)
@@ -216,57 +230,57 @@ exports.driver_upload_checkPic = (req, res, next) => {
                     })
                     .then(doc => {
                         let tempNum = req.body.outBasket - req.body.inBasket
-                        clientbControllers.findOne({clientbname:req.body.clientName},{basket:1})
-                        .then(oldNum => {
-                            if(oldNum.basket){
-                                tempNum = oldNum.basket + tempNum
-                            }
-                            clientbControllers.updateOne({clientbname:req.body.clientName},{
-                                basket:tempNum
-                            })
-                            .then(updateInfo => {
-                                console.log(req.body)
-                                myBasketModel.create({
-                                    date: req.body.date,//生成时间
-                                    lineName: req.body.lineName,//线路名称
-                                    clientName: req.body.clientName,
-                                    driverName: req.body.driverName,//生成司机
-                                    outBasket: req.body.outBasket,//拿给客户的框数
-                                    inBasket: req.body.inBasket,//拿回的框数
+                        clientbControllers.findOne({ clientbname: req.body.clientName }, { basket: 1 })
+                            .then(oldNum => {
+                                if (oldNum.basket) {
+                                    tempNum = oldNum.basket + tempNum
+                                }
+                                clientbControllers.updateOne({ clientbname: req.body.clientName }, {
+                                    basket: tempNum
                                 })
-                                .then(()=> {
-                                    res.send({
-                                        code: 0,
-                                        info: doc
+                                    .then(updateInfo => {
+                                        console.log(req.body)
+                                        myBasketModel.create({
+                                            date: req.body.date,//生成时间
+                                            lineName: req.body.lineName,//线路名称
+                                            clientName: req.body.clientName,
+                                            driverName: req.body.driverName,//生成司机
+                                            outBasket: req.body.outBasket,//拿给客户的框数
+                                            inBasket: req.body.inBasket,//拿回的框数
+                                        })
+                                            .then(() => {
+                                                res.send({
+                                                    code: 0,
+                                                    info: doc
+                                                })
+                                            })
+                                            .catch(err => {
+                                                console.log('catch an error while create basket info')
+                                                console.log(err)
+                                                res.send({
+                                                    code: 2,
+                                                    error: err
+                                                })
+                                            })
+
                                     })
-                                })
-                                .catch(err => {
-                                    console.log('catch an error while create basket info')
-                                    console.log(err)
-                                    res.send({
-                                        code: 2,
-                                        error: err
+                                    .catch(err => {
+                                        console.log('catch an error while update client basket info')
+                                        console.log(err)
+                                        res.send({
+                                            code: 2,
+                                            error: err
+                                        })
                                     })
-                                })
-                                
                             })
                             .catch(err => {
-                                console.log('catch an error while update client basket info')
+                                console.log('catch an error while find client old basket number')
                                 console.log(err)
                                 res.send({
                                     code: 2,
                                     error: err
                                 })
                             })
-                        })
-                        .catch(err => {
-                            console.log('catch an error while find client old basket number')
-                                console.log(err)
-                                res.send({
-                                    code: 2,
-                                    error: err
-                                })
-                        })
                     })
                     .catch(err => {
                         console.log(err)
@@ -313,10 +327,10 @@ exports.driver_missionComplete = (req, res, next) => {
                             error: err
                         })
                     })
-            }else{
+            } else {
                 res.send({
                     code: 1,
-                    msg:'please refresh page'
+                    msg: 'please refresh page'
                 })
             }
         })

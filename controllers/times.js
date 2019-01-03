@@ -157,6 +157,7 @@ exports.times_eidt = (req, res, next) => {
             } else {
                 Product.updateOne({ _id: req.body._id }, {
                     timesname: req.body.timesname,
+                    timesNameEN:req.body.timesNameEN,
                     timescar: req.body.timescar,
                     timesdirver: req.body.timesdirver,
                     timesclientb: req.body.timesclientb,

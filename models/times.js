@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 
 const timesSchema = mongoose.Schema({
     timesname: { type: String, required: true },//线路名称
+    timesNameEN: { type: String },//线路名称英文
     timesstatus: { type: String },//线路状态
     goTime: { type: String, default: null },//固定发车时间
     backTime: { type: String, default: null },//固定收车时间

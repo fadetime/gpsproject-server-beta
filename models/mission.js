@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const missionSchema = mongoose.Schema({
     missiondate: { type: Date, default: Date.now },//线路时间
     missionline: { type: String, required: true },//线路名称
+    missionLineEN: { type: String },//线路英文名称
     line_id: { type: String },//线路id
     missionnote: { type: String },//线路备注
     missiondirver: { type: String },//线路司机

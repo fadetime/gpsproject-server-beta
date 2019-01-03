@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const checkCarSchema = mongoose.Schema({
-    car_id: { type: String, required: true },//车辆标识
+    car_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Car' },//车辆标识
     driver: { type: String, required: true },//司机
     date: { type: Date, default: Date.now },//生成时间
     finishDate: { type: Date, default: null },//收车时间
