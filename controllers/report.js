@@ -8,7 +8,16 @@ const myMissionModels = require('../models/mission')
 exports.report_findMissionByDate = (req, res, next) => {
     let startdate = new Date(req.body.startDate).toISOString()
     let enddate = new Date(req.body.endDate).toISOString()
-    myMissionModels.find({ 'missiondate': { "$gte": startdate, "$lt": enddate } })
+    let a = new Date(startdate).getTime()
+    let b = new Date(enddate).getTime()
+    let c = b - a
+    if(c > 2678400000 ){
+        res.send({
+            code:3,
+            msg:'时间范围过大'
+        })
+    }else{
+        myMissionModels.find({ 'missiondate': { "$gte": startdate, "$lt": enddate } })
         .then(doc => {
             if (doc.length != 0) {
                 res.send({
@@ -29,12 +38,22 @@ exports.report_findMissionByDate = (req, res, next) => {
                 error: err
             })
         })
+    }
 }
 
 exports.report_findMissionByDateWithDriver = (req, res, next) => {
     let startdate = new Date(req.body.startDate).toISOString()
     let enddate = new Date(req.body.endDate).toISOString()
-    myMissionModels.find({ 'missiondirver':req.body.driver,'missiondate': { "$gte": startdate, "$lt": enddate } })
+    let a = new Date(startdate).getTime()
+    let b = new Date(enddate).getTime()
+    let c = b - a
+    if(c > 2678400000 ){
+        res.send({
+            code:3,
+            msg:'时间范围过大'
+        })
+    }else{
+        myMissionModels.find({ 'missiondirver':req.body.driver,'missiondate': { "$gte": startdate, "$lt": enddate } })
         .then(doc => {
             if (doc.length != 0) {
                 res.send({
@@ -55,6 +74,7 @@ exports.report_findMissionByDateWithDriver = (req, res, next) => {
                 error: err
             })
         })
+    }
 }
 
 exports.report_findByDate = (req, res, next) => {
