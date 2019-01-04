@@ -2,6 +2,12 @@ const express = require('express')
 const router = express.Router()
 const reportController = require('../controllers/report')
 
+// 任务统计
+router.post('/mission', reportController.report_findMissionByDate)
+
+// 任务统计-基于司机统计
+router.post('/mission', reportController.report_findMissionByDateWithDriver)
+
 // 车辆检查统计(夜班统计用)
 router.post('/check', reportController.report_findByDate)
 

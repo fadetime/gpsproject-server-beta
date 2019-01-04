@@ -3,6 +3,59 @@
 const checkCar = require('../models/checkCar')
 const MissionModels = require('../models/mission')
 const myClientModels = require('../models/clientb')
+const myMissionModels = require('../models/mission')
+
+exports.report_findMissionByDate = (req, res, next) => {
+    let startdate = new Date(req.body.startDate).toISOString()
+    let enddate = new Date(req.body.endDate).toISOString()
+    myMissionModels.find({ 'missiondate': { "$gte": startdate, "$lt": enddate } })
+        .then(doc => {
+            if (doc.length != 0) {
+                res.send({
+                    code: 0,
+                    doc: doc
+                })
+            } else {
+                res.send({
+                    code: 1
+                })
+            }
+        })
+        .catch(err => {
+            console.log('catch an error while find mission report by date')
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}
+
+exports.report_findMissionByDateWithDriver = (req, res, next) => {
+    let startdate = new Date(req.body.startDate).toISOString()
+    let enddate = new Date(req.body.endDate).toISOString()
+    myMissionModels.find({ 'missiondirver':req.body.driver,'missiondate': { "$gte": startdate, "$lt": enddate } })
+        .then(doc => {
+            if (doc.length != 0) {
+                res.send({
+                    code: 0,
+                    doc: doc
+                })
+            } else {
+                res.send({
+                    code: 1
+                })
+            }
+        })
+        .catch(err => {
+            console.log('catch an error while find mission report by date')
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}
 
 exports.report_findByDate = (req, res, next) => {
     let startdate = new Date(req.body.startDate).toISOString()
