@@ -8,6 +8,9 @@ router.post('/one', TimesController.times_get_one)
 // 加载所有数据
 router.get('/', TimesController.times_get_all)
 
+// 获取所有线路名
+router.get('/name', TimesController.times_getName)
+
 // 分页加载所有数据
 router.post('/get', TimesController.times_post_all)
 

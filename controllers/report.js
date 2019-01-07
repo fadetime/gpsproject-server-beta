@@ -4,6 +4,62 @@ const checkCar = require('../models/checkCar')
 const MissionModels = require('../models/mission')
 const myClientModels = require('../models/clientb')
 const myMissionModels = require('../models/mission')
+const myBasketModel = require('../models/basket')
+
+exports.report_findBasket = (req, res, next) => {
+    console.log('1')
+    let startdate = new Date(req.body.startDate).toISOString()
+    let enddate = new Date(req.body.endDate).toISOString()
+    let a = new Date(startdate).getTime()
+    let b = new Date(enddate).getTime()
+    let c = b - a
+    console.log('2')
+    if(c > 2678400000 ){
+        res.send({
+            code:3,
+            msg:'时间范围过大'
+        })
+    }else{
+        console.log('3')
+        let tempInfo = {
+            date:{
+                "$gte": startdate, 
+                "$lt": enddate
+            }
+        }
+        if(req.body.driverName){
+            tempInfo['driverName'] = req.body.driverName
+        }
+        if(req.body.lineName){
+            tempInfo['lineName'] = req.body.lineName
+        }
+        if(req.body.clientName){
+            tempInfo['clientName'] = req.body.clientName
+        }
+        console.log(tempInfo)
+        myBasketModel.find(tempInfo)
+        .then(doc => {
+            if (doc.length != 0) {
+                res.send({
+                    code: 0,
+                    doc: doc
+                })
+            } else {
+                res.send({
+                    code: 1
+                })
+            }
+        })
+        .catch(err => {
+            console.log('catch an error while find mission report by date')
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+    }
+}
 
 exports.report_findMissionByDate = (req, res, next) => {
     let startdate = new Date(req.body.startDate).toISOString()
@@ -186,7 +242,7 @@ exports.report_getByDateOfdriverFindMission = (req, res, next) => {
 }
 
 exports.report_getBasketTop = (req, res, next) => {
-    myClientModels.find({ basket: { "$gt": 0 } })
+    myClientModels.find({ basket: { "$gt": 1 } })
         .sort({ basket: -1 })
         .then(doc => {
             if (doc.length === 0) {

@@ -316,6 +316,31 @@ exports.times_find = (req, res, next) => {
         })
 }
 
+exports.times_getName = (req, res, next) => {
+    Product.find({},{'timesname':1})
+        .then((doc) => {
+            if (doc.length == 0) {
+                res.send({
+                    code: 1,
+                    msg: '未找到数据'
+                })
+            } else {
+                res.send({
+                    code: 0,
+                    doc: doc
+                })
+            }
+        })
+        .catch((err) => {
+            console.log('catch an error while get line name')
+            console.log(err)
+            res.status(500).json({
+                msg: '获取数据时服务器发生错误',
+                err:err
+            })
+        })
+}
+
 exports.advanced_find_title = (req, res, next) => {
     myClient.find({ "clientbname": { $regex: req.body.keyWord, $options: 'i' } }, { clientbname: 1 })
         .limit(5)

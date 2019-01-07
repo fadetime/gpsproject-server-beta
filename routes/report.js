@@ -23,6 +23,9 @@ router.post('/findmission', reportController.report_getByDateOfdriverFindMission
 // 拖欠框客户排名
 router.get('/basket', reportController.report_getBasketTop)
 
+// 查询框子流动信息
+router.post('/basket', reportController.report_findBasket)
+
 // 根据时间查找司机车辆检查记录
 router.post('/drivercheckbydate', reportController.report_getDriverCheckInfoByDate)
 
