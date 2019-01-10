@@ -36,8 +36,6 @@ exports.mission_get_today = (req, res, next) => {
     let enddate = startdate + 86400000
     startdate = new Date(startdate).toISOString()
     enddate = new Date(enddate).toISOString()
-    console.log(startdate + '###')
-    console.log(enddate)
     Product.find({ "missiondate": { "$gte": startdate, "$lt": enddate } })
         .then((doc) => {
             res.send(doc)
@@ -84,7 +82,8 @@ exports.mission_create = (req, res, next) => {
                                                 .then(() => {
                                                     res.send({
                                                         code: 0,
-                                                        msg: '创建任务成功'
+                                                        msg: '创建任务成功',
+                                                        _id:doc._id
                                                     })
                                                 })
                                                 .catch(err => {
@@ -179,6 +178,26 @@ exports.mission_addClient = (req, res, next) => {
     })
     .then(doc => {
         console.log(doc)
+        res.send({
+            code:0
+        })
+    })
+    .catch(err => {
+        console.log('catch an error while update mission')
+        console.log(err)
+        res.send({
+            code:2,
+            error:err
+        })
+    })
+}
+
+//任务增加客户并且排序相同名称
+exports.mission_addClientAndSort = (req, res, next) => {
+    Product.updateOne({_id:req.body.mission_id},{
+        $push:{ "missionclient":{$each:req.body.obj,$position: req.body.ClientPositionNum} }
+    })
+    .then(doc => {
         res.send({
             code:0
         })

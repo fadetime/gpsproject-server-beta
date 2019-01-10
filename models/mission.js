@@ -1,14 +1,14 @@
 const mongoose = require('mongoose')
 
 const missionSchema = mongoose.Schema({
-    missiondate: { type: Date, default: Date.now },//线路时间
-    missionline: { type: String, required: true },//线路名称
-    missionLineEN: { type: String },//线路英文名称
-    line_id: { type: String },//线路id
-    missionnote: { type: String },//线路备注
-    missiondirver: { type: String },//线路司机
-    missionphone: { type: String },//线路电话-司机
-    missioncar: { type: String },//线路车辆
+    missiondate: { type: Date, default: Date.now },//任务时间
+    missionline: { type: String, required: true },//任务名称
+    missionLineEN: { type: String },//任务英文名称
+    line_id: { type: String },//任务id
+    missionnote: { type: String },//任务备注
+    missiondirver: { type: String },//任务司机
+    missionphone: { type: String },//任务电话-司机
+    missioncar: { type: String },//任务车辆
     Car_id: { type: String },//车辆_id
     carCheck_id: { type: String },//检查记录id
     carCheckFirst: { type: Boolean, default: false },//出车检查
@@ -34,7 +34,8 @@ const missionSchema = mongoose.Schema({
             },
             note: { type: String },
             noteEN: { type: String },
-            image: { type: String, default: null }//客户图片
+            image: { type: String, default: null },//客户图片
+            isReturn: { type: Boolean, default: false }//属于退菜任务
         }
     ]//线路客户
 })

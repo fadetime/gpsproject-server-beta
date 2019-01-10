@@ -35,7 +35,7 @@ exports.clientbs_get_active = (req, res, next) => {
                     smg: '未找到该数据'
                 })
             } else {
-                Product.count({ 'clientbstatus': 'active' })
+                Product.countDocuments({ 'clientbstatus': 'active' })
                     .then(countNum => {
                         res.send({
                             code: 0,
@@ -78,7 +78,7 @@ exports.clientbs_active_Apage = (req, res, next) => {
                     msg: 'the doc length is zero'
                 })
             } else {
-                Product.count({ 'clientbname': { $regex: req.body.keyWord, $options: 'i' } })
+                Product.countDocuments({ 'clientbname': { $regex: req.body.keyWord, $options: 'i' } })
                     .then(countNum => {
                         res.send({
                             code: 0,
@@ -117,7 +117,7 @@ exports.clientbs_active_filter_Apage = (req, res, next) => {
                     msg: '未找到有效数据'
                 })
             } else {
-                Product.count({ 'clientbstatus': 'active' })
+                Product.countDocuments({ 'clientbstatus': 'active' })
                     .then(countNum => {
                         let newArray = []
                         if (req.body.clientArea) {
@@ -167,7 +167,7 @@ exports.clientbs_get_all = (req, res, next) => {
         .limit(req.body.pageSize)
         .skip(req.body.pageSize * (req.body.pageNow - 1))
         .then((doc) => {
-            Product.count()
+            Product.countDocuments()
                 .then(item => {
                     res.send({
                         msg: '计数成功',
@@ -437,7 +437,7 @@ exports.clientbs_other_edit = (req, res, next) => {//用于ebuy后台修改
                     msg: '未找到该客户'
                 })
             } else {
-                Product.count({ clientbname: req.body.oldname })
+                Product.countDocuments({ clientbname: req.body.oldname })
                     .then((doc1) => {
                         if (doc1 === 1) {
                             myArea.findOne({ areaName: '无区域' })
@@ -700,7 +700,7 @@ exports.clientbs_find = (req, res, next) => {
                     msg: '未找到该数据'
                 })
             } else {
-                Product.count({ "clientbname": { $regex: req.body.word, $options: 'i' } })
+                Product.countDocuments({ "clientbname": { $regex: req.body.word, $options: 'i' } })
                     .then(item => {
                         res.send({
                             code: 0,

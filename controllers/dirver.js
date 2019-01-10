@@ -22,7 +22,7 @@ exports.dirvers_post_all = (req, res, next) => {
         .limit(req.body.pageSize)
         .skip(req.body.pageSize * (req.body.pageNow - 1))
         .then((doc) => {
-            Product.count()
+            Product.countDocuments()
                 .then(item => {
                     res.send({
                         msg: '计数成功',
@@ -392,7 +392,7 @@ exports.driver_find = (req, res, next) => {
                     msg: '未找到该数据'
                 })
             } else {
-                Product.count({ "dirvername": { $regex: req.body.word, $options: 'i' } })
+                Product.countDocuments({ "dirvername": { $regex: req.body.word, $options: 'i' } })
                     .then(item => {
                         res.send({
                             code: 0,

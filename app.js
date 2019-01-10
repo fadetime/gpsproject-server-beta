@@ -31,6 +31,8 @@ const checkWorker = require('./routes/checkWorker')//检查员使用API
 const carWash = require('./routes/carWash')
 const remainBillNumber = require('./routes/remainBillNumber')
 const basket = require('./routes/basket')
+const customerService = require('./routes/customerService')
+
 
 // **************************一系列的middleware************************
 //log
@@ -105,6 +107,8 @@ app.use('/checkworker', checkWorker)//检查员使用API
 app.use('/carwash', carWash)
 app.use('/remainbillnum', remainBillNumber)//剩余订单计数
 app.use('/basket', basket)
+app.use('/customerService', customerService)
+
 
 //定期清理短信提醒
 const smsControllers = require('./models/openSMS')

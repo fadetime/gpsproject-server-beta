@@ -17,6 +17,9 @@ router.post('/editdate', MissionController.mission_editOne_missionDateByid)
 // 增加任务客户
 router.post('/addclient', MissionController.mission_addClient)
 
+// 增加任务客户并排序
+router.post('/addclientSort', MissionController.mission_addClientAndSort)
+
 // 删除任务客户
 router.post('/delclient', MissionController.mission_delClient)
 

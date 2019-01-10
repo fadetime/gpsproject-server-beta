@@ -6,7 +6,7 @@ const logControllers = require('../models/log')
 const bcrypt = require('bcryptjs')
 
 exports.clientas_get = (req, res, next) => {
-    Product.find({invisible:{$nin:true}})
+    Product.find({ invisible: { $nin: true } })
         .then((doc) => {
             console.log(doc)
             res.send(doc)
@@ -21,11 +21,11 @@ exports.clientas_get = (req, res, next) => {
 }
 
 exports.clientas_get_all = (req, res, next) => {
-    Product.find({invisible:{$nin:true}})
+    Product.find({ invisible: { $nin: true } })
         .limit(req.body.pageSize)
         .skip(req.body.pageSize * (req.body.pageNow - 1))
         .then((doc) => {
-            Product.count()
+            Product.countDocuments()
                 .then(item => {
                     res.send({
                         msg: '计数成功',
@@ -555,7 +555,7 @@ exports.clientA_find = (req, res, next) => {
                     msg: '未找到该数据'
                 })
             } else {
-                Product.count({ "clientaname": { $regex: req.body.word, $options: 'i' } })
+                Product.countDocuments({ "clientaname": { $regex: req.body.word, $options: 'i' } })
                     .then(item => {
                         res.send({
                             code: 0,
