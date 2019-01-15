@@ -1,5 +1,6 @@
 const dsDriverMissionModels = require('../models/dayShiftDriverMission')
 const dayShiftMissionPool = require('../models/dayShiftMission')
+const async = require("async")
 
 exports.dayShiftDriver_create = (req, res, next) => {
     let stopFlag = false
@@ -176,37 +177,42 @@ exports.dayShiftDriver_updateClientFinishDate = (req, res, next) => {
 }
 
 exports.dayShiftDriver_updateFinishState = (req, res, next) => {
-    dsDriverMissionModels.findOne({_id: req.body.mission_id})
+    dsDriverMissionModels.findOne({ _id: req.body.mission_id })
         .then(doc => {
-            console.log(doc)
-            if(doc){
+            if (doc) {
                 let notFinish = false
-                doc.clientArray.some( element => {
-                    if(!element.finisDate){
-                        notFinish = true
-                    }
-                    return notFinish
-                })
-                console.log(notFinish)
-                setTimeout(() => {
-                    if(!notFinish){
-                        doc.missionFinish = true
-                        doc.save()
-                        res.send({
-                            code: 0
+                let count = 0;
+                async.whilst(
+                    () => { return count < 1; },
+                    (callback) => {
+                        count++;
+                        doc.clientArray.some(element => {
+                            if (!element.finisDate) {
+                                notFinish = true
+                            }
+                            return notFinish
                         })
-                    }else{
-                        res.send({
-                            code: 1
-                        })
+                        callback(null, count);
+                    },
+                    (err, count) => {
+                        if (!notFinish) {
+                            doc.missionFinish = true
+                            doc.save()
+                            res.send({
+                                code: 0
+                            })
+                        } else {
+                            res.send({
+                                code: 1
+                            })
+                        }
                     }
-                }, 1000);
-            }else{
+                );
+            } else {
                 res.send({
                     code: 1
                 })
             }
-            
         })
         .catch(err => {
             console.log('catch an error while update client finish date')
@@ -251,16 +257,16 @@ exports.dayShiftDriver_findByDriver = (req, res, next) => {
 }
 
 exports.dayShiftDriver_findMissionByID = (req, res, next) => {
-    dsDriverMissionModels.findOne({ _id:req.body.mission_id})
+    dsDriverMissionModels.findOne({ _id: req.body.mission_id })
         .then(doc => {
-            if(doc){
+            if (doc) {
                 res.send({
-                    code:0,
-                    doc:doc
+                    code: 0,
+                    doc: doc
                 })
-            }else{
+            } else {
                 res.send({
-                    code:1
+                    code: 1
                 })
             }
         })
