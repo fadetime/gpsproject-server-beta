@@ -95,11 +95,15 @@ exports.endMIssion = (req, res, next) => {
 }
 
 exports.findMissionByDate = (req, res, next) => {
-    let startdate = new Date(req.body.orderDate).getTime() - 86400000
-    let enddate = new Date(req.body.orderDate).getTime() + 86400000
+    console.log(req.body)
+    let startdate = new Date(req.body.orderDate).toLocaleDateString()
+    let enddate = new Date(startdate).getTime() + 86400000
+    startdate = new Date(startdate).getTime()
     startdate = new Date(startdate).toISOString()
     enddate = new Date(enddate).toISOString()
-    myDayShiftMission.find({"isRemoved":false, "driverName": req.body.driverName, "orderDate": { "$gte": startdate, "$lt": enddate } })
+    console.log(startdate)
+    console.log(enddate)
+    myDayShiftMission.find({"isRemoved":false, "orderDate": { "$gte": startdate, "$lt": enddate } })
         .then(doc => {
             if (doc.length === 0) {
                 res.send({

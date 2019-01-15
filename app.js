@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 
 // 连接MongoDB by using mongoose
-mongoose.connect('mongodb://192.168.1.70/test', { useNewUrlParser: true })
+mongoose.connect('mongodb://127.0.0.1/drivertool', { useNewUrlParser: true })
 mongoose.Promise = global.Promise
 
 // 创建Routes实例
@@ -32,6 +32,7 @@ const carWash = require('./routes/carWash')
 const remainBillNumber = require('./routes/remainBillNumber')
 const basket = require('./routes/basket')
 const customerService = require('./routes/customerService')
+const dayShiftDriverMission = require('./routes/dayShiftDriverMission')
 
 
 // **************************一系列的middleware************************
@@ -108,6 +109,7 @@ app.use('/carwash', carWash)
 app.use('/remainbillnum', remainBillNumber)//剩余订单计数
 app.use('/basket', basket)
 app.use('/customerService', customerService)
+app.use('/dsdriver', dayShiftDriverMission)
 
 
 //定期清理短信提醒

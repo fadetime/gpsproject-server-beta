@@ -5,6 +5,9 @@ const checkCarController = require('../controllers/checkCar')
 //建立车辆检查数据
 router.post('/',checkCarController.checkCar_create)
 
+//建立车辆检查数据-白班用
+router.post('/day',checkCarController.dayShiftCheckCar_create)
+
 //获取车辆检查数据
 router.post('/get',checkCarController.checkCar_get)
 
@@ -16,5 +19,8 @@ router.post('/getone',checkCarController.checkCar_getOne)
 
 //修改一条检查数据
 router.post('/edit',checkCarController.checkCar_edit)
+
+//完成检查记录-白班用
+router.post('/editByday',checkCarController.checkCar_editByDayShift)
 
 module.exports = router

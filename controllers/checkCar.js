@@ -1,5 +1,6 @@
 const checkCar = require('../models/checkCar')
 const mission = require('../models/mission')
+const dsDriverMissionModels = require('../models/dayShiftDriverMission')
 
 exports.checkCar_create = (req, res, next) => {
     checkCar.create(req.body)
@@ -7,6 +8,36 @@ exports.checkCar_create = (req, res, next) => {
             mission.updateOne({ _id: req.body.mission_id }, {
                 carCheck_id: item._id,
                 carCheckFirst: true
+            })
+                .then(() => {
+                    res.send({
+                        code: 0
+                    })
+                })
+                .catch(err => {
+                    console.log('##catch an error while update check status')
+                    console.log(err)
+                    res.send({
+                        code: 2,
+                        error: err
+                    })
+                })
+        })
+        .catch(err => {
+            console.log('##catch an error while create check car log')
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}
+
+exports.dayShiftCheckCar_create = (req, res, next) => {
+    checkCar.create(req.body)
+        .then((item) => {
+            dsDriverMissionModels.updateOne({ _id: req.body.mission_id }, {
+                carCheck_id: item._id
             })
                 .then(() => {
                     res.send({
@@ -139,6 +170,41 @@ exports.checkCar_edit = (req, res, next) => {
                     })
                 })
 
+        })
+        .catch(err => {
+            console.log('##catch an error while update check car log')
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}
+
+exports.checkCar_editByDayShift = (req, res, next) => {
+    checkCar.updateOne({ _id: req.body.carCheck_id }, {
+        boxNumAgain: req.body.boxNumAgain,
+        clean: req.body.clean,
+        finishDate:req.body.finishDate
+    })
+        .then(() => {
+            dsDriverMissionModels.updateOne({_id:req.body.mission_id},{
+                backTime:req.body.finishDate
+            })
+            .then(() => {
+                console.log('finish')
+                res.send({
+                    code:0
+                })
+            })
+            .catch(err => {
+                console.log('##catch an error while update check car log')
+                console.log(err)
+                res.send({
+                    code: 2,
+                    error: err
+                })
+            })
         })
         .catch(err => {
             console.log('##catch an error while update check car log')
