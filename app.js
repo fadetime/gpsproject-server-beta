@@ -33,7 +33,10 @@ const remainBillNumber = require('./routes/remainBillNumber')
 const basket = require('./routes/basket')
 const customerService = require('./routes/customerService')
 const dayShiftDriverMission = require('./routes/dayShiftDriverMission')
-
+const breakBoxReport = require('./routes/breakBoxReport')
+const noticeRouter = require('./routes/notice')
+const boxCount = require('./routes/boxCount')//框数统计
+const Announcement = require('./routes/announcement')//首页通知
 
 // **************************一系列的middleware************************
 //log
@@ -110,7 +113,10 @@ app.use('/remainbillnum', remainBillNumber)//剩余订单计数
 app.use('/basket', basket)
 app.use('/customerService', customerService)
 app.use('/dsdriver', dayShiftDriverMission)
-
+app.use('/breakboxreport', breakBoxReport)//坏框申报
+app.use('/notice', noticeRouter)//通知公告
+app.use('/boxcount', boxCount)//框数统计
+app.use('/announcement', Announcement)//首页通知
 
 //定期清理短信提醒
 const smsControllers = require('./models/openSMS')

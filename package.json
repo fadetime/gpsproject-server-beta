@@ -1,6 +1,6 @@
 {
   "name": "gpsserver",
-  "version": "0.22.1",
+  "version": "0.23.0",
   "description": "provide GPS project front end serve for GPS project",
   "main": "index.js",
   "scripts": {
