@@ -4,7 +4,6 @@ const fs = require('fs')
 exports.breakBoxReport_create = (req, res, next) => {
     breakBoxReport.create({
         date: req.body.date,
-        basketNum: req.body.basketNum,
         note: req.body.note,
         image: req.file.path,
         submitter: req.body.submitter,

@@ -16,6 +16,7 @@ exports.carts_get_all = (req, res, next) => {
         })
 }
 
+
 exports.carts_get_allPlate = (req, res, next) => {
     Product.find({}, { carid: 1 })
         .then((doc) => {
@@ -24,7 +25,7 @@ exports.carts_get_allPlate = (req, res, next) => {
                     code: 0,
                     doc: doc
                 })
-            }else{
+            } else {
                 res.send({
                     code: 1
                 })
@@ -493,6 +494,58 @@ exports.carts_find = (req, res, next) => {
             console.log(err)
             res.status(500).json({
                 msg: '获取数据时服务器发生错误',
+                error: err
+            })
+        })
+}
+
+//-------------------机油监控部分---------------------
+
+exports.manFindAllCar = (req, res, next) => {
+    //维修员查看车辆信息
+    Product.find({}, { carid: -1, image: -1, kelometer: -1, lastOilKelometer: -1 })
+        .then(doc => {
+            if(doc.length != 0){
+                res.send({
+                    code: 0,
+                    doc: doc
+                })
+            }else{
+                res.send({
+                    code: 1
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}
+
+exports.manFindChangeOil = (req, res, next) => {
+    //维修员修改机油信息
+    Product.updateOne({ _id: req.body._id }, {
+        lastOilKelometer: req.body.lastOilKelometer
+    })
+        .then(doc => {
+            console.log(doc)
+            if(doc.ok === 1){
+                res.send({
+                    code: 0
+                })
+            }else{
+                res.send({
+                    code: 1
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code: 2,
                 error: err
             })
         })

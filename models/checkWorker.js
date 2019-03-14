@@ -10,6 +10,7 @@ const checkWorkerSchema = mongoose.Schema({
         brakeLight:{type: Boolean},
         tyre:{type: Boolean},
         petrolCard:{type: Boolean},
+        kilometer:{type: Number},
         note:{type: String},
         checkDate:{type:Date ,default:null}//提交检查时间
     }],//需要检查的车辆

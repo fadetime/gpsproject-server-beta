@@ -1,51 +1,46 @@
 const checkWorkerModel = require('../models/checkWorker')
-const checkWorkerCarModel = require('../models/checkWorkerCar')
+const carModel = require('../models/car')
 
 exports.checkWorker_create = (req, res, next) => {
-    checkWorkerCarModel.find()
+    carModel.find()
         .then(doc => {
-            if (doc.length === 0) {
-                res.send({
-                    code: 1
-                })
-            } else {
-                let tempArray = []
-                doc.forEach(element => {
-                    if (element) {
-                        tempArray.push(element)
-                    }
-                });
-                checkWorkerModel.create({
-                    createDate: req.body.createDate,
-                    missionCreator: req.body.driverName,
-                    creator_id: req.body.driver_id,
-                    missionList: tempArray
-                })
-                    .then(docs => {
-                        console.log(docs)
-                        res.send({
-                            code: 0
-                        })
+            let tempArray = doc.map(item => {
+                return {
+                    'carPlate':item.carid,
+                    'headlight':  true ,
+                    'brakeLight': true,//刹车灯
+                    'tyre': true,//车胎
+                    'petrolCard': true,//油卡
+                    'note': null//备注
+                }
+            })
+            checkWorkerModel.create({
+                createDate: req.body.createDate,
+                missionCreator: req.body.driverName,
+                creator_id: req.body.driver_id,
+                missionList: tempArray
+            })
+                .then(() => {
+                    res.send({
+                        code: 0
                     })
-                    .catch(err => {
-                        console.log('##catch an error while create check car mission')
-                        console.log(err)
-                        res.send({
-                            code: 2,
-                            error: err
-                        })
+                })
+                .catch(err => {
+                    console.log('##catch an error while create check car mission')
+                    console.log(err)
+                    res.send({
+                        code: 2,
+                        error: err
                     })
-            }
+                })
         })
         .catch(err => {
-            console.log('##catch an error while find check car mode')
             console.log(err)
             res.send({
-                code: 2,
-                error: err
+                code:2,
+                error:err
             })
         })
-
 }
 
 exports.checkWorker_edit = (req, res, next) => {
@@ -56,14 +51,26 @@ exports.checkWorker_edit = (req, res, next) => {
             "missionList.$.brakeLight": req.body.data.brakeLight,
             "missionList.$.tyre": req.body.data.tyre,
             "missionList.$.petrolCard": req.body.data.petrolCard,
-            "missionList.$.note": req.body.data.note
+            "missionList.$.note": req.body.data.note,
+            "missionList.$.kilometer": req.body.data.kilometer
         }
     })
         .then(doc => {
-            console.log(doc)
             if (doc.ok === 1) {
-                res.send({
-                    code: 0
+                carModel.updateOne({carid:req.body.data.carPlate},{
+                    kelometer:req.body.data.kilometer
+                })
+                .then(() => {
+                    res.send({
+                        code: 0
+                    })
+                })
+                .catch(err => {
+                    console.log(err)
+                    res.send({
+                        code:2,
+                        error:err
+                    })
                 })
             } else {
                 res.send({

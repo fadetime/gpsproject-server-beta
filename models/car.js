@@ -8,6 +8,8 @@ const carSchema = mongoose.Schema({
     cardate: { type: Date, default: Date.now },//加入时间
     cartimes: { type: Number, default: 0 },//出车次数
     carnote: { type: String },//出车备注
+    kelometer:{ type: Number, default: 0},//车辆行驶公里数
+    lastOilKelometer:{ type: Number, default: null},//最后一次更换机油时的公里数
     image: { type: String, default: null },//车辆照片
 })
 

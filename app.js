@@ -26,7 +26,6 @@ const fixCar = require('./routes/fixCar')
 const report = require('./routes/report')
 const dayShiftMission = require('./routes/dayShiftMission')
 const bill = require('./routes/bill')
-const checkWorkerCar = require('./routes/checkWorkerCar')//管理检查员需要检查的车辆
 const checkWorker = require('./routes/checkWorker')//检查员使用API
 const carWash = require('./routes/carWash')
 const remainBillNumber = require('./routes/remainBillNumber')
@@ -37,6 +36,7 @@ const breakBoxReport = require('./routes/breakBoxReport')
 const noticeRouter = require('./routes/notice')
 const boxCount = require('./routes/boxCount')//框数统计
 const Announcement = require('./routes/announcement')//首页通知
+const setting = require('./routes/setting')//软件设置
 
 // **************************一系列的middleware************************
 //log
@@ -106,7 +106,6 @@ app.use('/fixcar', fixCar)
 app.use('/report', report)
 app.use('/dayShiftmission', dayShiftMission)
 app.use('/bill', bill)
-app.use('/workercar', checkWorkerCar)//管理检查员需要检查的车辆
 app.use('/checkworker', checkWorker)//检查员使用API
 app.use('/carwash', carWash)
 app.use('/remainbillnum', remainBillNumber)//剩余订单计数
@@ -117,6 +116,7 @@ app.use('/breakboxreport', breakBoxReport)//坏框申报
 app.use('/notice', noticeRouter)//通知公告
 app.use('/boxcount', boxCount)//框数统计
 app.use('/announcement', Announcement)//首页通知
+app.use('/setting', setting)//首页通知
 
 //定期清理短信提醒
 const smsControllers = require('./models/openSMS')
