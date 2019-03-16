@@ -2,6 +2,8 @@ const Product = require('../models/mission')
 const CarModels = require('../models/car')
 const LineModels = require('../models/times')
 const logControllers = require('../models/log')
+const clientBModels = require('../models/clientb')
+const async = require("async")
 
 exports.mission_get_one = (req, res, next) => {
     Product.findOne({ "_id": req.body._id })
@@ -80,11 +82,65 @@ exports.mission_create = (req, res, next) => {
                                                 logInfo: '信息(' + '日期：' + req.body.missiondate + '名称：' + req.body.missionline + '备注：' + req.body.missionnote + ')'
                                             })
                                                 .then(() => {
-                                                    res.send({
-                                                        code: 0,
-                                                        msg: '创建任务成功',
-                                                        _id:doc._id
-                                                    })
+                                                    
+                                                    //未来单信息更新 start
+                                                    
+                                                    LineModels.findOne({_id:req.body.line_id})
+                                                        .populate({ path: 'timesclientb', populate: { path: 'clientbserve' } })
+                                                        .populate({ path: 'timesclientb', populate: { path: 'clientbarea' } })
+                                                        .then(doc => {
+                                                            var count = 0;
+                                                            let lineClientArray = []
+                                                            let orderClientArray = []
+                                                            let noOrderClientArray = []
+                                                            doc.timesclientb.forEach(lientClient => {
+                                                                lineClientArray.push(lientClient.clientbname)
+                                                            });
+                                                            req.body.missionclient.forEach(orderClient => {
+                                                                orderClientArray.push(orderClient.clientbname)
+                                                            });
+                                                            noOrderClientArray = lineClientArray.concat(orderClientArray).filter(v =>{
+                                                                return !lineClientArray.includes(v) || !orderClientArray.includes(v)
+                                                            })
+                                                            let tempDate = new Date(req.body.missiondate).toDateString()
+                                                            tempDate = new Date (tempDate).getTime()
+                                                            noOrderClientArray.forEach(item => {
+                                                                clientBModels.findOne({clientbname:item})
+                                                                .then(doc => {
+                                                                    if(tempDate != doc.changeNoOrderDate){
+                                                                        doc.noOrderDay ++
+                                                                        doc.changeNoOrderDate = tempDate
+                                                                        doc.save()
+                                                                    }
+                                                                })
+                                                                .catch(err => {
+                                                                    console.log(err)
+                                                                })
+                                                                
+                                                            })
+                                                            req.body.missionclient.forEach(element => {
+                                                                clientBModels.updateOne({clientbname:element.clientbname},{
+                                                                    noOrderDay:0,
+                                                                    changeNoOrderDate:tempDate
+                                                                })
+                                                                .catch(err => {
+                                                                    console.log(err)
+                                                                })
+                                                            });
+                                                            res.send({
+                                                                code: 0,
+                                                                msg: '创建任务成功',
+                                                                _id:doc._id
+                                                            })
+                                                        })
+                                                        .catch(err => {
+                                                            console.log(err)
+                                                            res.send({
+                                                                code:2,
+                                                                error:err
+                                                            })
+                                                        })
+                                                    //未来单信息更新 end
                                                 })
                                                 .catch(err => {
                                                     console.log('catch an error while write log')

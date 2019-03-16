@@ -6,6 +6,31 @@ const logControllers = require('../models/log')
 const myArea = require('../models/area')
 const mycompany = require('../models/clienta')
 
+//查找未来单客户 start
+exports.clientbs_getNoOrderDay = (req, res, next) => {
+    Product.find({noOrderDay:{$gte:3},basket:{$gte:1}})
+        .then(doc => {
+            if(doc.length === 0){
+                res.send({
+                    code:1
+                })
+            }else{
+                res.send({
+                    code:0,
+                    doc:doc
+                })
+            }
+        })
+        .catch((err) => {
+            console.log(err)
+            res.send({
+                code:2,
+                error:err
+            })
+        })
+}
+//查找未来单客户 end
+
 exports.clientbs_get = (req, res, next) => {
     Product.find()
         .populate('clientbserve')

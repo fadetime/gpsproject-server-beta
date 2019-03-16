@@ -4,11 +4,7 @@ const boxCount = require('../models/boxCount')
 exports.boxCount_create_collection = (req, res, next) => {
     boxCount.create({
         date:req.body.date,
-        submitter:req.body.submitter,
-        countArray:[{
-            date:req.body.date,
-            number:req.body.number
-        }]
+        submitter:req.body.submitter
     })
     .then(doc => {
         if(doc){
@@ -60,12 +56,21 @@ exports.boxCount_edit_collection = (req, res, next) => {
         finish:false
     })
     .then(doc => {
+        console.log(req.body)
         if(doc){
-            let tempArray = {
-                date:req.body.date,
-                number:req.body.number
+            if(req.body.editPart == 1){
+                doc.area1date = req.body.date
+                doc.area1number = req.body.number
+                doc.area1image = req.file.path
+            }else if(req.body.editPart == 2){
+                doc.area2date = req.body.date
+                doc.area2number = req.body.number
+                doc.area2image = req.file.path
+            }else{
+                doc.area3date = req.body.date
+                doc.area3number = req.body.number
+                doc.area3image = req.file.path
             }
-            doc.countArray = doc.countArray.concat(tempArray)
             doc.save()
             res.send({
                 code:0

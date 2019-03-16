@@ -11,6 +11,8 @@ exports.checkWorker_create = (req, res, next) => {
                     'brakeLight': true,//刹车灯
                     'tyre': true,//车胎
                     'petrolCard': true,//油卡
+                    'cart':true,//手推车
+                    'drivingRecorder':true,//行车记录仪
                     'note': null//备注
                 }
             })
@@ -52,7 +54,9 @@ exports.checkWorker_edit = (req, res, next) => {
             "missionList.$.tyre": req.body.data.tyre,
             "missionList.$.petrolCard": req.body.data.petrolCard,
             "missionList.$.note": req.body.data.note,
-            "missionList.$.kilometer": req.body.data.kilometer
+            "missionList.$.kilometer": req.body.data.kilometer,
+            "missionList.$.cart": req.body.data.cart,
+            "missionList.$.drivingRecorder": req.body.data.drivingRecorder
         }
     })
         .then(doc => {

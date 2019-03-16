@@ -6,6 +6,8 @@ const checkWorkerSchema = mongoose.Schema({
     creator_id: { type: String, required: true },//创建人_id
     missionList:[{ 
         carPlate:{type: String},
+        cart:{type: Boolean},
+        drivingRecorder:{type: Boolean},
         headlight:{type: Boolean},
         brakeLight:{type: Boolean},
         tyre:{type: Boolean},

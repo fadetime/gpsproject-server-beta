@@ -18,7 +18,9 @@ const clientBSchema = mongoose.Schema({
     timeLimit: { type: String },//限时
     NcSortNum: { type: Number, default: 999 },//客服后台顺序
     driverSortNum: { type: Number, default: 999 },//司机送货顺序
-    basket: { type: Number, default: 0 }//用户所欠框数
+    basket: { type: Number, default: 0 },//用户所欠框数
+    noOrderDay: { type: Number, default: 0 },//用户未下单天数
+    changeNoOrderDate: { type: String, default: null }//用户未下单天数最后修改日期
 })
 
 module.exports = mongoose.model('ClientB', clientBSchema)
