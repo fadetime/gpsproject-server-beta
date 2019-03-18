@@ -56,7 +56,6 @@ exports.boxCount_edit_collection = (req, res, next) => {
         finish:false
     })
     .then(doc => {
-        console.log(req.body)
         if(doc){
             if(req.body.editPart == 1){
                 doc.area1date = req.body.date
@@ -70,6 +69,49 @@ exports.boxCount_edit_collection = (req, res, next) => {
                 doc.area3date = req.body.date
                 doc.area3number = req.body.number
                 doc.area3image = req.file.path
+            }
+            doc.save()
+            res.send({
+                code:0
+            })
+        }else{
+            res.send({
+                code:1
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err)
+        res.send({
+            code:2,
+            error:err
+        })
+    })
+}
+
+exports.boxCount_edit_collection_multiple_pic = (req, res, next) => {
+    boxCount.findOne({
+        _id:req.body._id,
+        finish:false
+    })
+    .then(doc => {
+        if(doc){
+            let tempArray = []
+            req.files.forEach(element => {
+                tempArray.push(element.filename)
+            });
+            if(req.body.editPart == 1){
+                doc.area1date = req.body.date
+                doc.area1number = req.body.number
+                doc.area1imageArray = tempArray
+            }else if(req.body.editPart == 2){
+                doc.area2date = req.body.date
+                doc.area2number = req.body.number
+                doc.area2imageArray = tempArray
+            }else{
+                doc.area3date = req.body.date
+                doc.area3number = req.body.number
+                doc.area3imageArray = tempArray
             }
             doc.save()
             res.send({
