@@ -16,6 +16,28 @@ exports.carts_get_all = (req, res, next) => {
         })
 }
 
+exports.client_get_carInfo = (req, res, next) => {
+    Product.find({},{carid:-1,_id:-1})
+        .then(doc => {
+            if(doc.length === 0){
+                res.send({
+                    code:1
+                })
+            }else{
+                res.send({
+                    code:0,
+                    doc:doc
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code:2,
+                error:err
+            })
+        })
+}
 
 exports.carts_get_allPlate = (req, res, next) => {
     Product.find({}, { carid: 1 })

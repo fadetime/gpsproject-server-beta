@@ -13,6 +13,9 @@ exports.checkWorker_create = (req, res, next) => {
                     'petrolCard': true,//油卡
                     'cart':true,//手推车
                     'drivingRecorder':true,//行车记录仪
+                    'carWindow':true,//车窗
+                    'taillight':true,//尾灯
+                    'sideMirror':true,//后视镜
                     'note': null//备注
                 }
             })
@@ -49,6 +52,7 @@ exports.checkWorker_edit = (req, res, next) => {
     checkWorkerModel.updateOne({ _id: req.body._id, "missionList._id": req.body.data._id }, {
         $set: {
             "missionList.$.checkDate": req.body.time,
+            "missionList.$.isFinish": req.body.isFinish,
             "missionList.$.headlight": req.body.data.headlight,
             "missionList.$.brakeLight": req.body.data.brakeLight,
             "missionList.$.tyre": req.body.data.tyre,
@@ -56,7 +60,10 @@ exports.checkWorker_edit = (req, res, next) => {
             "missionList.$.note": req.body.data.note,
             "missionList.$.kilometer": req.body.data.kilometer,
             "missionList.$.cart": req.body.data.cart,
-            "missionList.$.drivingRecorder": req.body.data.drivingRecorder
+            "missionList.$.drivingRecorder": req.body.data.drivingRecorder,
+            "missionList.$.carWindow": req.body.data.carWindow,
+            "missionList.$.taillight": req.body.data.taillight,
+            "missionList.$.sideMirror": req.body.data.sideMirror
         }
     })
         .then(doc => {
