@@ -53,8 +53,13 @@ exports.tripCount_edit = (req, res, next) => {
     tripCountModel.updateOne({_id:req.body.mission_id,"missionArray._id": req.body.array_id}, {
         $set: {
             "missionArray.$.carNo": req.body.carNo,
+            "missionArray.$.driver_id": req.body.driver_id,
+            "missionArray.$.driverNameCh": req.body.driverNameCh,
+            "missionArray.$.driverNameEn": req.body.driverNameEn,
             "missionArray.$.out": req.body.out,
+            "missionArray.$.outKm": req.body.outKm,
             "missionArray.$.in": req.body.in,
+            "missionArray.$.inKm": req.body.inKm,
             "missionArray.$.lastEditDate": req.body.lastEditDate
         }
     })

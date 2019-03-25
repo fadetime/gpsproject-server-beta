@@ -6,6 +6,92 @@ const myClientModels = require('../models/clientb')
 const myMissionModels = require('../models/mission')
 const myBasketModel = require('../models/basket')
 const myCarWashModel = require('../models/carWash')
+const areaBasketModel = require('../models/boxCount')
+const breakBasketModel = require('../models/breakBoxReport')
+
+exports.report_findBreakBasketByDate = (req, res, next) => {
+    let startdate = new Date(req.body.startDate).toISOString()
+    let enddate = new Date(req.body.endDate).toISOString()
+    let a = new Date(startdate).getTime()
+    let b = new Date(enddate).getTime()
+    let c = b - a
+    if(c > 2678400000 ){
+        res.send({
+            code:3,
+            msg:'时间范围过大'
+        })
+    }else{
+        let tempInfo = {
+            date:{
+                "$gte": startdate, 
+                "$lt": enddate
+            }
+        }
+        breakBasketModel.find(tempInfo)
+            .then(doc => {
+                if (doc.length != 0) {
+                    res.send({
+                        code: 0,
+                        doc: doc
+                    })
+                } else {
+                    res.send({
+                        code: 1
+                    })
+                }
+            })
+            .catch(err => {
+                console.log('catch an error while find car wash report')
+                console.log(err)
+                res.send({
+                    code: 2,
+                    error: err
+                })
+            })
+    }
+}
+
+exports.report_findAreaBasketByDate = (req, res, next) => {
+    let startdate = new Date(req.body.startDate).toISOString()
+    let enddate = new Date(req.body.endDate).toISOString()
+    let a = new Date(startdate).getTime()
+    let b = new Date(enddate).getTime()
+    let c = b - a
+    if(c > 2678400000 ){
+        res.send({
+            code:3,
+            msg:'时间范围过大'
+        })
+    }else{
+        let tempInfo = {
+            date:{
+                "$gte": startdate, 
+                "$lt": enddate
+            }
+        }
+        areaBasketModel.find(tempInfo)
+            .then(doc => {
+                if (doc.length != 0) {
+                    res.send({
+                        code: 0,
+                        doc: doc
+                    })
+                } else {
+                    res.send({
+                        code: 1
+                    })
+                }
+            })
+            .catch(err => {
+                console.log('catch an error while find car wash report')
+                console.log(err)
+                res.send({
+                    code: 2,
+                    error: err
+                })
+            })
+    }
+}
 
 exports.report_findCarWashByDate = (req, res, next) => {
     let startdate = new Date(req.body.startDate).toISOString()
@@ -29,26 +115,26 @@ exports.report_findCarWashByDate = (req, res, next) => {
             tempInfo['creator'] = req.body.creator
         }
         myCarWashModel.find(tempInfo)
-        .then(doc => {
-            if (doc.length != 0) {
-                res.send({
-                    code: 0,
-                    doc: doc
-                })
-            } else {
-                res.send({
-                    code: 1
-                })
-            }
-        })
-        .catch(err => {
-            console.log('catch an error while find car wash report')
-            console.log(err)
-            res.send({
-                code: 2,
-                error: err
+            .then(doc => {
+                if (doc.length != 0) {
+                    res.send({
+                        code: 0,
+                        doc: doc
+                    })
+                } else {
+                    res.send({
+                        code: 1
+                    })
+                }
             })
-        })
+            .catch(err => {
+                console.log('catch an error while find car wash report')
+                console.log(err)
+                res.send({
+                    code: 2,
+                    error: err
+                })
+            })
     }
 }
 

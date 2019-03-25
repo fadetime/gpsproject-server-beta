@@ -26,6 +26,12 @@ router.get('/basket', reportController.report_getBasketTop)
 // 查询框子流动信息
 router.post('/basket', reportController.report_findBasket)
 
+//查询区域框数信息
+router.post('/areaBasket', reportController.report_findAreaBasketByDate)
+
+//查询坏框申报审批信息
+router.post('/breakBasket', reportController.report_findBreakBasketByDate)
+
 // 查询洗车信息
 router.post('/carwash', reportController.report_findCarWashByDate)
 

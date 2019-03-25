@@ -164,6 +164,7 @@ exports.dirvers_edit = (req, res, next) => {
                                         if (req.body.dirverpsw === undefined) {
                                             updateInfo = {
                                                 dirvername: req.body.dirvername,
+                                                name_en: req.body.name_en,
                                                 dirverid: req.body.dirverid,
                                                 dirverphone: req.body.dirverphone,
                                                 dirvercard: req.body.dirvercard,
@@ -176,6 +177,7 @@ exports.dirvers_edit = (req, res, next) => {
                                             req.body.dirverpsw = bcrypt.hashSync(psw)
                                             updateInfo = {
                                                 dirvername: req.body.dirvername,
+                                                name_en: req.body.name_en,
                                                 dirverid: req.body.dirverid,
                                                 dirverphone: req.body.dirverphone,
                                                 dirvercard: req.body.dirvercard,
@@ -415,6 +417,23 @@ exports.driver_find = (req, res, next) => {
             res.status(500).json({
                 msg: '获取数据时服务器发生错误',
                 error: err
+            })
+        })
+}
+
+exports.staff_nameCh_nameEn = (req, res, next) => {
+    Product.find({},{dirvername:-1,name_en:-1,_id:-1})
+        .then(doc => {
+            res.send({
+                code:0,
+                doc:doc
+            })
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code:2,
+                error:err
             })
         })
 }

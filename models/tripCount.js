@@ -8,8 +8,13 @@ const tripCountSchema = mongoose.Schema({
     missionDate: { type: Date, required: true },//任务时间
     missionArray: [{
         carNo: { type: String, default: null },
+        driver_id: { type: String, default: null },
+        driverNameCh: { type: String, default: null },
+        driverNameEn: { type: String, default: null },
         out: { type: Number, default: null },
+        outKm: { type: Number, default: null },
         in: { type: Number, default: null },
+        inKm: { type: Number, default: null },
         lastEditDate: { type: Date, default: null }
     }],
     finishDate: { type: Date, default: null },//完成时间
