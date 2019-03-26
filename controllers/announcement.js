@@ -7,13 +7,10 @@ exports.notice_update = (req, res, next) => {
         .findOne()
         .then(doc => {
             if(doc){
-                console.log('00000000000')
-                console.log(doc)
-                console.log(req.file)
                 if(req.file){
                     doc.image = req.file.path
                 }else if(req.body.image === 'oldPic'){
-                    console.log('1111111111111')
+                    console.log('使用旧照片')
                     console.log(req.body.image)
                 }else{
                     doc.image = null
@@ -22,6 +19,11 @@ exports.notice_update = (req, res, next) => {
                     doc.text = req.body.text
                 }else{
                     doc.text = null
+                }
+                if(req.body.textEN){
+                    doc.textEN = req.body.textEN
+                }else{
+                    doc.textEN = null
                 }
                 doc.date = req.body.date
                 doc.isShow = req.body.isShow
@@ -115,7 +117,8 @@ exports.client_Find = (req, res, next) => {
                 res.send({
                     code:0,
                     image:doc.image,
-                    text:doc.text
+                    text:doc.text,
+                    textEN:doc.textEN
                 })
             }else{
                 res.send({
