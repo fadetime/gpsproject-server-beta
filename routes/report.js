@@ -11,6 +11,9 @@ router.post('/missionwithdriver', reportController.report_findMissionByDateWithD
 // 车辆检查统计(夜班统计用)
 router.post('/check', reportController.report_findByDate)
 
+// 车辆维修记录
+router.post('/repairCar', reportController.report_repairCar_byDate)
+
 // 车辆检查统计-根据司机查询(夜班统计用)
 router.post('/bydriver', reportController.report_getByDateOfdriver)
 
@@ -37,5 +40,11 @@ router.post('/carwash', reportController.report_findCarWashByDate)
 
 // 根据时间查找司机车辆检查记录
 router.post('/drivercheckbydate', reportController.report_getDriverCheckInfoByDate)
+
+//查询一天的车次框数统计
+router.post('/tripByDay', reportController.report_get_byOneDay)
+
+//查询多天的车次框数统计
+router.post('/tripByMoreDay', reportController.report_get_byMoreDay)
 
 module.exports = router

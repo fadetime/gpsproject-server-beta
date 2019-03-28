@@ -8,6 +8,129 @@ const myBasketModel = require('../models/basket')
 const myCarWashModel = require('../models/carWash')
 const areaBasketModel = require('../models/boxCount')
 const breakBasketModel = require('../models/breakBoxReport')
+const tripCountModel = require('../models/tripCount')
+const timesModel = require('../models/times')
+const repairCar = require('../models/fixCar')
+
+exports.report_repairCar_byDate = (req, res, next) => {
+    let startdate = new Date(req.body.startDate).toISOString()
+    let enddate = new Date(req.body.endDate).toISOString()
+    let a = new Date(startdate).getTime()
+    let b = new Date(enddate).getTime()
+    let c = b - a
+    if(c > 2678400000 ){
+        res.send({
+            code:3,
+            msg:'时间范围过大'
+        })
+    }else{
+        let tempInfo = {
+            logStartTime:{
+                "$gte": startdate, 
+                "$lt": enddate
+            }
+        }
+        repairCar.find(tempInfo)
+            .then(doc => {
+                console.log(doc)
+                if(doc.length === 0){
+                    res.send({
+                        doc:doc,
+                        code:1
+                    })
+                }else{
+                    res.send({
+                        doc:doc,
+                        code:0
+                    })
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                res.send({
+                    code:2,
+                    error:err
+                })
+            })
+    }
+}
+
+
+exports.report_get_byMoreDay = (req, res, next) => {
+    let startdate = new Date(req.body.startDate).toISOString()
+    let enddate = new Date(req.body.endDate).toISOString()
+    let a = new Date(startdate).getTime()
+    let b = new Date(enddate).getTime()
+    let c = b - a
+    if(c > 2678400000 ){
+        res.send({
+            code:3,
+            msg:'时间范围过大'
+        })
+    }else{
+        let tempInfo = {
+            missionDate:{
+                "$gte": startdate, 
+                "$lt": enddate
+            }
+        }
+    timesModel.countDocuments()
+        .then(tripsNum => {
+            tripCountModel.find(tempInfo)
+                .then(doc => {
+                    if(doc.length === 0){
+                        res.send({
+                            code:1
+                        })
+                    }else{
+                        res.send({
+                            code:0,
+                            doc:doc,
+                            tripsNum:tripsNum
+                        })
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    res.send({
+                        code:2,
+                        error:err
+                    })
+                })
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code:2,
+                error:err
+            })
+        })
+    
+    }
+}
+
+exports.report_get_byOneDay = (req, res, next) => {
+    tripCountModel.findOne({missionDate:req.body.findDate})
+        .then(doc => {
+            if(doc){
+                res.send({
+                    code:0,
+                    doc:doc
+                })
+            }else{
+                res.send({
+                    code:1
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code:2,
+                error:err
+            })
+        })
+}
 
 exports.report_findBreakBasketByDate = (req, res, next) => {
     let startdate = new Date(req.body.startDate).toISOString()
