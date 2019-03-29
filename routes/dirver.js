@@ -27,4 +27,6 @@ router.post('/edit/img', uploadImage.dataInput, DirverController.dirver_img_edit
 // 删除数据
 router.post('/remove', DirverController.dirvers_delete)
 
+// 司机查找车辆机油报警
+router.post('/findOilWarning', DirverController.staff_find_carOilWarning)
 module.exports = router

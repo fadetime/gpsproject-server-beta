@@ -2,6 +2,8 @@ const Product = require('../models/dirver')
 const bcrypt = require('bcryptjs')
 const fs = require('fs')
 const logControllers = require('../models/log')
+const carModels = require('../models/car')
+const settingModel = require('../models/setting')
 
 exports.dirvers_get_all = (req, res, next) => {
     Product.find()
@@ -437,3 +439,52 @@ exports.staff_nameCh_nameEn = (req, res, next) => {
             })
         })
 }
+
+//司机查找机油报警 start
+exports.staff_find_carOilWarning = (req, res, next) => {
+    carModels.findOne({carid:req.body.carNo})
+        .then(carInfo => {
+            if(carInfo && carInfo.kelometer && carInfo.lastOilKelometer){
+                settingModel.findOne()
+                    .then(settingInfo => {
+                        if(settingInfo){
+                            if(carInfo.lastOilKelometer + settingInfo.oilProperty - settingInfo.engineOilValve < carInfo.kelometer){
+                                res.send({
+                                    code:0,
+                                    lastOilKelometer:carInfo.lastOilKelometer,//最后更换机油时的公里数
+                                    kelometer:carInfo.kelometer,//公里数
+                                    oilProperty:settingInfo.oilProperty//机油性能
+                                })
+                            }else{
+                                res.send({
+                                    code:1
+                                })
+                            }
+                        }else{
+                            res.send({
+                                code:3//未找到设置信息
+                            })
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        res.send({
+                            error:err,
+                            code:2
+                        })
+                    })
+            }else{
+                res.send({
+                    code:1
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                error:err,
+                code:2
+            })
+        })
+}
+//司机查找机油报警 end
