@@ -57,7 +57,7 @@ exports.client_driver_upload = (req, res, next) => {
                 Product.updateOne({
                     _id: req.body._id,
                     missionclient: {
-                        $elemMatch: { clientbname: req.body.dialogClientName }
+                        $elemMatch: { clientbname: req.body.dialogClientName ,isReturn: req.body.isReturn}
                     }
                 }, {
                         $set: { 'missionclient.$.finishphoto': req.file.path, 'missionclient.$.finishdate': new Date() },
@@ -223,7 +223,7 @@ exports.driver_upload_checkPic = (req, res, next) => {
                 Product.updateOne({
                     _id: req.body._id,
                     missionclient: {
-                        $elemMatch: { clientbname: req.body.clientName }
+                        $elemMatch: { clientbname: req.body.clientName ,isReturn: req.body.isReturn}
                     }
                 }, {
                         $set: { 'missionclient.$.finishdate': new Date(), 'missionclient.$.position': req.body.position },

@@ -53,7 +53,7 @@ exports.mission_get_today = (req, res, next) => {
 
 exports.mission_create = (req, res, next) => {
     Product.create(req.body)
-        .then((doc) => {
+        .then((missionDoc) => {
             CarModels.findOne({ 'carid': req.body.missioncar })
                 .then(doc2 => {
                     let carCount = doc2.cartimes + 1
@@ -130,7 +130,7 @@ exports.mission_create = (req, res, next) => {
                                                             res.send({
                                                                 code: 0,
                                                                 msg: '创建任务成功',
-                                                                _id:doc._id
+                                                                _id:missionDoc._id
                                                             })
                                                         })
                                                         .catch(err => {
@@ -250,10 +250,16 @@ exports.mission_addClient = (req, res, next) => {
 
 //任务增加客户并且排序相同名称
 exports.mission_addClientAndSort = (req, res, next) => {
+    console.log('##customer service add client _id')
+    console.log(req.body.mission_id)
+    console.log('##customer service add client _id')
     Product.updateOne({_id:req.body.mission_id},{
         $push:{ "missionclient":{$each:req.body.obj,$position: req.body.ClientPositionNum} }
     })
     .then(doc => {
+        console.log('customer service add client')
+        console.log(doc)
+        console.log('customer service add client')
         res.send({
             code:0
         })

@@ -572,3 +572,35 @@ exports.manFindChangeOil = (req, res, next) => {
             })
         })
 }
+
+exports.admFindChangeOil = (req, res, next) => {
+    let item = null
+    if(req.body.changeKmMode === 'km'){
+        item = {
+            kelometer:req.body.changeNumber
+        }
+    }else{
+        item = {
+            lastOilKelometer:req.body.changeNumber
+        }
+    }
+    Product.updateOne({ _id: req.body.car_id }, item)
+        .then(doc =>{
+            if(doc.ok === 1){
+                res.send({
+                    code:0
+                })
+            }else{
+                res.send({
+                    code: 1
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code:2,
+                error:err
+            })
+        })
+}

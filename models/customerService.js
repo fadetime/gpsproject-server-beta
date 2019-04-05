@@ -9,7 +9,8 @@ const customerServiceSchema = mongoose.Schema({
     isFinish: { type: Boolean, default: false },//是已经发放到物流任务
     mission_id: { type: String, default: null },//任务_id
     isReturnDone: { type: String, default: null },//退菜是否成功
-    finishiDate: { type: Date, default: null }//司机退菜完成时间
+    finishiDate: { type: Date, default: null },//司机退菜完成时间
+    errorID: { type: String }//客服系统需求
 })
 
 module.exports = mongoose.model('csnights', customerServiceSchema)

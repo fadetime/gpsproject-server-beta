@@ -1,6 +1,29 @@
 const myCustomerServiceMission = require('../models/customerService')
 const myMissionModels = require('../models/mission')
 
+exports.findCSerrorID = (req, res, next) => {
+    myCustomerServiceMission.findOne({mission_id:req.body.mission_id,clientName:req.body.clientName,finishiDate:req.body.finishiDate},{errorID:-1})
+        .then(doc => {
+            if(doc){
+                res.send({
+                    code:0,
+                    doc:doc
+                })
+            }else{
+                res.send({
+                    code:1
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                error:err,
+                code:2
+            })
+        })
+}
+
 exports.createCSMission = (req, res, next) => {
     let createDate = new Date(req.body.startdate).toISOString()
     let startdate = new Date(req.body.startdate).toLocaleDateString()

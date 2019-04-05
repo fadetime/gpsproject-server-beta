@@ -11,6 +11,108 @@ const breakBasketModel = require('../models/breakBoxReport')
 const tripCountModel = require('../models/tripCount')
 const timesModel = require('../models/times')
 const repairCar = require('../models/fixCar')
+const customerServiceMissionModel = require('../models/customerService')
+
+//退菜用 查询退菜任务司机(mission_id)
+exports.report_find_backMissionDriver = (req, res, next) => {
+    MissionModels.findOne({_id:req.body.mission_id})
+        .then(doc => {
+            if(doc){
+                res.send({
+                    doc:doc,
+                    code:0
+                })
+            }else{
+                res.send({
+                    code:1
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code:2,
+                error:err
+            })
+        })
+}
+
+exports.report_backMission = (req, res, next) => {
+    let startdate = new Date(req.body.startDate).toISOString()
+    let enddate = new Date(req.body.endDate).toISOString()
+    let a = new Date(startdate).getTime()
+    let b = new Date(enddate).getTime()
+    let c = b - a
+    if(c > 2678400000 ){
+        res.send({
+            code:3,
+            msg:'时间范围过大'
+        })
+    }else{
+        let tempInfo = {
+            createDate:{
+                "$gte": startdate, 
+                "$lt": enddate
+            }
+        }
+        customerServiceMissionModel.find(tempInfo)
+            .then(doc => {
+                console.log(doc)
+                if(doc.length != 0){
+                    res.send({
+                        doc:doc,
+                        code:0
+                    })
+                }else{
+                    res.send({
+                        code:1
+                    })
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                res.send({
+                    code:2,
+                    error:err
+                })
+            })
+    }
+}
+
+exports.report_tripCount_edit = (req, res, next) => {
+    tripCountModel.updateOne({_id:req.body.mission_id,"missionArray._id": req.body.array_id}, {
+        $set: {
+            "missionArray.$.carNo": req.body.carNo,
+            "missionArray.$.driver_id": req.body.driver_id,
+            "missionArray.$.driverNameCh": req.body.driverNameCh,
+            "missionArray.$.driverNameEn": req.body.driverNameEn,
+            "missionArray.$.out": req.body.out,
+            "missionArray.$.outKm": req.body.outKm,
+            "missionArray.$.in": req.body.in,
+            "missionArray.$.inKm": req.body.inKm,
+            "missionArray.$.lastEditDate": req.body.lastEditDate
+        }
+    })
+        .then(doc => {
+            console.log(doc)
+            if(doc.ok === 1){
+                res.send({
+                    code:0
+                })
+            }else{
+                res.send({
+                    code:1
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code:2,
+                error:err
+            })
+        })
+}
 
 exports.report_repairCar_byDate = (req, res, next) => {
     let startdate = new Date(req.body.startDate).toISOString()

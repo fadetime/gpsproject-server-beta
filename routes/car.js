@@ -38,4 +38,7 @@ router.get('/manFindCar', CarController.manFindAllCar)
 // 维修员修改机油信息
 router.post('/manChangeOil', CarController.manFindChangeOil)
 
+// 管理后台修改机油信息
+router.post('/admChangeOil', CarController.admFindChangeOil)
+
 module.exports = router

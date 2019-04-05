@@ -44,7 +44,16 @@ router.post('/drivercheckbydate', reportController.report_getDriverCheckInfoByDa
 //查询一天的车次框数统计
 router.post('/tripByDay', reportController.report_get_byOneDay)
 
+//修改一天的车次框数统计
+router.post('/editTripByDay', reportController.report_tripCount_edit)
+
 //查询多天的车次框数统计
 router.post('/tripByMoreDay', reportController.report_get_byMoreDay)
+
+//查询退菜任务统计
+router.post('/backMission', reportController.report_backMission)
+
+//查询退菜任务司机
+router.post('/backFindDriver', reportController.report_find_backMissionDriver)
 
 module.exports = router

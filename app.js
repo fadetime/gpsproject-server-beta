@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 
 // 连接MongoDB by using mongoose
-mongoose.connect('mongodb://127.0.0.1/drivertool', { useNewUrlParser: true })
+mongoose.connect('mongodb://192.168.1.70/test', { useNewUrlParser: true })
 mongoose.Promise = global.Promise
 
 // 创建Routes实例
@@ -27,6 +27,7 @@ const report = require('./routes/report')
 const dayShiftMission = require('./routes/dayShiftMission')
 const bill = require('./routes/bill')
 const checkWorker = require('./routes/checkWorker')//检查员使用API
+const checkWorkerDayShift = require('./routes/checkWorkerDayShift')//白班检查员使用API
 const carWash = require('./routes/carWash')
 const remainBillNumber = require('./routes/remainBillNumber')
 const basket = require('./routes/basket')
@@ -108,6 +109,7 @@ app.use('/report', report)
 app.use('/dayShiftmission', dayShiftMission)
 app.use('/bill', bill)
 app.use('/checkworker', checkWorker)//检查员使用API
+app.use('/checkWorkerDayShift', checkWorkerDayShift)//白班检查员使用API
 app.use('/carwash', carWash)
 app.use('/remainbillnum', remainBillNumber)//剩余订单计数
 app.use('/basket', basket)

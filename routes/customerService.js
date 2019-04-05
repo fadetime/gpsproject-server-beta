@@ -15,4 +15,7 @@ router.post('/finish', customerServiceController.updateFinishMission)
 //查找任务
 router.post('/find', customerServiceController.findCSMission)
 
+//查找customer service errorID
+router.post('/errorID', customerServiceController.findCSerrorID)
+
 module.exports = router

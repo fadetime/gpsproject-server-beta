@@ -1,5 +1,30 @@
-const checkWorkerModel = require('../models/checkWorker')
+const checkWorkerDayShiftModel = require('../models/checkWorkerDayShift')
 const carModel = require('../models/car')
+
+//new
+exports.checkWorker_get = (req, res, next) => {
+    checkWorkerDayShiftModel.findOne({ finishDate: null })
+        .then(doc => {
+            if (doc) {
+                res.send({
+                    code: 0,
+                    doc: doc
+                })
+            } else {
+                res.send({
+                    code: 1
+                })
+            }
+        })
+        .catch(err => {
+            console.log('##catch an error while find checkwork')
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}
 
 exports.checkWorker_create = (req, res, next) => {
     carModel.find()
@@ -19,7 +44,7 @@ exports.checkWorker_create = (req, res, next) => {
                     'note': null//备注
                 }
             })
-            checkWorkerModel.create({
+            checkWorkerDayShiftModel.create({
                 createDate: req.body.createDate,
                 missionCreator: req.body.driverName,
                 creator_id: req.body.driver_id,
@@ -49,7 +74,7 @@ exports.checkWorker_create = (req, res, next) => {
 }
 
 exports.checkWorker_edit = (req, res, next) => {
-    checkWorkerModel.updateOne({ _id: req.body._id, "missionList._id": req.body.data._id }, {
+    checkWorkerDayShiftModel.updateOne({ _id: req.body._id, "missionList._id": req.body.data._id }, {
         $set: {
             "missionList.$.checkDate": req.body.time,
             "missionList.$.isFinish": req.body.isFinish,
@@ -100,8 +125,32 @@ exports.checkWorker_edit = (req, res, next) => {
         })
 }
 
+exports.checkCar_change_engineOil = (req, res, next) => {
+    carModel.updateOne({_id:req.body.car_id},{
+        lastOilKelometer:req.body.newOilNum
+    })
+        .then(doc => {
+            if(doc.ok === 1){
+                res.send({
+                    code:0
+                })
+            }else{
+                res.send({
+                    code:1
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code:2,
+                error:err
+            })
+        })
+}
+
 exports.checkWorker_finish = (req, res, next) => {
-    checkWorkerModel.updateOne({ _id: req.body._id }, {
+    checkWorkerDayShiftModel.updateOne({ _id: req.body._id }, {
         finishDate: req.body.finishDate
     })
         .then(doc => {
@@ -112,57 +161,6 @@ exports.checkWorker_finish = (req, res, next) => {
         })
         .catch(err => {
             console.log('##catch an error while finish checkwork')
-            console.log(err)
-            res.send({
-                code: 2,
-                error: err
-            })
-        })
-}
-
-exports.checkWorker_get = (req, res, next) => {
-    checkWorkerModel.findOne({ finishDate: null })
-        .then(doc => {
-            if (doc) {
-                res.send({
-                    code: 0,
-                    doc: doc
-                })
-            } else {
-                res.send({
-                    code: 1
-                })
-            }
-        })
-        .catch(err => {
-            console.log('##catch an error while find checkwork')
-            console.log(err)
-            res.send({
-                code: 2,
-                error: err
-            })
-        })
-}
-
-exports.checkWorker_findByDate = (req, res, next) => {
-    let startdate = new Date(req.body.startDate).toISOString()
-    let enddate = new Date(req.body.endDate).toISOString()
-
-    checkWorkerModel.find({ "createDate": { "$gte": startdate, "$lt": enddate } })
-        .then(doc => {
-            if(doc.length === 0){
-                res.send({
-                    code:1
-                })
-            }else{
-                res.send({
-                    code:0,
-                    doc:doc
-                })
-            }
-        })
-        .catch(err => {
-            console.log('##catch an error while find check info by the date')
             console.log(err)
             res.send({
                 code: 2,
@@ -194,26 +192,29 @@ exports.checkCar_find_engineOil = (req, res, next) => {
         })
 }
 
-exports.checkCar_change_engineOil = (req, res, next) => {
-    carModel.updateOne({_id:req.body.car_id},{
-        lastOilKelometer:req.body.newOilNum
-    })
+exports.checkWorker_findByDate = (req, res, next) => {
+    let startdate = new Date(req.body.startDate).toISOString()
+    let enddate = new Date(req.body.endDate).toISOString()
+
+    checkWorkerDayShiftModel.find({ "createDate": { "$gte": startdate, "$lt": enddate } })
         .then(doc => {
-            if(doc.ok === 1){
+            if(doc.length === 0){
                 res.send({
-                    code:0
+                    code:1
                 })
             }else{
                 res.send({
-                    code:1
+                    code:0,
+                    doc:doc
                 })
             }
         })
         .catch(err => {
+            console.log('##catch an error while find check info by the date')
             console.log(err)
             res.send({
-                code:2,
-                error:err
+                code: 2,
+                error: err
             })
         })
 }

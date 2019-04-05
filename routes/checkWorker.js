@@ -18,4 +18,10 @@ router.get('/',checkWorkerController.checkWorker_get)
 //查询车辆检查数据-根据时间段
 router.post('/find',checkWorkerController.checkWorker_findByDate)
 
+//车辆检查时查询车辆上次更换机油公里数
+router.post('/findOil',checkWorkerController.checkCar_find_engineOil)
+
+//车辆检查时修改车辆上次更换机油公里数
+router.post('/changeOil',checkWorkerController.checkCar_change_engineOil)
+
 module.exports = router
