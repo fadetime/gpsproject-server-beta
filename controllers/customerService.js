@@ -74,7 +74,8 @@ exports.createCSMission = (req, res, next) => {
                                         if(doc){
                                             res.send({
                                                 code:0,
-                                                msg:'任务状态已更新'
+                                                msg:'任务状态已更新',
+                                                taskID:doc._id
                                             })
                                         }else{
                                             res.send({
@@ -116,7 +117,8 @@ exports.createCSMission = (req, res, next) => {
                     if(doc){
                         res.send({
                             code:0,
-                            msg:'已放入任务池，建立夜班任务会自动加入'
+                            msg:'已放入任务池，建立夜班任务会自动加入',
+                            taskID:doc._id
                         })
                     }else{
                         res.send({
@@ -210,6 +212,22 @@ exports.findCSMission = (req, res, next) => {
                 msg: '获取数据时服务器发生错误',
                 error: err,
                 code: 2
+            })
+        })
+}
+
+exports.delCSerrorID = (req, res, next) => {
+    myCustomerServiceMission.findByIdAndDelete(req.body.taskID)
+        .then(doc => {
+            console.log(doc)
+            res.send({
+                code:0
+            })
+        })
+        .catch(err => {
+            res.send({
+                code:2,
+                error:err
             })
         })
 }

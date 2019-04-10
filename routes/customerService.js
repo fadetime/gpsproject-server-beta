@@ -18,4 +18,7 @@ router.post('/find', customerServiceController.findCSMission)
 //查找customer service errorID
 router.post('/errorID', customerServiceController.findCSerrorID)
 
+//删除api
+router.post('/del', customerServiceController.delCSerrorID)
+
 module.exports = router
