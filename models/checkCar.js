@@ -14,7 +14,7 @@ const checkCarSchema = mongoose.Schema({
     petrolCard: { type: Boolean, default: false },//油卡
     text: { type: String, default: null }, //其他
     boxNum: { type: Number }, //框数量
-    clean: { type: Boolean, default: false },//干净
+    clean: { type: Boolean, default: true },//干净
     boxNumAgain: { type: Number, default: null },//送货后框数
     finish: { type: Boolean, default: true } //检查无异常
 })

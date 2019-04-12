@@ -35,7 +35,8 @@ const missionSchema = mongoose.Schema({
             note: { type: String },
             noteEN: { type: String },
             image: { type: String, default: null },//客户图片
-            isReturn: { type: Boolean, default: false }//属于退菜任务
+            isReturn: { type: Boolean, default: false },//属于退菜任务
+            returnPool_id: { type: String, default: null }//退菜任务池_id
         }
     ]//线路客户
 })

@@ -164,7 +164,7 @@ exports.updateCSMission = (req, res, next) => {
 }
 
 exports.updateFinishMission = (req, res, next) => {
-    myCustomerServiceMission.updateOne({mission_id:req.body.mission_id,clientName:req.body.clientName},{
+    myCustomerServiceMission.updateOne({_id:req.body.returnPool_id},{
         isReturnDone:req.body.isReturnDone,
         finishiDate:req.body.finishiDate
     })
@@ -188,10 +188,9 @@ exports.updateFinishMission = (req, res, next) => {
 exports.findCSMission = (req, res, next) => {
     let startdate = new Date(req.body.missionDate).getTime() 
     let enddate = startdate + 86400000
-    startdate = startdate - 86400000
+    startdate = startdate - 864000000 //10天
     startdate = new Date(startdate).toISOString()
     enddate = new Date(enddate).toISOString()
-
     myCustomerServiceMission.find({isFinish:false,createDate:{ "$gte": startdate, "$lt": enddate }},{clientName:1,note:1})
         .then(doc => {
             if(doc.length === 0){

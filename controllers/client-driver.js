@@ -57,7 +57,7 @@ exports.client_driver_upload = (req, res, next) => {
                 Product.updateOne({
                     _id: req.body._id,
                     missionclient: {
-                        $elemMatch: { clientbname: req.body.dialogClientName ,isReturn: req.body.isReturn}
+                        $elemMatch: { clientbname: req.body.dialogClientName ,isReturn: req.body.isReturn,returnPool_id:req.body.returnPool_id}
                     }
                 }, {
                         $set: { 'missionclient.$.finishphoto': req.file.path, 'missionclient.$.finishdate': new Date() },
@@ -223,7 +223,7 @@ exports.driver_upload_checkPic = (req, res, next) => {
                 Product.updateOne({
                     _id: req.body._id,
                     missionclient: {
-                        $elemMatch: { clientbname: req.body.clientName ,isReturn: req.body.isReturn}
+                        $elemMatch: { clientbname: req.body.clientName ,isReturn: req.body.isReturn ,returnPool_id: req.body.returnPool_id}
                     }
                 }, {
                         $set: { 'missionclient.$.finishdate': new Date(), 'missionclient.$.position': req.body.position },
@@ -239,7 +239,6 @@ exports.driver_upload_checkPic = (req, res, next) => {
                                     basket: tempNum
                                 })
                                     .then(updateInfo => {
-                                        console.log(req.body)
                                         myBasketModel.create({
                                             date: req.body.date,//生成时间
                                             lineName: req.body.lineName,//线路名称
