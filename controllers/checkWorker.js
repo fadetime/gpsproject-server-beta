@@ -16,7 +16,8 @@ exports.checkWorker_create = (req, res, next) => {
                     'carWindow':true,//车窗
                     'taillight':true,//尾灯
                     'sideMirror':true,//后视镜
-                    'note': null//备注
+                    'note': null,//备注
+                    'SD_card': true
                 }
             })
             checkWorkerModel.create({

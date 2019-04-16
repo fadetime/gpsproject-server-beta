@@ -2,51 +2,67 @@ const tripCountModel = require('../models/tripCount')
 const lineModel = require('../models/times')
 
 exports.tripCount_create = (req, res, next) => {
-    lineModel.countDocuments()
-        .then(lineNum => {
-            let tempArray = []
-            for (let index = 0; index < lineNum; index++) {
-                tempArray.push({
-                    carNo: null,
-                    out: null,
-                    in: null,
-                    lastEditDate: null
+    tripCountModel.findOne({missionDate:req.body.missionDate})
+        .then(doc => {
+            if(doc){
+                res.send({
+                    code:3,//任务已存在，发回客户端
+                    doc:doc
                 })
-            }
-            tripCountModel.create({
-                creater: req.body.creater,
-                creater_id: req.body.creater_id,//创建人_id
-                createDate: req.body.createDate,//创建时间
-                missionDate: req.body.missionDate,//任务时间
-                missionArray:tempArray
-            })
-                .then(doc => {
-                    if (doc) {
-                        res.send({
-                            code: 0
+            }else{
+                lineModel.countDocuments()
+                    .then(lineNum => {
+                        let tempArray = []
+                        for (let index = 0; index < lineNum; index++) {
+                            tempArray.push({
+                                carNo: null,
+                                out: null,
+                                in: null,
+                                lastEditDate: null
+                            })
+                        }
+                        tripCountModel.create({
+                            creater: req.body.creater,
+                            creater_id: req.body.creater_id,//创建人_id
+                            createDate: req.body.createDate,//创建时间
+                            missionDate: req.body.missionDate,//任务时间
+                            missionArray:tempArray
                         })
-                    } else {
-                        res.send({
-                            code: 1
-                        })
-                    }
-                })
-                .catch(err => {
-                    console.log(err)
-                    res.send({
-                        error: err,
-                        code: 2
+                            .then(doc => {
+                                if (doc) {
+                                    res.send({
+                                        code: 0
+                                    })
+                                } else {
+                                    res.send({
+                                        code: 1
+                                    })
+                                }
+                            })
+                            .catch(err => {
+                                console.log(err)
+                                res.send({
+                                    error: err,
+                                    code: 2
+                                })
+                            })
                     })
-                })
+                    .catch(err => {
+                        console.log(err)
+                        res.send({
+                            error: err,
+                            code: 2
+                        })
+                    })
+            }
         })
         .catch(err => {
             console.log(err)
             res.send({
-                error: err,
-                code: 2
+                code:2,
+                error:err
             })
         })
-
 }
 
 exports.tripCount_edit = (req, res, next) => {
@@ -127,3 +143,48 @@ exports.tripCount_get = (req, res, next) => {
         })
 }
 
+exports.tripCount_findTodayOldMission = (req, res, next) => {
+    tripCountModel.findOne({missionDate:req.body.missionDate})
+        .then(doc => {
+            if(doc) {
+                res.send({
+                    doc:doc,
+                    code:0
+                })
+            }else{
+                res.send({
+                    code:1
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code:2,
+                error:err
+            })
+        })
+}
+
+exports.tripCount_getOneDayInfo = (req, res, next) => {
+    tripCountModel.findOne({missionDate:req.body.missionDate})
+        .then(doc => {
+            if(doc){
+                res.send({
+                    code:0,
+                    doc:doc
+                })
+            }else{
+                res.send({
+                    code:1
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code:2,
+                error:err
+            })
+        })
+}
