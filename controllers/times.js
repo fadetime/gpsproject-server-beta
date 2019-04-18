@@ -604,3 +604,28 @@ exports.usedDriver_editDriverSort = (req, res, next) => {
     })
     //客户排序 end
 }
+
+exports.trips_get_DCInfo_forReport = (req, res, next) => {
+    Product.find({},{'timescar.carid':-1})
+        .populate('timescar')
+        .populate('timesdirver')
+        .then(doc => {
+            if(doc.length != 0){
+                res.send({
+                    code:0,
+                    doc:doc
+                })
+            }else{
+                res.send({
+                    code:1
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code:2,
+                error:err
+            })
+        })
+}

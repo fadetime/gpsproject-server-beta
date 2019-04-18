@@ -46,4 +46,8 @@ router.post('/find-tips', TimesController.advanced_find_title)
 
 // 高级搜索-搜索结果
 router.post('/finda', TimesController.advanced_find_clientAndLine)
+
+// 报表-获取车辆司机数据
+router.get('/DC', TimesController.trips_get_DCInfo_forReport)
+
 module.exports = router

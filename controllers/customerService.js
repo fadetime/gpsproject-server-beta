@@ -166,7 +166,8 @@ exports.updateCSMission = (req, res, next) => {
 exports.updateFinishMission = (req, res, next) => {
     myCustomerServiceMission.updateOne({_id:req.body.returnPool_id},{
         isReturnDone:req.body.isReturnDone,
-        finishiDate:req.body.finishiDate
+        finishiDate:req.body.finishiDate,
+        driverNote:req.body.driverNote
     })
     .then(doc => {
         if(doc){

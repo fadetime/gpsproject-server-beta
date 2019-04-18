@@ -18,6 +18,9 @@ router.get('/', tripCountController.tripCount_get)
 //获取数据1天数据(主管页面)
 router.post('/oneDay', tripCountController.tripCount_getOneDayInfo)
 
+//获取数据1月数据(主管页面)
+router.post('/oneMonth', tripCountController.tripCount_getOneMonthInfo)
+
 //获取当天已提交数据(防止同一天提交多次任务)
 router.post('/findOld', tripCountController.tripCount_findTodayOldMission)
 

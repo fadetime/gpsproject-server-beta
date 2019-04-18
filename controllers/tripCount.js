@@ -188,3 +188,37 @@ exports.tripCount_getOneDayInfo = (req, res, next) => {
             })
         })
 }
+
+exports.tripCount_getOneMonthInfo = (req, res, next) => {
+    let tempDate = new Date().setMonth(req.body.month)
+    tempDate = new Date(tempDate).setDate(0)
+    let maxDay = new Date(tempDate).getDate()
+    let startdate = new Date().setMonth(req.body.month -1)
+    startdate = new Date(startdate).setDate(1)
+    startdate = new Date(startdate).toLocaleDateString()
+    startdate = new Date(startdate).toISOString()
+    let enddate = new Date().setMonth(req.body.month -1)
+    enddate = new Date(enddate).setDate(maxDay)
+    enddate = new Date(enddate).toLocaleDateString()
+    enddate = new Date(enddate).toISOString()
+    tripCountModel.find({missionDate:{ "$gte": startdate, "$lte": enddate }})
+        .then(doc => {
+            if(doc.length != 0){
+                res.send({
+                    code:0,
+                    doc:doc
+                })
+            }else{
+                res.send({
+                    code:1
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code:2,
+                error:err
+            })
+        })
+}
