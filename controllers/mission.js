@@ -228,6 +228,32 @@ exports.mission_editOne_missionDateByid = (req, res, next) => {
     })
 }
 
+exports.mission_editOne_missionDriverByid = (req, res, next) => {
+    Product.updateOne({_id:req.body._id},{
+        missiondirver:req.body.driver
+    })
+    .then(doc => {
+        if(doc.ok === 1){
+            res.send({
+                code:0
+            })
+        }else{
+            res.send({
+                code:1,
+                doc:doc
+            })
+        }
+    })
+    .catch(err => {
+        console.log('catch an error while update mission date')
+        console.log(err)
+        res.send({
+            code:2,
+            error:err
+        })
+    })
+}
+
 exports.mission_addClient = (req, res, next) => {
     Product.updateOne({_id:req.body.mission_id},{
         "$addToSet":{"missionclient":req.body.obj}

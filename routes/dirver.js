@@ -9,6 +9,9 @@ router.get('/', DirverController.dirvers_get_all)
 // 获取员工中英文姓名
 router.post('/name', DirverController.staff_nameCh_nameEn)
 
+// 获取权限为司机的中英文姓名
+router.post('/driverName', DirverController.roleIsDriver_nameCh_nameEn)
+
 // 分页加载所有数据
 router.post('/get', DirverController.dirvers_post_all)
 

@@ -14,6 +14,9 @@ router.post('/', MissionController.mission_get_today)
 // 修改任务时间
 router.post('/editdate', MissionController.mission_editOne_missionDateByid)
 
+// 修改司机
+router.post('/editDriver', MissionController.mission_editOne_missionDriverByid)
+
 // 增加任务客户
 router.post('/addclient', MissionController.mission_addClient)
 

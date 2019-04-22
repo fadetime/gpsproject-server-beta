@@ -439,6 +439,23 @@ exports.staff_nameCh_nameEn = (req, res, next) => {
             })
         })
 }
+//获取权限为司机的中英文姓名
+exports.roleIsDriver_nameCh_nameEn = (req, res, next) => {
+    Product.find({role:'user'},{dirvername:-1,name_en:-1,_id:-1})
+        .then(doc => {
+            res.send({
+                code:0,
+                doc:doc
+            })
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code:2,
+                error:err
+            })
+        })
+}
 
 //司机查找机油报警 start
 exports.staff_find_carOilWarning = (req, res, next) => {

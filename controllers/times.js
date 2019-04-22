@@ -606,9 +606,9 @@ exports.usedDriver_editDriverSort = (req, res, next) => {
 }
 
 exports.trips_get_DCInfo_forReport = (req, res, next) => {
-    Product.find({},{'timescar.carid':-1})
-        .populate('timescar')
-        .populate('timesdirver')
+    Product.find({},{'_id':-1})
+        .populate({path:'timescar',select:'carid'})
+        .populate({path:'timesdirver',select:'dirvername'})
         .then(doc => {
             if(doc.length != 0){
                 res.send({
