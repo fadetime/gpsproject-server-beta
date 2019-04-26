@@ -49,12 +49,57 @@ exports.report_backMission = (req, res, next) => {
             msg:'时间范围过大'
         })
     }else{
-        let tempInfo = {
-            createDate:{
-                "$gte": startdate, 
-                "$lt": enddate
+        let tempInfo = null
+        if(req.body.findType === 'notsee'){//未取回
+            tempInfo = {
+                createDate:{
+                    "$gte": startdate, 
+                    "$lt": enddate
+                },
+                isFinish:true,
+                isReturnDone:'false',
+                mission_id:{$ne:null},
+                finishiDate:{$ne:null},
+            }
+        }else if(req.body.findType === 'notfinish'){//未完成
+            tempInfo = {
+                createDate:{
+                    "$gte": startdate, 
+                    "$lt": enddate
+                },
+                isFinish:false,
+                mission_id:{$ne:null},
+                finishiDate:null,
+                isReturnDone:null
+            }
+        }else if(req.body.findType === 'finish'){//已取回
+            tempInfo = {
+                createDate:{
+                    "$gte": startdate, 
+                    "$lt": enddate
+                },
+                isFinish:true,
+                isReturnDone:'true'
+            }
+        }else if(req.body.findType === 'notget'){//未发送
+            tempInfo = {
+                createDate:{
+                    "$gte": startdate, 
+                    "$lt": enddate
+                },
+                isFinish:false,
+                isReturnDone:null,
+                mission_id:null
+            }
+        }else{//全部
+            tempInfo = {
+                createDate:{
+                    "$gte": startdate, 
+                    "$lt": enddate
+                }
             }
         }
+        
         customerServiceMissionModel.find(tempInfo)
             .then(doc => {
                 console.log(doc)
