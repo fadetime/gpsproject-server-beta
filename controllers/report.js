@@ -178,6 +178,7 @@ exports.report_repairCar_byDate = (req, res, next) => {
             }
         }
         repairCar.find(tempInfo)
+            .populate({path:'car_id',select:'carid'})
             .then(doc => {
                 console.log(doc)
                 if(doc.length === 0){
