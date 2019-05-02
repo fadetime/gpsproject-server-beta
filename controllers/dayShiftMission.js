@@ -3,9 +3,29 @@ const myDayShiftMission = require('../models/dayShiftMission')
 exports.createMission = (req, res, next) => {
     myDayShiftMission.create(req.body)
         .then(doc => {
-            res.send({
-                code: 0
-            })
+            if(doc){
+                myDayShiftMission
+                    .updateOne({_id:doc._id},{
+                        pool_id:doc.id
+                    })
+                    .then(()=> {
+                        res.send({
+                            code: 0
+                        })
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        res.send({
+                            code:2,
+                            error:err
+                        })
+                    })
+                
+            }else{
+                res.send({
+                    code:1
+                })
+            }
         })
         .catch((err) => {
             console.log('catch an error while create a day shift mission')

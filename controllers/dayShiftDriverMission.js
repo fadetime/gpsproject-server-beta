@@ -4,66 +4,74 @@ const async = require("async")
 
 exports.dayShiftDriver_create = (req, res, next) => {
     let stopFlag = false
-    req.body.clientArray.some(element => {
-        dayShiftMissionPool.findOne({ _id: element._id })
-            .then(doc => {
-                if (doc.dayMission_id) {
-                    stopFlag = true
-                }
-            })
-            .catch(err => {
-                console.log('catch an error while mission pool client enable')
-                console.log(err)
+    async function check_missionIsNew() {
+        new Promise (() => {
+            req.body.clientArray.some(element => {
+                dayShiftMissionPool.findOne({ _id: element._id })
+                    .then(doc => {
+                        if (doc.dayMission_id) {
+                            stopFlag = true
+                        }
+                    })
+                    .catch(err => {
+                        console.log('catch an error while mission pool client enable')
+                        console.log(err)
+                        res.send({
+                            code: 2,
+                            error: err
+                        })
+                    })
+                return stopFlag
+            });
+        })
+    }
+    async function startCheck() {
+        await check_missionIsNew()
+    }
+    startCheck()
+        .then(() => {
+            if (stopFlag) {
                 res.send({
-                    code: 2,
-                    error: err
+                    code: 1,
+                    msg: '请求中包含已派送客户'
                 })
-            })
-        return stopFlag
-    });
-
-    setTimeout(() => {
-        if (stopFlag) {
-            res.send({
-                code: 1,
-                msg: '请求中包含已派送客户'
-            })
-        } else {
-            dsDriverMissionModels.create(req.body)
-                .then(doc => {
-                    if (doc) {
-                        req.body.clientArray.forEach(element => {
-                            dayShiftMissionPool.updateOne({ _id: element._id }, {
-                                dayMission_id: doc._id,
-                                driverName: req.body.driverName
-                            })
-                                .then(() => {
-                                    console.log('更新任务池')
+            } else {
+                dsDriverMissionModels.create(req.body)
+                    .then(doc => {
+                        if (doc) {
+                            req.body.clientArray.forEach(element => {
+                                dayShiftMissionPool.updateOne({ _id: element._id }, {
+                                    dayMission_id: doc._id,
+                                    driverName: req.body.driverName
                                 })
-                                .then(err => {
+                                .then(() => {
+                                    console.log('update pool mission success')
+                                })
+                                .catch(err => {
                                     console.log(err)
                                 })
-                        });
-                        res.send({
-                            code: 0,
-                            doc: doc._id
-                        })
-                    } else {
-                        res.send({
-                            code: 1
-                        })
-                    }
-                })
-                .catch(err => {
-                    console.log('catch an error while create day shift driver mission')
-                    console.log(err)
-                    res.send({
-                        code: 2,
-                        error: err
+                            });
+                            res.send({
+                                code: 0,
+                                doc: doc._id
+                            })
+                        } else {
+                            res.send({
+                                code: 1
+                            })
+                        }
                     })
-                })
-        }
-    }, 1000);
+                    .catch(err => {
+                        console.log('catch an error while create day shift driver mission')
+                        console.log(err)
+                        res.send({
+                            code: 2,
+                            error: err
+                        })
+                    })
+            }
+        })
+    
 }
 
 exports.dayShiftDriver_removeClient = (req, res, next) => {
@@ -152,7 +160,6 @@ exports.dayShiftDriver_updateCheckCar = (req, res, next) => {
 }
 
 exports.dayShiftDriver_updateClientFinishDate = (req, res, next) => {
-    console.log(req.body)
     dsDriverMissionModels.updateOne({
         _id: req.body.mission_id, clientArray: {
             $elemMatch: { clientName: req.body.clientName }
@@ -160,11 +167,27 @@ exports.dayShiftDriver_updateClientFinishDate = (req, res, next) => {
     }, {
             $set: { 'clientArray.$.finisDate': req.body.finisDate }
         })
-        .then(doc => {
-            console.log(doc)
-            res.send({
-                code: 0
-            })
+        .then(() => {
+            dayShiftMissionPool
+                .updateOne({_id:req.body.pool_id},{
+                    image:req.file.path,
+                    isFinish: true,
+                    finishDate:req.body.finisDate
+                })
+                .then(imgInfo => {
+                    if(imgInfo.n === 1 && imgInfo.ok === 1){
+                        res.send({
+                            code: 0
+                        })
+                    }else{
+                        res.send({
+                            code: 1
+                        })
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
         })
         .catch(err => {
             console.log('catch an error while update client finish date')

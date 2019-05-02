@@ -20,9 +20,9 @@ const dayShiftDriverMissionSchema = mongoose.Schema({
         clientPostcode: { type: String },//客户邮编
         image: { type: String, default: null },//客户图片
         isIncreaseOrder: { type: String, default: null },//是否为加单，true 加单 false 补单 return
-        finisDate: {type: Date, default: null}
+        finisDate: {type: Date, default: null },//完成时间
+        pool_id: { type: String, default: null }//任务池_id
     }]
-
 })
 
 module.exports = mongoose.model('dayShiftDriverMissions', dayShiftDriverMissionSchema)

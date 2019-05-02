@@ -2,6 +2,7 @@
 const express = require('express')
 const router = express.Router()
 const dayShiftDriverMissionController = require('../controllers/dayShiftDriverMission')
+const uploadImage = require('../middlewares/dayShiftUse')
 
 //增加任务
 router.post('/create', dayShiftDriverMissionController.dayShiftDriver_create)
@@ -22,7 +23,7 @@ router.post('/car', dayShiftDriverMissionController.dayShiftDriver_updateMission
 router.post('/check', dayShiftDriverMissionController.dayShiftDriver_updateCheckCar)
 
 //完成任务中的客户
-router.post('/finish', dayShiftDriverMissionController.dayShiftDriver_updateClientFinishDate)
+router.post('/finish', uploadImage.dataInput, dayShiftDriverMissionController.dayShiftDriver_updateClientFinishDate)
 
 //完成任务并修改任务状态
 router.post('/finishMission', dayShiftDriverMissionController.dayShiftDriver_updateFinishState)

@@ -18,6 +18,9 @@ router.post('/find', customerServiceController.findCSMission)
 //查找customer service errorID
 router.post('/errorID', customerServiceController.findCSerrorID)
 
+//白班客户查找退菜
+router.post('/findClient', customerServiceController.dayShift_customerService_findClient)
+
 //删除api
 router.post('/del', customerServiceController.delCSerrorID)
 

@@ -1,5 +1,6 @@
 const myCustomerServiceMission = require('../models/customerService')
 const myMissionModels = require('../models/mission')
+const clientModels = require('../models/clientb')
 
 exports.findCSerrorID = (req, res, next) => {
     myCustomerServiceMission.findOne({mission_id:req.body.mission_id,clientName:req.body.clientName,finishiDate:req.body.finishiDate},{errorID:-1})
@@ -230,4 +231,30 @@ exports.delCSerrorID = (req, res, next) => {
                 error:err
             })
         })
+}
+
+//白班查询客户
+exports.dayShift_customerService_findClient = (req, res, next) => {
+    clientModels.find({ "clientbname": { $regex: req.body.word, $options: 'i' } },{clientbname:-1,clientbphone:-1,clientbaddress:-1,clientbnameEN:-1,image:-1,clientbpostcode:-1})
+    .limit(5)
+    .then(doc => {
+        console.log(doc)
+        if(doc.length != 0){
+            res.send({
+                code:0,
+                doc:doc
+            })
+        }else{
+            res.send({
+                code:1
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err)
+        res.send({
+            code:2,
+            error:err
+        })
+    })
 }

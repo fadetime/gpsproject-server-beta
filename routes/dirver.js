@@ -32,4 +32,7 @@ router.post('/remove', DirverController.dirvers_delete)
 
 // 司机查找车辆机油报警
 router.post('/findOilWarning', DirverController.staff_find_carOilWarning)
+
+// 白班主管查找白班司机
+router.post('/findDayDriver', DirverController.staff_find_dayShiftDriver)
 module.exports = router

@@ -505,3 +505,28 @@ exports.staff_find_carOilWarning = (req, res, next) => {
         })
 }
 //司机查找机油报警 end
+
+//查找白班司机 start
+exports.staff_find_dayShiftDriver = (req, res, next) => {
+    Product.find({role:"dayshift"},{dirvername:-1})
+        .then(doc => {
+            if(doc.length != 0){
+                res.send({
+                    code:0,
+                    doc:doc
+                })
+            }else{
+                res.send({
+                    code:1
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code:2,
+                error:err
+            })
+        })
+}
+//查找白班司机 end
