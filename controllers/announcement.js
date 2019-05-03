@@ -1,4 +1,5 @@
 const Announcement = require('../models/announcement')
+const noticeLog = require('../models/firstPageNotice')
 const fs = require('fs')
 
 //add and edit
@@ -30,9 +31,32 @@ exports.notice_update = (req, res, next) => {
                 doc.save()
                     .then(saveDoc => {
                         if(saveDoc){
-                            res.send({
-                                code:0
-                            })
+                            if(req.body.image === 'oldPic'){
+                                req.body.image = doc.image
+                            }else{  
+                                req.body.image = req.file.path
+                            }
+                            noticeLog
+                                .create(req.body)
+                                .then(noticeInfo => {
+                                    if(noticeInfo){
+                                        res.send({
+                                            code:0
+                                        })
+                                    }else{
+                                        res.send({
+                                            code:1
+                                        })
+                                    }
+                                })
+                                .catch(err => {
+                                    console.log(err)
+                                    res.send({
+                                        code:2,
+                                        error:err
+                                    })
+                                })
+                            
                         }else{
                             res.send({
                                 code:1
@@ -56,9 +80,30 @@ exports.notice_update = (req, res, next) => {
                     })
                     .then(newCreateDoc => {
                         if(newCreateDoc){
-                            res.send({
-                                code:0
-                            })
+                            noticeLog
+                                .create({
+                                    date: req.body.date,//生成时间
+                                    image: req.file.path,//提交的照片
+                                    text: req.body.text,//提交的文字
+                                })
+                                .then(noticeInfo => {
+                                    if(noticeInfo){
+                                        res.send({
+                                            code:0
+                                        })
+                                    }else{
+                                        res.send({
+                                            code:1
+                                        })
+                                    }
+                                })
+                                .catch(err => {
+                                    console.log(err)
+                                    res.send({
+                                        code:2,
+                                        error:err
+                                    })
+                                })
                         }else{
                             res.send({
                                 code:1
@@ -104,6 +149,31 @@ exports.notice_Find = (req, res, next) => {
             res.send({
                 error:err,
                 code:2
+            })
+        })
+}
+
+exports.notice_firstPage_Find10 = (req, res, next) => {
+    noticeLog
+        .find()
+        .limit(10)
+        .then(doc => {
+            if(doc.length != 0){
+                res.send({
+                    code:0,
+                    doc:doc
+                })
+            }else{
+                res.send({
+                    code:1
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code:2,
+                error:err
             })
         })
 }

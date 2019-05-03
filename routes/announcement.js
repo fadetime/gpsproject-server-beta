@@ -12,4 +12,7 @@ router.post('/panelfind', announcementController.notice_Find)
 // 用户查找首页公告
 router.get('/find', announcementController.client_Find)
 
+// 控制台查找首页公告记录
+router.get('/findFirstPageLog', announcementController.notice_firstPage_Find10)
+
 module.exports = router
