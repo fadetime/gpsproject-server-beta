@@ -115,3 +115,36 @@ exports.billFindByDate = (req, res, next) => {
             })
         })
 }
+
+exports.bill_thisMonthInfo = (req, res, next) => {
+    let startDate = new Date().setDate(1)
+    startDate = new Date(startDate).toDateString()
+    startDate = new Date(startDate).setMonth(req.body.myMonth - 1)
+    let endDate = new Date().setDate(1)
+    endDate = new Date(endDate).toDateString()
+    endDate = new Date(endDate).setMonth(req.body.myMonth)
+    bill
+        .find({"date":{"$gte": startDate, "$lt": endDate},'hasReomved': false},{
+            hasReomved:0
+        })
+        .then(doc => {
+            console.log(doc)
+            if(doc.length != 0){
+                res.send({
+                    doc: doc,
+                    code: 0
+                })
+            }else{
+                res.send({
+                    code: 1
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code:2,
+                error:err
+            })
+        })
+}

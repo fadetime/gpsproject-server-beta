@@ -14,4 +14,7 @@ router.post('/find', billController.billFind)
 // 获取所有账单
 router.post('/findall', billController.billFindByDate)
 
+// 主管获取本月账单
+router.post('/thisMonth', billController.bill_thisMonthInfo)
+
 module.exports = router

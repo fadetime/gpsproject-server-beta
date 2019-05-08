@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 //送单统计模型
 const billSchema = mongoose.Schema({
-    date: { type: String, required: true },//生成时间
+    date: { type: Date, required: true },//生成时间
     startNum: { type: Number, required: true },//接受账单数量
     endNum: { type: Number, default: null },//带回账单数量
     endDate: { type: Date, default: null },//带回时间

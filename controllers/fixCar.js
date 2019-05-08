@@ -82,8 +82,10 @@ exports.fixCar_clientFirstReport = (req, res, next) => {
         .countDocuments({finish:false})
         .then(needDoNum => {
             let startDate = new Date().setDate(1)
+            startDate = new Date(startDate).toDateString()
             startDate = new Date(startDate).setMonth(req.body.myMonth - 1)
             let endDate = new Date().setDate(1)
+            endDate = new Date(endDate).toDateString()
             endDate = new Date(endDate).setMonth(req.body.myMonth)
             fixCar
                 .find({logStartTime:{"$gte": startDate, "$lt": endDate}})
@@ -166,8 +168,10 @@ exports.fixCar_clientFirstReport = (req, res, next) => {
 
 exports.fixCar_thisMonthMaxBreakCarReport = (req, res, next) => {
     let startDate = new Date().setDate(1)
+    startDate = new Date(startDate).toDateString()
     startDate = new Date(startDate).setMonth(req.body.myMonth - 1)
     let endDate = new Date().setDate(1)
+    endDate = new Date(endDate).toDateString()
     endDate = new Date(endDate).setMonth(req.body.myMonth)
     fixCar
         .find({car_id:req.body.car_id,logStartTime:{"$gte": startDate, "$lt": endDate}})
@@ -220,8 +224,10 @@ exports.fixCar_notReadyRepairInfo = (req, res, next) => {
 
 exports.fixCar_thisMonthInfo = (req, res, next) => {
     let startDate = new Date().setDate(1)
+    startDate = new Date(startDate).toDateString()
     startDate = new Date(startDate).setMonth(req.body.myMonth - 1)
     let endDate = new Date().setDate(1)
+    endDate = new Date(endDate).toDateString()
     endDate = new Date(endDate).setMonth(req.body.myMonth)
     fixCar
         .find({logStartTime:{"$gte": startDate, "$lt": endDate}})
