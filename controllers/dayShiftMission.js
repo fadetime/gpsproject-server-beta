@@ -171,3 +171,90 @@ exports.findMissionByActive = (req, res, next) => {
             })
     })
 }
+
+exports.thisMonthInfoReport = (req, res, next) => {
+    let startDate = new Date().setDate(1)
+    startDate = new Date(startDate).toDateString()
+    startDate = new Date(startDate).setMonth(req.body.myMonth - 1)
+    let endDate = new Date().setDate(1)
+    endDate = new Date(endDate).toDateString()
+    endDate = new Date(endDate).setMonth(req.body.myMonth)
+    myDayShiftMission
+        .countDocuments({orderDate:{"$gte": startDate, "$lt": endDate}})
+        .then(allNum => {
+            if(allNum){//所有单数
+                myDayShiftMission
+                    .countDocuments({isIncreaseOrder:'true',orderDate:{"$gte": startDate, "$lt": endDate}})
+                    .then(increaseNum => {
+                        if(increaseNum){//加单数
+                            myDayShiftMission
+                                .countDocuments({isIncreaseOrder:'false',orderDate:{"$gte": startDate, "$lt": endDate}})
+                                .then(recoupNum => {
+                                    if(recoupNum){//补单数
+                                        myDayShiftMission
+                                            .countDocuments({isIncreaseOrder:'return',orderDate:{"$gte": startDate, "$lt": endDate}})
+                                            .then(returnNum => {
+                                                if(returnNum){//退单数
+                                                    myDayShiftMission
+                                                        .countDocuments({isIncreaseOrder:'other',orderDate:{"$gte": startDate, "$lt": endDate}})
+                                                        .then(otherNum => {//其他单数
+                                                            if(otherNum){
+                                                                res.send({
+                                                                    code:0,
+                                                                    allNum:allNum,
+                                                                    increaseNum:increaseNum,
+                                                                    recoupNum:recoupNum,
+                                                                    returnNum:returnNum,
+                                                                    otherNum:otherNum
+                                                                })
+                                                            }else{
+                                                                res.send({
+                                                                    code:1,
+                                                                    msg:'catch an error while find other order documents'
+                                                                })
+                                                            }
+                                                        })
+                                                        .catch(err => {
+                                                            console.log(err)
+                                                        })
+                                                }else{
+                                                    res.send({
+                                                        code:1,
+                                                        msg:'catch an error while find return order documents'
+                                                    })
+                                                }
+                                            })
+                                            .catch(err => {
+                                                console.log(err)
+                                            })
+                                    }else{
+                                        res.send({
+                                            code:1,
+                                            msg:'catch an error while find recoup order documents'
+                                        })
+                                    }
+                                })
+                                .catch(err => {
+                                    console.log(err)
+                                })
+                        }else{
+                            res.send({
+                                code:1,
+                                msg:'catch an error while find increase order documents'
+                            })
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            }else{
+                res.send({
+                    code:1,
+                    msg:'catch an error while find this month all documents'
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+        })
+}
