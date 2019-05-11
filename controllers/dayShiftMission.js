@@ -1,4 +1,5 @@
 const myDayShiftMission = require('../models/dayShiftMission')
+const dsDriverMissionModels = require('../models/dayShiftDriverMission')
 
 exports.createMission = (req, res, next) => {
     myDayShiftMission.create(req.body)
@@ -258,3 +259,105 @@ exports.thisMonthInfoReport = (req, res, next) => {
             console.log(err)
         })
 }
+
+//主管删除已分配的客户start
+exports.leaderRemoveConfirguedClient = (req, res, next) => {
+    myDayShiftMission
+        .updateOne({ _id: req.body.pool_id }, {
+            isRemoved: true,
+            removeReason: '已分配后删除'
+        })
+        .then(doc => {
+            if (doc.ok === 1) {
+                dsDriverMissionModels
+                    .findOne({_id:req.body.dayMission_id})
+                    .then(dayDriverMissionInfo =>{
+                        if(dayDriverMissionInfo){
+                            if(dayDriverMissionInfo.clientArray.length === 1){
+                                dsDriverMissionModels
+                                    .deleteOne({_id:req.body.dayMission_id})
+                                    .then(delInfo => {
+                                        if(delInfo.n === 1 && delInfo.ok === 1){
+                                            res.send({
+                                                code: 0
+                                            })
+                                        }else{
+                                            res.send({
+                                                code: 1,
+                                                msg:'del failed while find and remove day driver mission'
+                                            })
+                                        }
+                                    })
+                                    .catch(err => {
+                                        console.log(err)
+                                    })
+                            }else{
+                                let tempDate = null
+                                async function findNeedDelClientInfo() {
+                                    return new Promise(() => {
+                                        dayDriverMissionInfo.clientArray.some(element => {
+                                            if(element.pool_id === req.body.pool_id){
+                                                tempDate = element
+                                                console.log(tempDate)
+                                                return true
+                                            }
+                                        });
+                                    })
+                                }
+                                async function waitFindClient() {
+                                        await findNeedDelClientInfo()
+                                }
+                                waitFindClient()
+                                if(tempDate){
+                                    dsDriverMissionModels
+                                        .updateOne({_id:req.body.dayMission_id},{
+                                            "$pull":{"clientArray":tempDate}
+                                        })
+                                        .then(delArrayInfo => {
+                                            if(delArrayInfo.n === 1 && delArrayInfo.ok === 1){
+                                                res.send({
+                                                    code: 0
+                                                })
+                                            }else{
+                                                res.send({
+                                                    code: 1,
+                                                    msg:'failed to delete properly'
+                                                })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            console.log(err)
+                                        })
+                                }else{
+                                    res.send({
+                                        code:1,
+                                        msg:'foreach not found infomation'
+                                    })
+                                }
+                            }
+                        }else{
+                            res.send({
+                                code: 1,
+                                msg:'查找白班司机任务时发生错误'
+                            })
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            } else {
+                res.send({
+                    code: 1
+                })
+            }
+        })
+        .catch(err => {
+            console.log('catch an error while remove a mission')
+            console.log(err)
+            res.send({
+                error: err,
+                code: 2
+            })
+        })
+}
+//主管删除已分配的客户end

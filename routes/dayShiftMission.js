@@ -24,4 +24,7 @@ router.post('/findall', dayShiftMissionController.findMissionByActive)
 //主管查找本月白班信息
 router.post('/thisMonthInfo', dayShiftMissionController.thisMonthInfoReport)
 
+//白班主管删除已分配的白班任务
+router.post('/removeConfiguredClient', dayShiftMissionController.leaderRemoveConfirguedClient)
+
 module.exports = router
