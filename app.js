@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 
 // 连接MongoDB by using mongoose
-mongoose.connect('mongodb://192.168.1.70/test', { useNewUrlParser: true })
+mongoose.connect('mongodb://127.0.0.1/drivertool', { useNewUrlParser: true })
 mongoose.Promise = global.Promise
 
 // 创建Routes实例
