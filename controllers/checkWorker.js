@@ -17,7 +17,8 @@ exports.checkWorker_create = (req, res, next) => {
                     'taillight':true,//尾灯
                     'sideMirror':true,//后视镜
                     'note': null,//备注
-                    'SD_card': true
+                    'SD_card': true,
+                    'flashLight': true//手电筒
                 }
             })
             checkWorkerModel.create({
@@ -64,7 +65,9 @@ exports.checkWorker_edit = (req, res, next) => {
             "missionList.$.drivingRecorder": req.body.data.drivingRecorder,
             "missionList.$.carWindow": req.body.data.carWindow,
             "missionList.$.taillight": req.body.data.taillight,
-            "missionList.$.sideMirror": req.body.data.sideMirror
+            "missionList.$.sideMirror": req.body.data.sideMirror,
+            "missionList.$.SD_card": req.body.data.SD_card,
+            "missionList.$.flashLight": req.body.data.flashLight
         }
     })
         .then(doc => {

@@ -9,6 +9,7 @@ const checkWorkerSchema = mongoose.Schema({
         cart: { type: Boolean },//手推车
         drivingRecorder: { type: Boolean },//行车记录仪
         SD_card: { type: Boolean },//SD卡
+        flashLight: {type: Boolean },//手电筒
         carWindow: { type: Boolean },//车窗
         taillight: { type: Boolean },//尾灯
         sideMirror: { type: Boolean },//后视镜

@@ -312,6 +312,7 @@ exports.client_Find = (req, res, next) => {
                 res.send({
                     code:0,
                     image:doc.image,
+                    imageEN: doc.imageEN,
                     text:doc.text,
                     textEN:doc.textEN
                 })
