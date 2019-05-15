@@ -7,21 +7,9 @@ exports.dayShiftDriver_create = (req, res, next) => {
     async function check_missionIsNew() {
         new Promise (() => {
             req.body.clientArray.some(element => {
-                dayShiftMissionPool
-                    .findOne({ _id: element._id })
-                    .then(doc => {
-                        if (doc.dayMission_id) {
-                            stopFlag = true
-                        }
-                    })
-                    .catch(err => {
-                        console.log('catch an error while mission pool client enable')
-                        console.log(err)
-                        res.send({
-                            code: 2,
-                            error: err
-                        })
-                    })
+                if (element.dayMission_id) {
+                    stopFlag = true
+                }
                 return stopFlag
             });
         })
@@ -30,48 +18,47 @@ exports.dayShiftDriver_create = (req, res, next) => {
         await check_missionIsNew()
     }
     startCheck()
-        if (stopFlag) {
-            res.send({
-                code: 1,
-                msg: '请求中包含已派送客户'
-            })
-        } else {
-            dsDriverMissionModels
-                .create(req.body)
-                .then(doc => {
-                    if (doc) {
-                        req.body.clientArray.forEach(element => {
-                            dayShiftMissionPool.updateOne({ _id: element._id }, {
-                                dayMission_id: doc._id,
-                                driverName: req.body.driverName
-                            })
-                            .then(() => {
-                                console.log('update pool mission success')
-                            })
-                            .catch(err => {
-                                console.log(err)
-                            })
-                        });
-                        res.send({
-                            code: 0,
-                            doc: doc._id
+    if (stopFlag) {
+        res.send({
+            code: 1,
+            msg: '请求中包含已派送客户'
+        })
+    } else {
+        dsDriverMissionModels
+            .create(req.body)
+            .then(doc => {
+                if (doc) {
+                    req.body.clientArray.forEach(element => {
+                        dayShiftMissionPool.updateOne({ _id: element._id }, {
+                            dayMission_id: doc._id,
+                            driverName: req.body.driverName
                         })
-                    } else {
-                        res.send({
-                            code: 1
+                        .then(() => {
+                            console.log('update pool mission success')
                         })
-                    }
-                })
-                .catch(err => {
-                    console.log('catch an error while create day shift driver mission')
-                    console.log(err)
+                        .catch(err => {
+                            console.log(err)
+                        })
+                    });
                     res.send({
-                        code: 2,
-                        error: err
+                        code: 0,
+                        doc: doc._id
                     })
+                } else {
+                    res.send({
+                        code: 1
+                    })
+                }
+            })
+            .catch(err => {
+                console.log('catch an error while create day shift driver mission')
+                console.log(err)
+                res.send({
+                    code: 2,
+                    error: err
                 })
-        }
-    
+            })
+    }
 }
 
 exports.dayShiftDriver_removeClient = (req, res, next) => {
@@ -160,43 +147,66 @@ exports.dayShiftDriver_updateCheckCar = (req, res, next) => {
 }
 
 exports.dayShiftDriver_updateClientFinishDate = (req, res, next) => {
-    dsDriverMissionModels.updateOne({
-        _id: req.body.mission_id, clientArray: {
-            $elemMatch: { clientName: req.body.clientName }
-        }
-    }, {
-            $set: { 'clientArray.$.finisDate': req.body.finisDate }
-        })
-        .then(() => {
-            dayShiftMissionPool
-                .updateOne({_id:req.body.pool_id},{
-                    image:req.file.path,
-                    isFinish: true,
-                    finishDate:req.body.finisDate
-                })
-                .then(imgInfo => {
-                    if(imgInfo.n === 1 && imgInfo.ok === 1){
-                        res.send({
-                            code: 0
-                        })
-                    }else{
-                        res.send({
-                            code: 1
-                        })
-                    }
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-        })
-        .catch(err => {
-            console.log('catch an error while update client finish date')
-            console.log(err)
-            res.send({
-                code: 2,
-                error: err
+    dsDriverMissionModels
+        .updateOne({
+            _id: req.body.mission_id, clientArray: {
+                $elemMatch: { clientName: req.body.clientName }
+            }
+        }, {
+                $set: { 'clientArray.$.finisDate': req.body.finisDate }
             })
-        })
+            .then(() => {
+                if(req.file){
+                    dayShiftMissionPool
+                        .updateOne({_id:req.body.pool_id},{
+                            image:req.file.path,
+                            isFinish: true,
+                            finishDate:req.body.finisDate
+                        })
+                        .then(updateInfo => {
+                            if(updateInfo.n === 1 && updateInfo.ok === 1){
+                                res.send({
+                                    code: 0
+                                })
+                            }else{
+                                res.send({
+                                    code: 1
+                                })
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+                }else{
+                    dayShiftMissionPool
+                        .updateOne({_id:req.body.pool_id},{
+                            isFinish: true,
+                            finishDate:req.body.finisDate
+                        })
+                        .then(updateInfo => {
+                            if(updateInfo.n === 1 && updateInfo.ok === 1){
+                                res.send({
+                                    code: 0
+                                })
+                            }else{
+                                res.send({
+                                    code: 1
+                                })
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+                }
+            })
+            .catch(err => {
+                console.log('catch an error while update client finish date')
+                console.log(err)
+                res.send({
+                    code: 2,
+                    error: err
+                })
+            })
 }
 
 exports.dayShiftDriver_updateFinishState = (req, res, next) => {
