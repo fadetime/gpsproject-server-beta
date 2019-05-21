@@ -39,6 +39,7 @@ const boxCount = require('./routes/boxCount')//框数统计
 const Announcement = require('./routes/announcement')//首页通知
 const setting = require('./routes/setting')//软件设置
 const tripCount = require('./routes/tripCount')//车次菜框盘点
+const template = require('./routes/dayShiftTemplate')//白班模板
 
 // **************************一系列的middleware************************
 //log
@@ -121,6 +122,7 @@ app.use('/boxcount', boxCount)//框数统计
 app.use('/announcement', Announcement)//首页通知
 app.use('/setting', setting)//首页通知
 app.use('/tripCount', tripCount)//车次菜框盘点
+app.use('/template', template)//白班模板
 
 //定期清理短信提醒
 const smsControllers = require('./models/openSMS')

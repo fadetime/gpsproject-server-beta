@@ -11,7 +11,7 @@ const dayShiftMissionSchema = mongoose.Schema({
     clientPhone: { type: String },//客户电话
     clientPostcode: { type: String },//客户邮编
     image: { type: String, default: null },//客户图片
-    isIncreaseOrder: { type: String, default:null },//是否为加单，true 加单 false 补单 return 退单 other 其他
+    isIncreaseOrder: { type: String, default:null },//是否为加单，true 加单 false 补单 return 退单 delivery 运输  other 其他
     driverName: { type: String, default:null },//任务司机名
     orderDate: { type: Date, required: true },//订单生成日期
     isRemoved: { type: Boolean, default: false },//已经删除

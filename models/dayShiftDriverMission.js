@@ -11,7 +11,7 @@ const dayShiftDriverMissionSchema = mongoose.Schema({
     backTime: { type: Date, default: null },//收车时间
     missionFinish: { type:Boolean, default: false },//任务完成标识符
     clientArray: [{
-        client_id: { type: String, required: true },//客户_id
+        client_id: { type: String, default: null },//客户_id
         clientName: { type: String, required: true },//客户名称
         clientNameEN: { type: String },//英文名称
         note: { type: String, default: null },//备注
@@ -19,7 +19,7 @@ const dayShiftDriverMissionSchema = mongoose.Schema({
         clientPhone: { type: String },//客户电话
         clientPostcode: { type: String },//客户邮编
         image: { type: String, default: null },//客户图片
-        isIncreaseOrder: { type: String, default: null },//是否为加单，true 加单 false 补单 return
+        isIncreaseOrder: { type: String, default: null },//是否为加单，true 加单 false 补单 return 运输 delivery 其他 other
         finisDate: {type: Date, default: null },//完成时间
         pool_id: { type: String, default: null }//任务池_id
     }]

@@ -508,7 +508,7 @@ exports.staff_find_carOilWarning = (req, res, next) => {
 
 //查找白班司机 start
 exports.staff_find_dayShiftDriver = (req, res, next) => {
-    Product.find({role:"dayshift"},{dirvername:-1})
+    Product.find({$or:[{role:"dayshift"},{role:"dayshiftLeader"}]} ,{dirvername:-1})
         .then(doc => {
             if(doc.length != 0){
                 res.send({

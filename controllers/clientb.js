@@ -751,6 +751,49 @@ exports.clientbs_find = (req, res, next) => {
         })
 }
 
+exports.clientbs_findForDayShift = (req, res, next) => {
+    Product.find({ "clientbname": { $regex: req.body.word, $options: 'i' } },{
+        clientbname: -1,
+        clientbnameEN: -1,
+        clientbaddress: -1,
+        clientbphone: -1,
+        clientbpostcode: -1
+    })
+        .limit(req.body.pageSize)
+        .skip(req.body.pageSize * (req.body.pageNow - 1))
+        .then((doc) => {
+            if (doc.length == 0) {
+                res.send({
+                    code: 1,
+                    msg: '未找到该数据'
+                })
+            } else {
+                Product.countDocuments({ "clientbname": { $regex: req.body.word, $options: 'i' } })
+                    .then(item => {
+                        res.send({
+                            code: 0,
+                            doc: doc,
+                            count: item,
+                            msg: '查找成功'
+                        })
+                    })
+                    .catch(err => {
+                        res.send({
+                            msg: '获取数据时服务器发生错误',
+                            error: err
+                        })
+                    })
+            }
+        })
+        .catch((err) => {
+            console.log(err)
+            res.status(500).json({
+                msg: '获取数据时服务器发生错误',
+                error: err
+            })
+        })
+}
+
 exports.client_change_needpic = (req, res, next) => {
     Product.findByIdAndUpdate(req.body._id, {
         isNeedPic: req.body.isNeedPic

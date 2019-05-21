@@ -149,7 +149,8 @@ exports.findMissionByDate = (req, res, next) => {
 
 exports.findMissionByActive = (req, res, next) => {
     let startdate = new Date(req.body.startDate).toISOString()
-    let enddate = new Date(req.body.endDate).toISOString()
+    let enddate = new Date(req.body.endDate).getTime() + 86400000
+    enddate = new Date(enddate).toISOString()
     myDayShiftMission.find({"isRemoved":false, "orderDate": { "$gte": startdate, "$lt": enddate } })
     .then(doc => {
         if (doc.length === 0) {

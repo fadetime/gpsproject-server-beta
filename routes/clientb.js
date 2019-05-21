@@ -25,6 +25,9 @@ router.post('/filterpage', ClientBController.clientbs_active_filter_Apage)
 // 查找数据
 router.post('/find', ClientBController.clientbs_find)
 
+// 白班主管查询数据
+router.post('/dayFind', ClientBController.clientbs_findForDayShift)
+
 // 增加数据
 router.post('/', uploadImage.dataInput, ClientBController.clientbs_create_product)
 
