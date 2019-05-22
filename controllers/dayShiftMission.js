@@ -122,10 +122,32 @@ exports.findMissionByDate = (req, res, next) => {
     startdate = new Date(startdate).getTime()
     startdate = new Date(startdate).toISOString()
     enddate = new Date(enddate).toISOString()
-    console.log(startdate)
-    console.log(enddate)
-    myDayShiftMission.find({"isRemoved":false, "orderDate": { "$gte": startdate, "$lt": enddate } })
+    let findDayMission_id = null
+    let findFinishDate = null
+    if(req.body.mode === 'mission'){
+        findDayMission_id =  null
+    }else if(req.body.mode === 'shipping'){
+        findDayMission_id = {
+            $ne: null
+        }
+        findFinishDate = null
+    }else{
+        findDayMission_id = {
+            $ne: null
+        }
+        findFinishDate = {
+            $ne: null
+        }
+    }
+    myDayShiftMission
+        .find({
+            "isRemoved":false,
+            "orderDate": { "$gte": startdate, "$lt": enddate },
+            "dayMission_id": findDayMission_id, 
+            "finishDate": findFinishDate
+        })
         .then(doc => {
+            console.log(doc)
             if (doc.length === 0) {
                 res.send({
                     code: 1
@@ -148,10 +170,13 @@ exports.findMissionByDate = (req, res, next) => {
 }
 
 exports.findMissionByActive = (req, res, next) => {
+    if(req.body.searchType == 'all'){
+        req.body.searchType = {"$ne": null}
+    }
     let startdate = new Date(req.body.startDate).toISOString()
     let enddate = new Date(req.body.endDate).getTime() + 86400000
     enddate = new Date(enddate).toISOString()
-    myDayShiftMission.find({"isRemoved":false, "orderDate": { "$gte": startdate, "$lt": enddate } })
+    myDayShiftMission.find({"isRemoved":false, "orderDate": { "$gte": startdate, "$lt": enddate },isIncreaseOrder: req.body.searchType })
     .then(doc => {
         if (doc.length === 0) {
             res.send({
