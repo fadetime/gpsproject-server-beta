@@ -2,8 +2,8 @@
 const mongoose = require('mongoose')
 
 const dayShiftMissionSchema = mongoose.Schema({
-    client_id: { type: String, required: true },//客户_id
-    dayMission_id: {type: String,default: null},//白班司机任务id
+    client_id: { type: String, default: null },//客户_id
+    dayMission_id: {type: String, default: null},//白班司机任务id
     clientName: { type: String, required: true },//客户名称
     clientNameEN: { type: String },//英文名称
     note: { type: String, default: null },//备注

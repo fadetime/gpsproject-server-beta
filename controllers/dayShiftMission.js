@@ -116,7 +116,6 @@ exports.endMIssion = (req, res, next) => {
 }
 
 exports.findMissionByDate = (req, res, next) => {
-    console.log(req.body)
     let startdate = new Date(req.body.orderDate).toLocaleDateString()
     let enddate = new Date(startdate).getTime() + 86400000
     startdate = new Date(startdate).getTime()
@@ -147,7 +146,6 @@ exports.findMissionByDate = (req, res, next) => {
             "finishDate": findFinishDate
         })
         .then(doc => {
-            console.log(doc)
             if (doc.length === 0) {
                 res.send({
                     code: 1
