@@ -28,4 +28,7 @@ router.post('/finish', uploadImage.dataInput, dayShiftDriverMissionController.da
 //完成任务并修改任务状态
 router.post('/finishMission', dayShiftDriverMissionController.dayShiftDriver_updateFinishState)
 
+//白班主管查询当天任务
+router.post('/findByDate', dayShiftDriverMissionController.dayShiftDriver_findMissionByDay)
+
 module.exports = router

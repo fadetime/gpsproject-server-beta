@@ -116,11 +116,14 @@ exports.endMIssion = (req, res, next) => {
 }
 
 exports.findMissionByDate = (req, res, next) => {
-    let startdate = new Date(req.body.orderDate).toLocaleDateString()
+    let startdate = new Date(req.body.orderDate).toDateString()
     let enddate = new Date(startdate).getTime() + 86400000
-    startdate = new Date(startdate).getTime()
     startdate = new Date(startdate).toISOString()
+    console.log('start date')
+    console.log(startdate)
     enddate = new Date(enddate).toISOString()
+    console.log('enddate')
+    console.log(enddate)
     let findDayMission_id = null
     let findFinishDate = null
     if(req.body.mode === 'mission'){
@@ -302,6 +305,7 @@ exports.leaderRemoveConfirguedClient = (req, res, next) => {
                                     .deleteOne({_id:req.body.dayMission_id})
                                     .then(delInfo => {
                                         if(delInfo.n === 1 && delInfo.ok === 1){
+                                            console.log(delInfo)
                                             res.send({
                                                 code: 0
                                             })

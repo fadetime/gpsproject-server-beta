@@ -290,7 +290,8 @@ exports.dayShiftDriver_findByDriver = (req, res, next) => {
 }
 
 exports.dayShiftDriver_findMissionByID = (req, res, next) => {
-    dsDriverMissionModels.findOne({ _id: req.body.mission_id })
+    dsDriverMissionModels
+        .findOne({ _id: req.body.mission_id })
         .then(doc => {
             if (doc) {
                 res.send({
@@ -305,6 +306,34 @@ exports.dayShiftDriver_findMissionByID = (req, res, next) => {
         })
         .catch(err => {
             console.log('catch an error while find mission by id')
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}
+
+exports.dayShiftDriver_findMissionByDay = (req, res, next) => {
+    let startDate = req.body.tripsDate
+    let endDate = new Date(startDate).getTime()
+    endDate = endDate + 86400000
+    endDate = new Date(endDate).toISOString()
+    dsDriverMissionModels
+        .find({orderDate: { "$gte": startDate, "$lt": endDate }})
+        .then(doc => {
+            if(doc.length === 0){
+                res.send({
+                    code: 1
+                })
+            }else{
+                res.send({
+                    doc: doc,
+                    code: 0
+                })
+            }
+        })
+        .catch(err => {
             console.log(err)
             res.send({
                 code: 2,
