@@ -116,13 +116,11 @@ exports.endMIssion = (req, res, next) => {
 }
 
 exports.findMissionByDate = (req, res, next) => {
-    let startdate = new Date(req.body.orderDate).toDateString()
+    let startdate = req.body.orderDate
     let enddate = new Date(startdate).getTime() + 86400000
     startdate = new Date(startdate).toISOString()
-    console.log('start date')
-    console.log(startdate)
     enddate = new Date(enddate).toISOString()
-    console.log('enddate')
+    console.log(startdate)
     console.log(enddate)
     let findDayMission_id = null
     let findFinishDate = null

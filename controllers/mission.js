@@ -301,9 +301,6 @@ exports.mission_addClientAndSort = (req, res, next) => {
 }
 
 exports.mission_delClient = (req, res, next) => {
-    console.log('@@@@@@@@@@@')
-    console.log(req.body.obj)
-    console.log('@@@@@@@@@@@')
     Product.updateOne({_id:req.body.mission_id},{
         "$pull":{"missionclient":req.body.obj}
     })

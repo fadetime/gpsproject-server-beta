@@ -31,4 +31,16 @@ router.post('/finishMission', dayShiftDriverMissionController.dayShiftDriver_upd
 //白班主管查询当天任务
 router.post('/findByDate', dayShiftDriverMissionController.dayShiftDriver_findMissionByDay)
 
+//白班主管车次功能添加客户的搜索
+router.post('/search', dayShiftDriverMissionController.dayShiftDriver_searchClient)
+
+//白班主管车次功能添加客户
+router.post('/addClient', dayShiftDriverMissionController.dayShiftDriver_addClient)
+
+//白班主管车次功能添加客户
+router.post('/secondAddClient', dayShiftDriverMissionController.dayShiftDriver_secondAddClient)
+
+//白班主管删除白班车次以及相关任务池客户
+router.post('/delTrips', dayShiftDriverMissionController.dayShiftDriver_removeTrpisAndPoolClient)
+
 module.exports = router

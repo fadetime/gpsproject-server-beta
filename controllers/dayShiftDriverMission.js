@@ -1,5 +1,6 @@
 const dsDriverMissionModels = require('../models/dayShiftDriverMission')
 const dayShiftMissionPool = require('../models/dayShiftMission')
+const clientModels = require('../models/clientb')
 const async = require("async")
 
 exports.dayShiftDriver_create = (req, res, next) => {
@@ -330,6 +331,249 @@ exports.dayShiftDriver_findMissionByDay = (req, res, next) => {
                 res.send({
                     doc: doc,
                     code: 0
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}
+
+exports.dayShiftDriver_searchClient = (req, res, next) => {
+    clientModels
+        .find({ 'clientbname': { $regex: req.body.keyWord, $options: 'i' }},{
+            clientbname: -1,
+            clientbnameEN: -1,
+            clientbaddress: -1,
+            clientbphone: -1,
+            clientbpostcode: -1
+        })
+        .limit(5)
+        .then(doc => {
+            if(doc.length === 0){
+                res.send({
+                    code: 1
+                })
+            }else{
+                res.send({
+                    code: 0,
+                    doc: doc
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}
+
+exports.dayShiftDriver_addClient = (req, res, next) => {
+    let startDate = req.body.orderDate
+    let endDate = new Date().getTime()
+    endDate = endDate + 86400000
+    endDate = new Date(endDate).toISOString()
+    dayShiftMissionPool
+        .findOne({"orderDate":{ "$gte": startDate, "$lt": endDate },"client_id": req.body.client_id},{
+            dayMission_id: -1,
+            isFinish: -1
+        })
+        .then(poolInfo => {
+            if(poolInfo){
+                res.send({
+                    code: 1,
+                    doc: poolInfo
+                })
+            }else{
+                if(req.body.isIncreaseOrder === 'increase'){
+                    req.body.isIncreaseOrder = 'true'
+                }else if(req.body.isIncreaseOrder === 'return'){
+                    req.body.isIncreaseOrder = 'false'
+                }else if(req.body.isIncreaseOrder === 'back'){
+                    req.body.isIncreaseOrder = 'return'
+                }else if(req.body.isIncreaseOrder === 'transport'){
+                    req.body.isIncreaseOrder = 'delivery'
+                }else{
+                    req.body.isIncreaseOrder = 'other'
+                }
+                dayShiftMissionPool
+                    .create({
+                        client_id: req.body.client_id,//客户_id
+                        dayMission_id: req.body.dayMission_id,//白班司机任务id
+                        clientName: req.body.clientName,//客户名称
+                        clientNameEN: req.body.clientNameEN,//英文名称
+                        clientAddress: req.body.clientAddress,//客户地址
+                        clientPhone: req.body.clientPhone,//客户电话
+                        clientPostcode: req.body.clientPostcode,//客户邮编
+                        isIncreaseOrder: req.body.isIncreaseOrder,//是否为加单，true 加单 false 补单 return 退单 delivery 运输  other 其他
+                        driverName: req.body.driverName,//任务司机名
+                        orderDate: req.body.orderDate,//订单生成日期
+                        pool_id: null//任务池_id
+                    })
+                    .then(newPoolInfo => {
+                        if(newPoolInfo){
+                            newPoolInfo.save({pool_id:newPoolInfo._id})
+                            dsDriverMissionModels
+                                .updateOne({_id: req.body.dayMission_id},{
+                                    $push:{"clientArray": {
+                                        "client_id" : req.body.client_id,
+                                        "note" : null,
+                                        "image" : null,
+                                        "isIncreaseOrder" : req.body.isIncreaseOrder,
+                                        "finisDate" : null,
+                                        "pool_id" : newPoolInfo._id,
+                                        "clientName" : req.body.clientName,
+                                        "clientNameEN" : req.body.clientNameEN,
+                                        "clientAddress" : req.body.clientAddress,
+                                        "clientPhone" : req.body.clientPhone,
+                                        "clientPostcode" : req.body.clientPostcode
+                                    }}
+                                })
+                                .then(doc => {
+                                    if(doc.n === 1 && doc.ok === 1){
+                                        res.send({
+                                            code: 0
+                                        })
+                                    }else{
+                                        res.send({
+                                            code: 0,
+                                            msg: 'catch an errror while update day shift driver mission'
+                                        })
+                                    }
+                                })
+                                .catch(err => {
+                                    console.log(err)
+                                    res.send({
+                                        code: 2,
+                                        error: err
+                                    })
+                                })
+                        }else{
+                            res.send({
+                                code: 1
+                            })
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        res.send({
+                            code: 2,
+                            error: err
+                        })
+                    })
+                }
+            })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}
+
+exports.dayShiftDriver_secondAddClient = (req, res, next) => {
+    if(req.body.isIncreaseOrder === 'increase'){
+        req.body.isIncreaseOrder = 'true'
+    }else if(req.body.isIncreaseOrder === 'return'){
+        req.body.isIncreaseOrder = 'false'
+    }else if(req.body.isIncreaseOrder === 'back'){
+        req.body.isIncreaseOrder = 'return'
+    }else if(req.body.isIncreaseOrder === 'transport'){
+        req.body.isIncreaseOrder = 'delivery'
+    }else{
+        req.body.isIncreaseOrder = 'other'
+    }
+    dayShiftMissionPool
+        .create({
+            client_id: req.body.client_id,//客户_id
+            dayMission_id: req.body.dayMission_id,//白班司机任务id
+            clientName: req.body.clientName,//客户名称
+            clientNameEN: req.body.clientNameEN,//英文名称
+            clientAddress: req.body.clientAddress,//客户地址
+            clientPhone: req.body.clientPhone,//客户电话
+            clientPostcode: req.body.clientPostcode,//客户邮编
+            isIncreaseOrder: req.body.isIncreaseOrder,//是否为加单，true 加单 false 补单 return 退单 delivery 运输  other 其他
+            driverName: req.body.driverName,//任务司机名
+            orderDate: req.body.orderDate,//订单生成日期
+            pool_id: null//任务池_id
+        })
+        .then(newPoolInfo => {
+            if(newPoolInfo){
+                newPoolInfo.save({
+                    pool_id:newPoolInfo._id
+                })
+                dsDriverMissionModels
+                    .updateOne({_id: req.body.dayMission_id},{
+                        $push:{"clientArray": {
+                            "client_id" : req.body.client_id,
+                            "note" : null,
+                            "image" : null,
+                            "isIncreaseOrder" : req.body.isIncreaseOrder,
+                            "finisDate" : null,
+                            "pool_id" : newPoolInfo._id,
+                            "clientName" : req.body.clientName,
+                            "clientNameEN" : req.body.clientNameEN,
+                            "clientAddress" : req.body.clientAddress,
+                            "clientPhone" : req.body.clientPhone,
+                            "clientPostcode" : req.body.clientPostcode
+                        }}
+                    })
+                    .then(doc => {
+                        res.send({
+                            code: 0
+                        })
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        res.send({
+                            code: 2,
+                            error: err
+                        })
+                    })
+            }else{
+                res.send({
+                    code: 1
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}
+
+exports.dayShiftDriver_removeTrpisAndPoolClient = (req, res, next) => {
+    dsDriverMissionModels
+        .deleteOne({_id: req.body.mission_id})
+        .then(tripsInfo => {
+            if(tripsInfo.n === 1 && tripsInfo.ok === 1){
+                dayShiftMissionPool
+                    .deleteMany({dayMission_id: req.body.mission_id})
+                    .then(poolInfo => {
+                        res.send({
+                            code: 0
+                        })
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        res.send({
+                            code: 2,
+                            error: err
+                        })
+                    })
+            }else{
+                res.send({
+                    code: 1
                 })
             }
         })
