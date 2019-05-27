@@ -1,256 +1,1226 @@
 const Announcement = require('../models/announcement')
 const noticeLog = require('../models/firstPageNotice')
-const fs = require('fs')
+const announcementForDay = require('../models/announcementForDay')
 
 //add and edit
 exports.notice_update = (req, res, next) => {
-    Announcement
-        .findOne()
-        .then(doc => {
-            if(doc){
-                if(req.file){
-                    doc.image = req.file.path
-                }else if(req.body.image === 'oldPic'){
-                    console.log('使用旧照片')
-                    console.log(req.body.image)
-                }else{
-                    doc.image = null
-                }
-                if(req.body.text){
-                    doc.text = req.body.text
-                }else{
-                    doc.text = null
-                }
-                doc.date = req.body.date
-                doc.isShow = req.body.isShow
-                doc.save()
-                    .then(saveDoc => {
-                        if(saveDoc){
-                            if(req.body.image === 'oldPic'){
-                                req.body.image = doc.image
-                            }else{  
-                                req.body.image = req.file.path
+    if(req.body.place === 'day'){//day shift first page notice
+        announcementForDay
+            .findOne()
+            .then(doc => {
+                if(doc){
+                    if(req.file){
+                        doc.image = req.file.path
+                    }else if(req.body.image === 'oldPic'){
+                        console.log('使用旧照片')
+                        console.log(req.body.image)
+                    }else{
+                        doc.image = null
+                    }
+                    if(req.body.text){
+                        doc.text = req.body.text
+                    }else{
+                        doc.text = null
+                    }
+                    doc.date = req.body.date
+                    doc.isShow = req.body.isShow
+                    doc.save()
+                        .then(saveDoc => {
+                            if(saveDoc){
+                                if(req.body.image === 'oldPic'){
+                                    req.body.image = doc.image
+                                }else{  
+                                    req.body.image = req.file.path
+                                }
+                                noticeLog
+                                    .create({
+                                        date: req.body.date,//生成时间
+                                        image: req.file.path,//提交的照片
+                                        text: req.body.text,//提交的文字
+                                    })
+                                    .then(noticeInfo => {
+                                        if(noticeInfo){
+                                            res.send({
+                                                code:0
+                                            })
+                                        }else{
+                                            res.send({
+                                                code:1
+                                            })
+                                        }
+                                    })
+                                    .catch(err => {
+                                        console.log(err)
+                                        res.send({
+                                            code:2,
+                                            error:err
+                                        })
+                                    })
+                                
+                            }else{
+                                res.send({
+                                    code:1
+                                })
                             }
-                            noticeLog
-                                .create({
-                                    date: req.body.date,//生成时间
-                                    image: req.file.path,//提交的照片
-                                    text: req.body.text,//提交的文字
-                                })
-                                .then(noticeInfo => {
-                                    if(noticeInfo){
-                                        res.send({
-                                            code:0
-                                        })
-                                    }else{
-                                        res.send({
-                                            code:1
-                                        })
-                                    }
-                                })
-                                .catch(err => {
-                                    console.log(err)
-                                    res.send({
-                                        code:2,
-                                        error:err
-                                    })
-                                })
-                            
-                        }else{
-                            res.send({
-                                code:1
-                            })
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err)
-                        res.send({
-                            code:2,
-                            error:err
                         })
-                    })
-            }else{
-                Announcement
-                    .create({
-                        date: req.body.date,//生成时间
-                        image: req.file.path,//提交的照片
-                        text: req.body.text,//提交的文字
-                        isShow: req.body.isShow//是否展示
-                    })
-                    .then(newCreateDoc => {
-                        if(newCreateDoc){
-                            noticeLog
-                                .create({
-                                    date: req.body.date,//生成时间
-                                    image: req.file.path,//提交的照片
-                                    text: req.body.text,//提交的文字
-                                })
-                                .then(noticeInfo => {
-                                    if(noticeInfo){
-                                        res.send({
-                                            code:0
-                                        })
-                                    }else{
-                                        res.send({
-                                            code:1
-                                        })
-                                    }
-                                })
-                                .catch(err => {
-                                    console.log(err)
-                                    res.send({
-                                        code:2,
-                                        error:err
-                                    })
-                                })
-                        }else{
+                        .catch(err => {
+                            console.log(err)
                             res.send({
-                                code:1
+                                code:2,
+                                error:err
                             })
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err)
-                        res.send({
-                            error:err,
-                            code:2
                         })
-                    })
-            }
-        })
-        .catch(err => {
-            console.log(err)
-            res.send({
-                error:err,
-                code:2
+                }else{
+                    announcementForDay
+                        .create({
+                            date: req.body.date,//生成时间
+                            image: req.file.path,//提交的照片
+                            text: req.body.text,//提交的文字
+                            isShow: req.body.isShow//是否展示
+                        })
+                        .then(newCreateDoc => {
+                            if(newCreateDoc){
+                                noticeLog
+                                    .create({
+                                        date: req.body.date,//生成时间
+                                        image: req.file.path,//提交的照片
+                                        text: req.body.text,//提交的文字
+                                    })
+                                    .then(noticeInfo => {
+                                        if(noticeInfo){
+                                            res.send({
+                                                code:0
+                                            })
+                                        }else{
+                                            res.send({
+                                                code:1
+                                            })
+                                        }
+                                    })
+                                    .catch(err => {
+                                        console.log(err)
+                                        res.send({
+                                            code:2,
+                                            error:err
+                                        })
+                                    })
+                            }else{
+                                res.send({
+                                    code:1
+                                })
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            res.send({
+                                error:err,
+                                code:2
+                            })
+                        })
+                }
             })
-        })
+            .catch(err => {
+                console.log(err)
+                res.send({
+                    error:err,
+                    code:2
+                })
+            })
+    }else if(req.body.place === 'night'){//night shift first page notice
+        Announcement
+            .findOne()
+            .then(doc => {
+                if(doc){
+                    if(req.file){
+                        doc.image = req.file.path
+                    }else if(req.body.image === 'oldPic'){
+                        console.log('使用旧照片')
+                        console.log(req.body.image)
+                    }else{
+                        doc.image = null
+                    }
+                    if(req.body.text){
+                        doc.text = req.body.text
+                    }else{
+                        doc.text = null
+                    }
+                    doc.date = req.body.date
+                    doc.isShow = req.body.isShow
+                    doc.save()
+                        .then(saveDoc => {
+                            if(saveDoc){
+                                if(req.body.image === 'oldPic'){
+                                    req.body.image = doc.image
+                                }else{  
+                                    req.body.image = req.file.path
+                                }
+                                noticeLog
+                                    .create({
+                                        date: req.body.date,//生成时间
+                                        image: req.file.path,//提交的照片
+                                        text: req.body.text,//提交的文字
+                                    })
+                                    .then(noticeInfo => {
+                                        if(noticeInfo){
+                                            res.send({
+                                                code:0
+                                            })
+                                        }else{
+                                            res.send({
+                                                code:1
+                                            })
+                                        }
+                                    })
+                                    .catch(err => {
+                                        console.log(err)
+                                        res.send({
+                                            code:2,
+                                            error:err
+                                        })
+                                    })
+                                
+                            }else{
+                                res.send({
+                                    code:1
+                                })
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            res.send({
+                                code:2,
+                                error:err
+                            })
+                        })
+                }else{
+                    Announcement
+                        .create({
+                            date: req.body.date,//生成时间
+                            image: req.file.path,//提交的照片
+                            text: req.body.text,//提交的文字
+                            isShow: req.body.isShow//是否展示
+                        })
+                        .then(newCreateDoc => {
+                            if(newCreateDoc){
+                                noticeLog
+                                    .create({
+                                        date: req.body.date,//生成时间
+                                        image: req.file.path,//提交的照片
+                                        text: req.body.text,//提交的文字
+                                    })
+                                    .then(noticeInfo => {
+                                        if(noticeInfo){
+                                            res.send({
+                                                code:0
+                                            })
+                                        }else{
+                                            res.send({
+                                                code:1
+                                            })
+                                        }
+                                    })
+                                    .catch(err => {
+                                        console.log(err)
+                                        res.send({
+                                            code:2,
+                                            error:err
+                                        })
+                                    })
+                            }else{
+                                res.send({
+                                    code:1
+                                })
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            res.send({
+                                error:err,
+                                code:2
+                            })
+                        })
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                res.send({
+                    error:err,
+                    code:2
+                })
+            })
+    }else{//both first page notice
+        console.log(req.body.place)
+        Announcement
+            .findOne()
+            .then(doc => {
+                if(doc){
+                    if(req.file){
+                        doc.image = req.file.path
+                    }else if(req.body.image === 'oldPic'){
+                        console.log('使用旧照片')
+                        console.log(req.body.image)
+                    }else{
+                        doc.image = null
+                    }
+                    if(req.body.text){
+                        doc.text = req.body.text
+                    }else{
+                        doc.text = null
+                    }
+                    doc.date = req.body.date
+                    doc.isShow = req.body.isShow
+                    doc.save()
+                        .then(saveDoc => {
+                            if(saveDoc){
+                                if(req.body.image === 'oldPic'){
+                                    req.body.image = doc.image
+                                }else{  
+                                    req.body.image = req.file.path
+                                }
+                                noticeLog
+                                    .create({
+                                        date: req.body.date,//生成时间
+                                        image: req.file.path,//提交的照片
+                                        text: req.body.text,//提交的文字
+                                    })
+                                    .then(noticeInfo => {
+                                        if(noticeInfo){
+                                            // update night shift then update day shift 
+                                            announcementForDay
+                                                .findOne()
+                                                .then(doc => {
+                                                    if(doc){
+                                                        if(req.file){
+                                                            doc.imageEN = req.file.path
+                                                        }else if(req.body.image === 'oldPic'){
+                                                            console.log('使用旧照片')
+                                                            console.log(req.body.image)
+                                                        }else{
+                                                            doc.imageEN = null
+                                                        }
+                                                        if(req.body.textEN){
+                                                            doc.textEN = req.body.textEN
+                                                        }else{
+                                                            doc.textEN = null
+                                                        }
+                                                        doc.date = req.body.date
+                                                        doc.isShow = req.body.isShow
+                                                        doc.save()
+                                                            .then(saveDoc => {
+                                                                if(saveDoc){
+                                                                    if(req.body.imageEN === 'oldPic'){
+                                                                        req.body.imageEN = doc.imageEN
+                                                                    }else{  
+                                                                        req.body.imageEN = req.file.path
+                                                                    }
+                                                                    noticeLog
+                                                                        .create({
+                                                                            date: new Date(),
+                                                                            image: req.body.imageEN,
+                                                                            text: req.body.textEN
+                                                                        })
+                                                                        .then(noticeInfo => {
+                                                                            if(noticeInfo){
+                                                                                res.send({
+                                                                                    code:0
+                                                                                })
+                                                                            }else{
+                                                                                res.send({
+                                                                                    code:1
+                                                                                })
+                                                                            }
+                                                                        })
+                                                                        .catch(err => {
+                                                                            console.log(err)
+                                                                            res.send({
+                                                                                code:2,
+                                                                                error:err
+                                                                            })
+                                                                        })
+                                                                    
+                                                                }else{
+                                                                    res.send({
+                                                                        code:1
+                                                                    })
+                                                                }
+                                                            })
+                                                            .catch(err => {
+                                                                console.log(err)
+                                                                res.send({
+                                                                    code:2,
+                                                                    error:err
+                                                                })
+                                                            })
+                                                    }else{
+                                                        announcementForDay
+                                                            .create({
+                                                                date: req.body.date,//生成时间
+                                                                image: req.file.path,//提交的照片
+                                                                text: req.body.text,//提交的文字
+                                                                isShow: req.body.isShow//是否展示
+                                                            })
+                                                            .then(newCreateDoc => {
+                                                                if(newCreateDoc){
+                                                                    noticeLog
+                                                                        .create({
+                                                                            date: req.body.date,//生成时间
+                                                                            image: req.file.path,//提交的照片
+                                                                            text: req.body.text,//提交的文字
+                                                                        })
+                                                                        .then(noticeInfo => {
+                                                                            if(noticeInfo){
+                                                                                res.send({
+                                                                                    code:0
+                                                                                })
+                                                                            }else{
+                                                                                res.send({
+                                                                                    code:1
+                                                                                })
+                                                                            }
+                                                                        })
+                                                                        .catch(err => {
+                                                                            console.log(err)
+                                                                            res.send({
+                                                                                code:2,
+                                                                                error:err
+                                                                            })
+                                                                        })
+                                                                }else{
+                                                                    res.send({
+                                                                        code:1
+                                                                    })
+                                                                }
+                                                            })
+                                                            .catch(err => {
+                                                                console.log(err)
+                                                                res.send({
+                                                                    error:err,
+                                                                    code:2
+                                                                })
+                                                            })
+                                                    }
+                                                })
+                                                .catch(err => {
+                                                    console.log(err)
+                                                    res.send({
+                                                        error:err,
+                                                        code:2
+                                                    })
+                                                })
+                                            // update night shift then update day shift 
+                                        }else{
+                                            res.send({
+                                                code:1
+                                            })
+                                        }
+                                    })
+                                    .catch(err => {
+                                        console.log(err)
+                                        res.send({
+                                            code:2,
+                                            error:err
+                                        })
+                                    })
+                                
+                            }else{
+                                res.send({
+                                    code:1
+                                })
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            res.send({
+                                code:2,
+                                error:err
+                            })
+                        })
+                }else{
+                    Announcement
+                        .create({
+                            date: req.body.date,//生成时间
+                            image: req.file.path,//提交的照片
+                            text: req.body.text,//提交的文字
+                            isShow: req.body.isShow//是否展示
+                        })
+                        .then(newCreateDoc => {
+                            if(newCreateDoc){
+                                noticeLog
+                                    .create({
+                                        date: req.body.date,//生成时间
+                                        image: req.file.path,//提交的照片
+                                        text: req.body.text,//提交的文字
+                                    })
+                                    .then(noticeInfo => {
+                                        if(noticeInfo){
+                                            announcementForDay
+                                                .findOne()
+                                                .then(doc => {
+                                                    if(doc){
+                                                        if(req.file){
+                                                            doc.imageEN = req.file.path
+                                                        }else if(req.body.image === 'oldPic'){
+                                                            console.log('使用旧照片')
+                                                            console.log(req.body.image)
+                                                        }else{
+                                                            doc.imageEN = null
+                                                        }
+                                                        if(req.body.textEN){
+                                                            doc.textEN = req.body.textEN
+                                                        }else{
+                                                            doc.textEN = null
+                                                        }
+                                                        doc.date = req.body.date
+                                                        doc.isShow = req.body.isShow
+                                                        doc.save()
+                                                            .then(saveDoc => {
+                                                                if(saveDoc){
+                                                                    if(req.body.imageEN === 'oldPic'){
+                                                                        req.body.imageEN = doc.imageEN
+                                                                    }else{  
+                                                                        req.body.imageEN = req.file.path
+                                                                    }
+                                                                    noticeLog
+                                                                        .create({
+                                                                            date: new Date(),
+                                                                            image: req.body.imageEN,
+                                                                            text: req.body.textEN
+                                                                        })
+                                                                        .then(noticeInfo => {
+                                                                            if(noticeInfo){
+                                                                                res.send({
+                                                                                    code:0
+                                                                                })
+                                                                            }else{
+                                                                                res.send({
+                                                                                    code:1
+                                                                                })
+                                                                            }
+                                                                        })
+                                                                        .catch(err => {
+                                                                            console.log(err)
+                                                                            res.send({
+                                                                                code:2,
+                                                                                error:err
+                                                                            })
+                                                                        })
+                                                                    
+                                                                }else{
+                                                                    res.send({
+                                                                        code:1
+                                                                    })
+                                                                }
+                                                            })
+                                                            .catch(err => {
+                                                                console.log(err)
+                                                                res.send({
+                                                                    code:2,
+                                                                    error:err
+                                                                })
+                                                            })
+                                                    }else{
+                                                        announcementForDay
+                                                            .create({
+                                                                date: req.body.date,//生成时间
+                                                                image: req.file.path,//提交的照片
+                                                                text: req.body.text,//提交的文字
+                                                                isShow: req.body.isShow//是否展示
+                                                            })
+                                                            .then(newCreateDoc => {
+                                                                if(newCreateDoc){
+                                                                    noticeLog
+                                                                        .create({
+                                                                            date: req.body.date,//生成时间
+                                                                            image: req.file.path,//提交的照片
+                                                                            text: req.body.text,//提交的文字
+                                                                        })
+                                                                        .then(noticeInfo => {
+                                                                            if(noticeInfo){
+                                                                                res.send({
+                                                                                    code:0
+                                                                                })
+                                                                            }else{
+                                                                                res.send({
+                                                                                    code:1
+                                                                                })
+                                                                            }
+                                                                        })
+                                                                        .catch(err => {
+                                                                            console.log(err)
+                                                                            res.send({
+                                                                                code:2,
+                                                                                error:err
+                                                                            })
+                                                                        })
+                                                                }else{
+                                                                    res.send({
+                                                                        code:1
+                                                                    })
+                                                                }
+                                                            })
+                                                            .catch(err => {
+                                                                console.log(err)
+                                                                res.send({
+                                                                    error:err,
+                                                                    code:2
+                                                                })
+                                                            })
+                                                    }
+                                                })
+                                                .catch(err => {
+                                                    console.log(err)
+                                                    res.send({
+                                                        error:err,
+                                                        code:2
+                                                    })
+                                                })
+                                        }else{
+                                            res.send({
+                                                code:1
+                                            })
+                                        }
+                                    })
+                                    .catch(err => {
+                                        console.log(err)
+                                        res.send({
+                                            code:2,
+                                            error:err
+                                        })
+                                    })
+                            }else{
+                                res.send({
+                                    code:1
+                                })
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            res.send({
+                                error:err,
+                                code:2
+                            })
+                        })
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                res.send({
+                    error:err,
+                    code:2
+                })
+            })
+    }
+    
 }
 
 //add and edit en
 exports.notice_updateEN = (req, res, next) => {
-    console.log('enter method')
-    Announcement
-        .findOne()
-        .then(doc => {
-            if(doc){
-                if(req.file){
-                    doc.imageEN = req.file.path
-                }else if(req.body.image === 'oldPic'){
-                    console.log('使用旧照片')
-                    console.log(req.body.image)
-                }else{
-                    doc.imageEN = null
-                }
-                if(req.body.textEN){
-                    doc.textEN = req.body.textEN
-                }else{
-                    doc.textEN = null
-                }
-                doc.date = req.body.date
-                doc.isShow = req.body.isShow
-                doc.save()
-                    .then(saveDoc => {
-                        if(saveDoc){
-                            if(req.body.imageEN === 'oldPic'){
-                                req.body.imageEN = doc.imageEN
-                            }else{  
-                                req.body.imageEN = req.file.path
+    if(req.body.place === 'day'){
+        console.log(req.body.place)
+        announcementForDay
+            .findOne()
+            .then(doc => {
+                if(doc){
+                    if(req.file){
+                        doc.imageEN = req.file.path
+                    }else if(req.body.image === 'oldPic'){
+                        console.log('使用旧照片')
+                        console.log(req.body.image)
+                    }else{
+                        doc.imageEN = null
+                    }
+                    if(req.body.textEN){
+                        doc.textEN = req.body.textEN
+                    }else{
+                        doc.textEN = null
+                    }
+                    doc.date = req.body.date
+                    doc.isShow = req.body.isShow
+                    doc.save()
+                        .then(saveDoc => {
+                            if(saveDoc){
+                                if(req.body.imageEN === 'oldPic'){
+                                    req.body.imageEN = doc.imageEN
+                                }else{  
+                                    req.body.imageEN = req.file.path
+                                }
+                                noticeLog
+                                    .create({
+                                        date: new Date(),
+                                        image: req.body.imageEN,
+                                        text: req.body.textEN
+                                    })
+                                    .then(noticeInfo => {
+                                        if(noticeInfo){
+                                            res.send({
+                                                code:0
+                                            })
+                                        }else{
+                                            res.send({
+                                                code:1
+                                            })
+                                        }
+                                    })
+                                    .catch(err => {
+                                        console.log(err)
+                                        res.send({
+                                            code:2,
+                                            error:err
+                                        })
+                                    })
+                                
+                            }else{
+                                res.send({
+                                    code:1
+                                })
                             }
-                            noticeLog
-                                .create({
-                                    date: new Date(),
-                                    image: req.body.imageEN,
-                                    text: req.body.textEN
-                                })
-                                .then(noticeInfo => {
-                                    if(noticeInfo){
-                                        res.send({
-                                            code:0
-                                        })
-                                    }else{
-                                        res.send({
-                                            code:1
-                                        })
-                                    }
-                                })
-                                .catch(err => {
-                                    console.log(err)
-                                    res.send({
-                                        code:2,
-                                        error:err
-                                    })
-                                })
-                            
-                        }else{
-                            res.send({
-                                code:1
-                            })
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err)
-                        res.send({
-                            code:2,
-                            error:err
                         })
-                    })
-            }else{
-                Announcement
-                    .create({
-                        date: req.body.date,//生成时间
-                        image: req.file.path,//提交的照片
-                        text: req.body.text,//提交的文字
-                        isShow: req.body.isShow//是否展示
-                    })
-                    .then(newCreateDoc => {
-                        if(newCreateDoc){
-                            noticeLog
-                                .create({
-                                    date: req.body.date,//生成时间
-                                    image: req.file.path,//提交的照片
-                                    text: req.body.text,//提交的文字
-                                })
-                                .then(noticeInfo => {
-                                    if(noticeInfo){
-                                        res.send({
-                                            code:0
-                                        })
-                                    }else{
-                                        res.send({
-                                            code:1
-                                        })
-                                    }
-                                })
-                                .catch(err => {
-                                    console.log(err)
-                                    res.send({
-                                        code:2,
-                                        error:err
-                                    })
-                                })
-                        }else{
+                        .catch(err => {
+                            console.log(err)
                             res.send({
-                                code:1
+                                code:2,
+                                error:err
                             })
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err)
-                        res.send({
-                            error:err,
-                            code:2
                         })
-                    })
-            }
-        })
-        .catch(err => {
-            console.log(err)
-            res.send({
-                error:err,
-                code:2
+                }else{
+                    announcementForDay
+                        .create({
+                            date: req.body.date,//生成时间
+                            image: req.file.path,//提交的照片
+                            text: req.body.text,//提交的文字
+                            isShow: req.body.isShow//是否展示
+                        })
+                        .then(newCreateDoc => {
+                            if(newCreateDoc){
+                                noticeLog
+                                    .create({
+                                        date: req.body.date,//生成时间
+                                        image: req.file.path,//提交的照片
+                                        text: req.body.text,//提交的文字
+                                    })
+                                    .then(noticeInfo => {
+                                        if(noticeInfo){
+                                            res.send({
+                                                code:0
+                                            })
+                                        }else{
+                                            res.send({
+                                                code:1
+                                            })
+                                        }
+                                    })
+                                    .catch(err => {
+                                        console.log(err)
+                                        res.send({
+                                            code:2,
+                                            error:err
+                                        })
+                                    })
+                            }else{
+                                res.send({
+                                    code:1
+                                })
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            res.send({
+                                error:err,
+                                code:2
+                            })
+                        })
+                }
             })
-        })
+            .catch(err => {
+                console.log(err)
+                res.send({
+                    error:err,
+                    code:2
+                })
+            })
+    }else if(req.body.place === 'night'){
+        Announcement
+            .findOne()
+            .then(doc => {
+                if(doc){
+                    if(req.file){
+                        doc.imageEN = req.file.path
+                    }else if(req.body.image === 'oldPic'){
+                        console.log('使用旧照片')
+                        console.log(req.body.image)
+                    }else{
+                        doc.imageEN = null
+                    }
+                    if(req.body.textEN){
+                        doc.textEN = req.body.textEN
+                    }else{
+                        doc.textEN = null
+                    }
+                    doc.date = req.body.date
+                    doc.isShow = req.body.isShow
+                    doc.save()
+                        .then(saveDoc => {
+                            if(saveDoc){
+                                if(req.body.imageEN === 'oldPic'){
+                                    req.body.imageEN = doc.imageEN
+                                }else{  
+                                    req.body.imageEN = req.file.path
+                                }
+                                noticeLog
+                                    .create({
+                                        date: new Date(),
+                                        image: req.body.imageEN,
+                                        text: req.body.textEN
+                                    })
+                                    .then(noticeInfo => {
+                                        if(noticeInfo){
+                                            res.send({
+                                                code:0
+                                            })
+                                        }else{
+                                            res.send({
+                                                code:1
+                                            })
+                                        }
+                                    })
+                                    .catch(err => {
+                                        console.log(err)
+                                        res.send({
+                                            code:2,
+                                            error:err
+                                        })
+                                    })
+                                
+                            }else{
+                                res.send({
+                                    code:1
+                                })
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            res.send({
+                                code:2,
+                                error:err
+                            })
+                        })
+                }else{
+                    Announcement
+                        .create({
+                            date: req.body.date,//生成时间
+                            image: req.file.path,//提交的照片
+                            text: req.body.text,//提交的文字
+                            isShow: req.body.isShow//是否展示
+                        })
+                        .then(newCreateDoc => {
+                            if(newCreateDoc){
+                                noticeLog
+                                    .create({
+                                        date: req.body.date,//生成时间
+                                        image: req.file.path,//提交的照片
+                                        text: req.body.text,//提交的文字
+                                    })
+                                    .then(noticeInfo => {
+                                        if(noticeInfo){
+                                            res.send({
+                                                code:0
+                                            })
+                                        }else{
+                                            res.send({
+                                                code:1
+                                            })
+                                        }
+                                    })
+                                    .catch(err => {
+                                        console.log(err)
+                                        res.send({
+                                            code:2,
+                                            error:err
+                                        })
+                                    })
+                            }else{
+                                res.send({
+                                    code:1
+                                })
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            res.send({
+                                error:err,
+                                code:2
+                            })
+                        })
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                res.send({
+                    error:err,
+                    code:2
+                })
+            })
+    }else{
+        Announcement
+            .findOne()
+            .then(doc => {
+                if(doc){
+                    if(req.file){
+                        doc.imageEN = req.file.path
+                    }else if(req.body.image === 'oldPic'){
+                        console.log('使用旧照片')
+                        console.log(req.body.image)
+                    }else{
+                        doc.imageEN = null
+                    }
+                    if(req.body.textEN){
+                        doc.textEN = req.body.textEN
+                    }else{
+                        doc.textEN = null
+                    }
+                    doc.date = req.body.date
+                    doc.isShow = req.body.isShow
+                    doc.save()
+                        .then(saveDoc => {
+                            if(saveDoc){
+                                if(req.body.imageEN === 'oldPic'){
+                                    req.body.imageEN = doc.imageEN
+                                }else{  
+                                    req.body.imageEN = req.file.path
+                                }
+                                noticeLog
+                                    .create({
+                                        date: new Date(),
+                                        image: req.body.imageEN,
+                                        text: req.body.textEN
+                                    })
+                                    .then(noticeInfo => {
+                                        if(noticeInfo){
+                                            //update night shift
+                                            announcementForDay
+                                                .findOne()
+                                                .then(doc => {
+                                                    if(doc){
+                                                        if(req.file){
+                                                            doc.imageEN = req.file.path
+                                                        }else if(req.body.image === 'oldPic'){
+                                                            console.log('使用旧照片')
+                                                            console.log(req.body.image)
+                                                        }else{
+                                                            doc.imageEN = null
+                                                        }
+                                                        if(req.body.textEN){
+                                                            doc.textEN = req.body.textEN
+                                                        }else{
+                                                            doc.textEN = null
+                                                        }
+                                                        doc.date = req.body.date
+                                                        doc.isShow = req.body.isShow
+                                                        doc.save()
+                                                            .then(saveDoc => {
+                                                                if(saveDoc){
+                                                                    if(req.body.imageEN === 'oldPic'){
+                                                                        req.body.imageEN = doc.imageEN
+                                                                    }else{  
+                                                                        req.body.imageEN = req.file.path
+                                                                    }
+                                                                    noticeLog
+                                                                        .create({
+                                                                            date: new Date(),
+                                                                            image: req.body.imageEN,
+                                                                            text: req.body.textEN
+                                                                        })
+                                                                        .then(noticeInfo => {
+                                                                            if(noticeInfo){
+                                                                                res.send({
+                                                                                    code:0
+                                                                                })
+                                                                            }else{
+                                                                                res.send({
+                                                                                    code:1
+                                                                                })
+                                                                            }
+                                                                        })
+                                                                        .catch(err => {
+                                                                            console.log(err)
+                                                                            res.send({
+                                                                                code:2,
+                                                                                error:err
+                                                                            })
+                                                                        })
+                                                                    
+                                                                }else{
+                                                                    res.send({
+                                                                        code:1
+                                                                    })
+                                                                }
+                                                            })
+                                                            .catch(err => {
+                                                                console.log(err)
+                                                                res.send({
+                                                                    code:2,
+                                                                    error:err
+                                                                })
+                                                            })
+                                                    }else{
+                                                        announcementForDay
+                                                            .create({
+                                                                date: req.body.date,//生成时间
+                                                                image: req.file.path,//提交的照片
+                                                                text: req.body.text,//提交的文字
+                                                                isShow: req.body.isShow//是否展示
+                                                            })
+                                                            .then(newCreateDoc => {
+                                                                if(newCreateDoc){
+                                                                    noticeLog
+                                                                        .create({
+                                                                            date: req.body.date,//生成时间
+                                                                            image: req.file.path,//提交的照片
+                                                                            text: req.body.text,//提交的文字
+                                                                        })
+                                                                        .then(noticeInfo => {
+                                                                            if(noticeInfo){
+                                                                                res.send({
+                                                                                    code:0
+                                                                                })
+                                                                            }else{
+                                                                                res.send({
+                                                                                    code:1
+                                                                                })
+                                                                            }
+                                                                        })
+                                                                        .catch(err => {
+                                                                            console.log(err)
+                                                                            res.send({
+                                                                                code:2,
+                                                                                error:err
+                                                                            })
+                                                                        })
+                                                                }else{
+                                                                    res.send({
+                                                                        code:1
+                                                                    })
+                                                                }
+                                                            })
+                                                            .catch(err => {
+                                                                console.log(err)
+                                                                res.send({
+                                                                    error:err,
+                                                                    code:2
+                                                                })
+                                                            })
+                                                    }
+                                                })
+                                                .catch(err => {
+                                                    console.log(err)
+                                                    res.send({
+                                                        error:err,
+                                                        code:2
+                                                    })
+                                                })
+                                            //update night shift
+                                        }else{
+                                            res.send({
+                                                code:1
+                                            })
+                                        }
+                                    })
+                                    .catch(err => {
+                                        console.log(err)
+                                        res.send({
+                                            code:2,
+                                            error:err
+                                        })
+                                    })
+                                
+                            }else{
+                                res.send({
+                                    code:1
+                                })
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            res.send({
+                                code:2,
+                                error:err
+                            })
+                        })
+                }else{
+                    Announcement
+                        .create({
+                            date: req.body.date,//生成时间
+                            image: req.file.path,//提交的照片
+                            text: req.body.text,//提交的文字
+                            isShow: req.body.isShow//是否展示
+                        })
+                        .then(newCreateDoc => {
+                            if(newCreateDoc){
+                                noticeLog
+                                    .create({
+                                        date: req.body.date,//生成时间
+                                        image: req.file.path,//提交的照片
+                                        text: req.body.text,//提交的文字
+                                    })
+                                    .then(noticeInfo => {
+                                        if(noticeInfo){
+                                            announcementForDay
+                                                .findOne()
+                                                .then(doc => {
+                                                    if(doc){
+                                                        if(req.file){
+                                                            doc.imageEN = req.file.path
+                                                        }else if(req.body.image === 'oldPic'){
+                                                            console.log('使用旧照片')
+                                                            console.log(req.body.image)
+                                                        }else{
+                                                            doc.imageEN = null
+                                                        }
+                                                        if(req.body.textEN){
+                                                            doc.textEN = req.body.textEN
+                                                        }else{
+                                                            doc.textEN = null
+                                                        }
+                                                        doc.date = req.body.date
+                                                        doc.isShow = req.body.isShow
+                                                        doc.save()
+                                                            .then(saveDoc => {
+                                                                if(saveDoc){
+                                                                    if(req.body.imageEN === 'oldPic'){
+                                                                        req.body.imageEN = doc.imageEN
+                                                                    }else{  
+                                                                        req.body.imageEN = req.file.path
+                                                                    }
+                                                                    noticeLog
+                                                                        .create({
+                                                                            date: new Date(),
+                                                                            image: req.body.imageEN,
+                                                                            text: req.body.textEN
+                                                                        })
+                                                                        .then(noticeInfo => {
+                                                                            if(noticeInfo){
+                                                                                res.send({
+                                                                                    code:0
+                                                                                })
+                                                                            }else{
+                                                                                res.send({
+                                                                                    code:1
+                                                                                })
+                                                                            }
+                                                                        })
+                                                                        .catch(err => {
+                                                                            console.log(err)
+                                                                            res.send({
+                                                                                code:2,
+                                                                                error:err
+                                                                            })
+                                                                        })
+                                                                    
+                                                                }else{
+                                                                    res.send({
+                                                                        code:1
+                                                                    })
+                                                                }
+                                                            })
+                                                            .catch(err => {
+                                                                console.log(err)
+                                                                res.send({
+                                                                    code:2,
+                                                                    error:err
+                                                                })
+                                                            })
+                                                    }else{
+                                                        announcementForDay
+                                                            .create({
+                                                                date: req.body.date,//生成时间
+                                                                image: req.file.path,//提交的照片
+                                                                text: req.body.text,//提交的文字
+                                                                isShow: req.body.isShow//是否展示
+                                                            })
+                                                            .then(newCreateDoc => {
+                                                                if(newCreateDoc){
+                                                                    noticeLog
+                                                                        .create({
+                                                                            date: req.body.date,//生成时间
+                                                                            image: req.file.path,//提交的照片
+                                                                            text: req.body.text,//提交的文字
+                                                                        })
+                                                                        .then(noticeInfo => {
+                                                                            if(noticeInfo){
+                                                                                res.send({
+                                                                                    code:0
+                                                                                })
+                                                                            }else{
+                                                                                res.send({
+                                                                                    code:1
+                                                                                })
+                                                                            }
+                                                                        })
+                                                                        .catch(err => {
+                                                                            console.log(err)
+                                                                            res.send({
+                                                                                code:2,
+                                                                                error:err
+                                                                            })
+                                                                        })
+                                                                }else{
+                                                                    res.send({
+                                                                        code:1
+                                                                    })
+                                                                }
+                                                            })
+                                                            .catch(err => {
+                                                                console.log(err)
+                                                                res.send({
+                                                                    error:err,
+                                                                    code:2
+                                                                })
+                                                            })
+                                                    }
+                                                })
+                                                .catch(err => {
+                                                    console.log(err)
+                                                    res.send({
+                                                        error:err,
+                                                        code:2
+                                                    })
+                                                })
+                                        }else{
+                                            res.send({
+                                                code:1
+                                            })
+                                        }
+                                    })
+                                    .catch(err => {
+                                        console.log(err)
+                                        res.send({
+                                            code:2,
+                                            error:err
+                                        })
+                                    })
+                            }else{
+                                res.send({
+                                    code:1
+                                })
+                            }
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            res.send({
+                                error:err,
+                                code:2
+                            })
+                        })
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                res.send({
+                    error:err,
+                    code:2
+                })
+            })
+    }
 }
 
 //find
