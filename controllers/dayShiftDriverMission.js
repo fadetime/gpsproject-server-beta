@@ -585,3 +585,29 @@ exports.dayShiftDriver_removeTrpisAndPoolClient = (req, res, next) => {
             })
         })
 }
+
+exports.dayShiftDriver_removeClientInTrips = (req, res, next) => {
+    dsDriverMissionModels
+        .updateOne({_id:req.body._id},{
+            $pull: { clientArray: { _id: req.body.client_id } }
+        })
+        .then(doc => {
+            console.log(doc)
+            if(doc.n === 1 && doc.ok === 1){
+                res.send({
+                    code: 0
+                })
+            }else{
+                res.send({
+                    code: 1
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}
