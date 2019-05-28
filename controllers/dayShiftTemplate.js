@@ -40,7 +40,7 @@ exports.templateCreateMission = (req, res, next) => {
                     clientAddress: item.clientAddress,//客户地址
                     clientPhone: item.clientPhone,//客户电话
                     clientPostcode: item.clientPostcode,//客户邮编
-                    isIncreaseOrder: 'other'
+                    isIncreaseOrder: item.isIncreaseOrder
                 }
             })
         })
