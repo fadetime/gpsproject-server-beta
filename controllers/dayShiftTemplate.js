@@ -210,3 +210,23 @@ exports.findAllTemplate = (req, res, next) => {
             })
         })
 }
+
+exports.changeMissionType = (req, res, next) => {
+    dayShiftTemplate
+        .updateOne({_id: req.body._id, clientArray: {$elemMatch: { _id: req.body.client_id }}},{
+            $set: { 'clientArray.$.isIncreaseOrder': req.body.isIncreaseOrder }
+        })
+        .then(doc => {
+            console.log(doc)
+            res.send({
+                code: 0
+            })
+        })
+        .catch(err =>{
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}

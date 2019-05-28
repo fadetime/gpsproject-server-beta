@@ -13,6 +13,7 @@ const dayShiftTemplateSchema = mongoose.Schema({
             clientAddress: { type: String },//客户地址
             clientPhone: { type: String },//客户电话
             clientPostcode: { type: String },//客户邮编
+            isIncreaseOrder: { type: String, default:null },//是否为加单，true 加单 false 补单 return 退单 change 换货 delivery 运输  other 其他
         }
     ]
 })
