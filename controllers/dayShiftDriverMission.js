@@ -592,11 +592,28 @@ exports.dayShiftDriver_removeClientInTrips = (req, res, next) => {
             $pull: { clientArray: { _id: req.body.client_id } }
         })
         .then(doc => {
-            console.log(doc)
             if(doc.n === 1 && doc.ok === 1){
-                res.send({
-                    code: 0
-                })
+                dayShiftMissionPool
+                    .deleteOne({_id: req.body.pool_id})
+                    .then(delInfo => {
+                        if(delInfo.n === 1 && delInfo.ok === 1){
+                            res.send({
+                                code: 0
+                            })
+                        }else{
+                            res.send({
+                                code: 1,
+                                msg: 'del failed while remove client in pool'
+                            })
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        res.send({
+                            code: 2,
+                            error: err
+                        })
+                    })
             }else{
                 res.send({
                     code: 1
