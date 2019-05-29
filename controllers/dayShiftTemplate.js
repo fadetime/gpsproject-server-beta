@@ -71,7 +71,7 @@ exports.templateCreateMission = (req, res, next) => {
                         clientAddress: item.clientAddress,//客户地址
                         clientPhone: item.clientPhone,//客户电话
                         clientPostcode: item.clientPostcode,//客户邮编
-                        isIncreaseOrder: 'other',//是否为加单，true 加单 false 补单 return 退单 other 其他
+                        isIncreaseOrder: item.isIncreaseOrder,//是否为加单，true 加单 false 补单 return 退单 other 其他
                         driverName: req.body.driverName,//任务司机名
                         orderDate: new Date().toISOString(),//订单生成日期
                     }

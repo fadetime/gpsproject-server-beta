@@ -391,17 +391,6 @@ exports.dayShiftDriver_addClient = (req, res, next) => {
                     doc: poolInfo
                 })
             }else{
-                if(req.body.isIncreaseOrder === 'increase'){
-                    req.body.isIncreaseOrder = 'true'
-                }else if(req.body.isIncreaseOrder === 'return'){
-                    req.body.isIncreaseOrder = 'false'
-                }else if(req.body.isIncreaseOrder === 'back'){
-                    req.body.isIncreaseOrder = 'return'
-                }else if(req.body.isIncreaseOrder === 'transport'){
-                    req.body.isIncreaseOrder = 'delivery'
-                }else{
-                    req.body.isIncreaseOrder = 'other'
-                }
                 dayShiftMissionPool
                     .create({
                         client_id: req.body.client_id,//客户_id
@@ -411,7 +400,7 @@ exports.dayShiftDriver_addClient = (req, res, next) => {
                         clientAddress: req.body.clientAddress,//客户地址
                         clientPhone: req.body.clientPhone,//客户电话
                         clientPostcode: req.body.clientPostcode,//客户邮编
-                        isIncreaseOrder: req.body.isIncreaseOrder,//是否为加单，true 加单 false 补单 return 退单 delivery 运输  other 其他
+                        isIncreaseOrder: req.body.isIncreaseOrder,////是否为加单，order 订单true 加单 false 补单 bun 面食 return 退单 change 换货 delivery 运输  other 其他
                         driverName: req.body.driverName,//任务司机名
                         orderDate: req.body.orderDate,//订单生成日期
                         pool_id: null//任务池_id
@@ -499,7 +488,7 @@ exports.dayShiftDriver_secondAddClient = (req, res, next) => {
             clientAddress: req.body.clientAddress,//客户地址
             clientPhone: req.body.clientPhone,//客户电话
             clientPostcode: req.body.clientPostcode,//客户邮编
-            isIncreaseOrder: req.body.isIncreaseOrder,//是否为加单，true 加单 false 补单 return 退单 delivery 运输  other 其他
+            isIncreaseOrder: req.body.isIncreaseOrder,//是否为加单，order 订单true 加单 false 补单 bun 面食 return 退单 change 换货 delivery 运输  other 其他
             driverName: req.body.driverName,//任务司机名
             orderDate: req.body.orderDate,//订单生成日期
             pool_id: null//任务池_id
