@@ -162,7 +162,7 @@ exports.updateTemplate = (req, res, next) => {
 
 exports.findTemplate = (req, res, next) => {
     dayShiftTemplate
-        .findOne({_id: req.body.id},{templateName: -1,clientArray:-1})
+        .findOne({_id: req.body.id},{templateName: -1,clientArray:-1,matchBun: -1})
         .then(doc => {
             if(doc){
                 res.send({
@@ -188,7 +188,8 @@ exports.findAllTemplate = (req, res, next) => {
     dayShiftTemplate
         .find({},{
             templateName: -1,
-            clientArray: -1
+            clientArray: -1,
+            matchBun: -1
         })
         .then(doc => {
             if(doc.length != 0){
@@ -223,6 +224,31 @@ exports.changeMissionType = (req, res, next) => {
             })
         })
         .catch(err =>{
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}
+
+exports.changeMatch = (req, res, next) => {
+    dayShiftTemplate
+        .updateOne({_id: req.body._id},{
+            matchBun: req.body.matchBun
+        })
+        .then(doc => {
+            if(doc.n === 1 && doc.ok === 1){
+                res.send({
+                    code: 0
+                })
+            }else{
+                res.send({
+                    code: 1
+                })
+            }
+        })
+        .catch(err => {
             console.log(err)
             res.send({
                 code: 2,

@@ -24,4 +24,7 @@ router.post('/updateClient', dayShiftTemplateController.updateTemplate)
 //修改任务类型
 router.post('/changeMissionType', dayShiftTemplateController.changeMissionType)
 
+//修改模板匹配
+router.post('/changeMatch', dayShiftTemplateController.changeMatch)
+
 module.exports = router

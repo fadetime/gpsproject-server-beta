@@ -5,6 +5,7 @@ const dayShiftTemplateSchema = mongoose.Schema({
     templateName: { type: String, required: true },//模板名称
     createDate: {type: Date, default: Date.now()},//创建时间
     creater: { type: String, required: true },//创建人
+    matchBun: { type: Boolean, default: false },//匹配面食
     clientArray: [
         {
             client_id: { type: String, required: true },//客户_id
