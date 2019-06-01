@@ -1,6 +1,6 @@
 {
   "name": "gpsserver",
-  "version": "0.34.0",
+  "version": "0.34.1",
   "description": "provide GPS project front end serve for GPS project",
   "main": "index.js",
   "scripts": {
@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.19.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "dotenv": "^6.0.0",

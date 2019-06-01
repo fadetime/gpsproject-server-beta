@@ -40,6 +40,8 @@ const Announcement = require('./routes/announcement')//首页通知
 const setting = require('./routes/setting')//软件设置
 const tripCount = require('./routes/tripCount')//车次菜框盘点
 const template = require('./routes/dayShiftTemplate')//白班模板
+const workStream_label = require('./routes/workStream/workStream_label')//工作流-标签
+const workStream_mission = require('./routes/workStream/workStream_mission')//工作流-任务
 
 // **************************一系列的middleware************************
 //log
@@ -123,6 +125,7 @@ app.use('/announcement', Announcement)//首页通知
 app.use('/setting', setting)//首页通知
 app.use('/tripCount', tripCount)//车次菜框盘点
 app.use('/template', template)//白班模板
+app.use('/workStream_label', workStream_label)//创建任务流标签
 
 //定期清理短信提醒
 const smsControllers = require('./models/openSMS')

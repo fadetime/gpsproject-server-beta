@@ -27,4 +27,10 @@ router.post('/changeMissionType', dayShiftTemplateController.changeMissionType)
 //修改模板匹配
 router.post('/changeMatch', dayShiftTemplateController.changeMatch)
 
+//匹配14车次
+router.post('/Match14', dayShiftTemplateController.getMatchInfo_match14)
+
+//匹配19车次
+router.post('/Match19', dayShiftTemplateController.getMatchInfo_match19)
+
 module.exports = router
