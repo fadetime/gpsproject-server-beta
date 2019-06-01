@@ -335,3 +335,28 @@ exports.getMatchInfo_match19 = (req, res, next) => {
             })
         })
 }
+
+exports.template_changeName = (req, res, next) => {
+    dayShiftTemplate
+        .updateOne({_id: req.body._id},{
+            templateName: req.body.newTemplateName
+        })
+        .then(doc => {
+            if(doc.n === 1 && doc.ok === 1){
+                res.send({
+                    code: 0
+                })
+            }else{
+                res.send({
+                    code: 1
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}

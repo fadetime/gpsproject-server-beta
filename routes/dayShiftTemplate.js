@@ -33,4 +33,7 @@ router.post('/Match14', dayShiftTemplateController.getMatchInfo_match14)
 //匹配19车次
 router.post('/Match19', dayShiftTemplateController.getMatchInfo_match19)
 
+//修改模板名
+router.post('/changeName', dayShiftTemplateController.template_changeName)
+
 module.exports = router
