@@ -7,9 +7,6 @@ const uploadImage = require('../middlewares/dayShiftUse')
 //增加任务
 router.post('/create', dayShiftDriverMissionController.dayShiftDriver_create)
 
-//司机删除任务中客户
-router.post('/remove', dayShiftDriverMissionController.dayShiftDriver_removeClient)
-
 //根据司机获取任务
 router.post('/find', dayShiftDriverMissionController.dayShiftDriver_findByDriver)
 

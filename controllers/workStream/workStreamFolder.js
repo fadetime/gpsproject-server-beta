@@ -1,8 +1,7 @@
-const workStreamMissionModels = require('../../models/workStream/workStream_mission')
 const workStreamFolderModels = require('../../models/workStream/workStream_folder')
 
-exports.workStream_mission_create = (req, res, next) => {
-    workStreamMissionModels
+exports.workStream_folder_create = (req, res, next) => {
+    workStreamFolderModels
         .create({
             date: req.body.date,
             name: req.body.name
@@ -27,9 +26,8 @@ exports.workStream_mission_create = (req, res, next) => {
         })
 }
 
-exports.workStream_mission_createChild = (req, res, next) => {
-    console.log('child stream')
-    workStreamMissionModels
+exports.workStream_folder_createChild = (req, res, next) => {
+    workStreamFolderModels
         .create({
             date: req.body.date,
             name: req.body.name,
@@ -42,25 +40,20 @@ exports.workStream_mission_createChild = (req, res, next) => {
                         $push:{"content": {
                             child_id: doc._id,
                             name: doc.name,
-                            forder: false
+                            forder: true
                         }}
                     })
-                    .then(folderInfo =>{
-                        if(folderInfo.n === 1 && folderInfo.ok === 1){
-                            res.send({
-                                code: 0
-                            })
-                        }else{
-                            res.send({
-                                code: 1
-                            })
-                        }
+                    .then(updateInfo => {
+                        console.log(updateInfo)
+                        res.send({
+                            code: 0
+                        })
                     })
                     .catch(err => {
                         console.log(err)
                         res.send({
                             code: 2,
-                            error:err
+                            error: err
                         })
                     })
             }else{
@@ -70,6 +63,30 @@ exports.workStream_mission_createChild = (req, res, next) => {
             }
         })
         .catch(err =>{
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}
+
+exports.workStream_folder_find = (req, res, next) => {
+    workStreamFolderModels
+        .findOne({"_id": req.body._id})
+        .then(doc => {
+            if(doc){
+                res.send({
+                    code: 0,
+                    doc: doc
+                })
+            }else{
+                res.send({
+                    code: 1
+                })
+            }
+        })
+        .catch(err => {
             console.log(err)
             res.send({
                 code: 2,

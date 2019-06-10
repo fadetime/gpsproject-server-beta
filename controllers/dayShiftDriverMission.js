@@ -62,51 +62,6 @@ exports.dayShiftDriver_create = (req, res, next) => {
     }
 }
 
-exports.dayShiftDriver_removeClient = (req, res, next) => {
-    console.log(req.body)
-    dsDriverMissionModels.updateOne({ _id: req.body.mission_id }, {
-        $pull: { clientArray: { clientName: req.body.clientName } }
-    })
-        .then(doc => {
-            if (doc.nModified === doc.ok) {
-                dayShiftMissionPool.updateOne({ dayMission_id: req.body.mission_id, clientName: req.body.clientName }, {
-                    dayMission_id: null
-                })
-                    .then(doc2 => {
-                        if (doc2.nModified === doc2.ok) {
-                            res.send({
-                                code: 0
-                            })
-                        } else {
-                            res.send({
-                                code: 1
-                            })
-                        }
-                    })
-                    .catch(err => {
-                        console('catch an error while driver remove client')
-                        console.log(err)
-                        res.send({
-                            code: 2,
-                            error: err
-                        })
-                    })
-            } else {
-                res.send({
-                    code: 1
-                })
-            }
-        })
-        .catch(err => {
-            console.log('catch an error while update client finish date')
-            console.log(err)
-            res.send({
-                code: 2,
-                error: err
-            })
-        })
-}
-
 exports.dayShiftDriver_updateMissionByDriver = (req, res, next) => {
     dsDriverMissionModels.updateOne({ _id: req.body._id }, {
         carPlate: req.body.carPlate,

@@ -32,8 +32,8 @@ exports.templateCreateMission = (req, res, next) => {
     let tempDate = []
     async function mapMissionClient() {
         return new Promise(() => {
-            tempDate = req.body.clientArray.map(item => {
-                return {
+            req.body.clientArray.map(item => {
+                tempDate.push({
                     client_id: item.client_id,
                     clientName: item.clientName,
                     clientNameEN: item.clientNameEN,
@@ -41,7 +41,7 @@ exports.templateCreateMission = (req, res, next) => {
                     clientPhone: item.clientPhone,//客户电话
                     clientPostcode: item.clientPostcode,//客户邮编
                     isIncreaseOrder: item.isIncreaseOrder//任务类型
-                }
+                })
             })
         })
     }
@@ -312,7 +312,7 @@ exports.getMatchInfo_match19 = (req, res, next) => {
             if(doc.data.status === 0){
                 let tempData = null
                 doc.data.payload.some(item => {
-                    if(item.carNumber === '19'){
+                    if(item.carNumber === '20'){
                         tempData = item
                         res.send({
                             code: 0,
@@ -337,26 +337,32 @@ exports.getMatchInfo_match19 = (req, res, next) => {
 }
 
 exports.template_changeName = (req, res, next) => {
-    dayShiftTemplate
-        .updateOne({_id: req.body._id},{
-            templateName: req.body.newTemplateName
-        })
-        .then(doc => {
-            if(doc.n === 1 && doc.ok === 1){
-                res.send({
-                    code: 0
-                })
-            }else{
-                res.send({
-                    code: 1
-                })
-            }
-        })
-        .catch(err => {
-            console.log(err)
-            res.send({
-                code: 2,
-                error: err
+    if(req.body.newTemplateName){
+        dayShiftTemplate
+            .updateOne({_id: req.body._id},{
+                templateName: req.body.newTemplateName
             })
+            .then(doc => {
+                if(doc.n === 1 && doc.ok === 1){
+                    res.send({
+                        code: 0
+                    })
+                }else{
+                    res.send({
+                        code: 1
+                    })
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                res.send({
+                    code: 2,
+                    error: err
+                })
+            })
+    }else{
+        res.send({
+            code: 1
         })
+    }
 }
