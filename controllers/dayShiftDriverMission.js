@@ -537,27 +537,33 @@ exports.dayShiftDriver_removeClientInTrips = (req, res, next) => {
         })
         .then(doc => {
             if(doc.n === 1 && doc.ok === 1){
-                dayShiftMissionPool
-                    .deleteOne({_id: req.body.pool_id})
-                    .then(delInfo => {
-                        if(delInfo.n === 1 && delInfo.ok === 1){
-                            res.send({
-                                code: 0
-                            })
-                        }else{
-                            res.send({
-                                code: 1,
-                                msg: 'del failed while remove client in pool'
-                            })
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err)
-                        res.send({
-                            code: 2,
-                            error: err
+                if(req.body.pool_id){
+                    dayShiftMissionPool
+                        .deleteOne({_id: req.body.pool_id})
+                        .then(delInfo => {
+                            if(delInfo.n === 1 && delInfo.ok === 1){
+                                res.send({
+                                    code: 0
+                                })
+                            }else{
+                                res.send({
+                                    code: 1,
+                                    msg: 'del failed while remove client in pool'
+                                })
+                            }
                         })
+                        .catch(err => {
+                            console.log(err)
+                            res.send({
+                                code: 2,
+                                error: err
+                            })
+                        })
+                }else{
+                    res.send({
+                        code: 0
                     })
+                }
             }else{
                 res.send({
                     code: 1
