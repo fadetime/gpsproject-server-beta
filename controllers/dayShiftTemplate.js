@@ -275,7 +275,7 @@ exports.getMatchInfo_match14 = (req, res, next) => {
             if(doc.data.status === 0){
                 let tempData = null
                 doc.data.payload.some(item => {
-                    if(item.carNumber === '14'){
+                    if(item.carNumber === '15'){
                         tempData = item
                         res.send({
                             code: 0,
@@ -312,7 +312,7 @@ exports.getMatchInfo_match19 = (req, res, next) => {
             if(doc.data.status === 0){
                 let tempData = null
                 doc.data.payload.some(item => {
-                    if(item.carNumber === '20'){
+                    if(item.carNumber === '21'){
                         tempData = item
                         res.send({
                             code: 0,

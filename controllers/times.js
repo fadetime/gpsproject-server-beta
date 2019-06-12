@@ -629,3 +629,119 @@ exports.trips_get_DCInfo_forReport = (req, res, next) => {
             })
         })
 }
+
+exports.trips_changeClientWithOtherTrips = (req, res, next) => {
+    Product.findOne({_id: req.body.right_id})
+        .populate({ path: 'timesclientb', populate: { path: 'clientbserve' } })
+        .then(rightTripsInfo => {
+            let newRightArray = rightTripsInfo.timesclientb.concat(req.body.chooseArray)
+            //check repeat
+            let tempCheckRepeatArray = []
+            async function checkRightRepeat(){
+                return new Promise(()=> {
+                    newRightArray.forEach(item => {
+                        let tempFlag = true
+                        if(tempCheckRepeatArray.length === 0){
+                            tempCheckRepeatArray.push(item)
+                        }else{
+                            tempCheckRepeatArray.some(temp => {
+                                if(item.clientbname === temp.clientbname){
+                                    tempFlag = false
+                                    return true
+                                }
+                                
+                            })
+                            if(tempFlag){
+                                tempCheckRepeatArray.push(item)
+                            }
+                        }
+                    })
+                })
+            }
+            async function waitCheckRight(){
+                await checkRightRepeat()
+            }
+            waitCheckRight()
+            //check repeat
+            rightTripsInfo.timesclientb = tempCheckRepeatArray
+            rightTripsInfo.save()
+                .then(saveInfo => {
+                    if(saveInfo){
+                        Product.findOne({_id: req.body.left_id})
+                            .populate({ path: 'timesclientb', populate: { path: 'clientbserve' } })
+                            .then(leftTripsInfo => {
+                                let newLeftArray = []
+                                async function checkChooseMethod(){
+                                    return new Promise(()=>{
+                                        leftTripsInfo.timesclientb.forEach(leftClient => {
+                                            let tempFlag = true
+                                            req.body.chooseArray.some(chooseClient => {
+                                                if(leftClient.clientbname === chooseClient.clientbname){
+                                                    tempFlag = false
+                                                    return true
+                                                }
+                                            })
+                                            if(tempFlag){
+                                                newLeftArray.push(leftClient)
+                                            }
+                                        })
+                                    })
+                                }
+                                async function startCheckMethod(){
+                                    await checkChooseMethod()
+                                }
+                                startCheckMethod()
+                                leftTripsInfo.timesclientb = newLeftArray
+                                leftTripsInfo.save()
+                                    .then(saveLeftInfo => {
+                                        console.log('saveLeftInfo')
+                                        console.log(saveLeftInfo)
+                                        console.log('saveLeftInfo')
+                                        if(saveLeftInfo){
+                                            res.send({
+                                                code:0
+                                            })
+                                        }else{
+                                            res.send({
+                                                code: 1
+                                            })
+                                        }
+                                    })
+                                    .catch(err => {
+                                        console.log(err)
+                                        res.send({
+                                            code: 2,
+                                            error: err
+                                        })
+                                    })
+                            })
+                            .catch(err => {
+                                console.log(err)
+                                res.send({
+                                    code: 2,
+                                    error: err
+                                })
+                            })
+                    }else{
+                        res.send({
+                            code: 1
+                        })
+                    }
+                    
+                })
+                .catch(err => {
+                    console.log(err)
+                    res.send({
+                        code: 2,
+                        error: err
+                    })
+                })
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code: 2,
+                error: err
+            })
+        })
+}

@@ -50,4 +50,7 @@ router.post('/finda', TimesController.advanced_find_clientAndLine)
 // 报表-获取车辆司机数据
 router.get('/DC', TimesController.trips_get_DCInfo_forReport)
 
+// 车次转移客户
+router.post('/changeTrips', TimesController.trips_changeClientWithOtherTrips)
+
 module.exports = router
