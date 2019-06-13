@@ -153,7 +153,8 @@ exports.checkCar_edit = (req, res, next) => {
         clean: req.body.clean,
         finishDate:req.body.finishDate
     })
-        .then(() => {
+        .then(checkCarInfo => {
+            console.log(checkCarInfo)
             mission.updateOne({ _id: req.body.mission_id }, {
                 carCheckFinish: true
             })

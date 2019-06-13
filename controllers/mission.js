@@ -334,7 +334,6 @@ exports.mission_remove = (req, res, next) => {
                         let carCount 
                         if(doc1){
                             carCount = doc1.cartimes - 1
-                            console.log('1111')
                         }
                         CarModels.update({ 'carid': doc.missioncar }, {
                             cartimes: carCount

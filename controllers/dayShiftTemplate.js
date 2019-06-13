@@ -33,15 +33,36 @@ exports.templateCreateMission = (req, res, next) => {
     async function mapMissionClient() {
         return new Promise(() => {
             req.body.clientArray.map(item => {
-                tempDate.push({
-                    client_id: item.client_id,
-                    clientName: item.clientName,
-                    clientNameEN: item.clientNameEN,
-                    clientAddress: item.clientAddress,//客户地址
-                    clientPhone: item.clientPhone,//客户电话
-                    clientPostcode: item.clientPostcode,//客户邮编
-                    isIncreaseOrder: item.isIncreaseOrder//任务类型
-                })
+                if(tempDate.length === 0){
+                    tempDate.push({
+                        client_id: item.client_id,
+                        clientName: item.clientName,
+                        clientNameEN: item.clientNameEN,
+                        clientAddress: item.clientAddress,//客户地址
+                        clientPhone: item.clientPhone,//客户电话
+                        clientPostcode: item.clientPostcode,//客户邮编
+                        isIncreaseOrder: item.isIncreaseOrder//任务类型
+                    })
+                }else{
+                    let flag = true
+                    tempDate.some(checkData => {
+                        if(checkData.clientName === item.clientName){
+                            flag = false
+                            return true
+                        }
+                    })
+                    if(flag){
+                        tempDate.push({
+                            client_id: item.client_id,
+                            clientName: item.clientName,
+                            clientNameEN: item.clientNameEN,
+                            clientAddress: item.clientAddress,//客户地址
+                            clientPhone: item.clientPhone,//客户电话
+                            clientPostcode: item.clientPostcode,//客户邮编
+                            isIncreaseOrder: item.isIncreaseOrder//任务类型
+                        })
+                    }
+                }
             })
         })
     }
@@ -49,6 +70,9 @@ exports.templateCreateMission = (req, res, next) => {
         await mapMissionClient()
     }
     waitMap()
+    console.log('tempDate')
+    console.log(tempDate)
+    console.log('tempDate')
     dsDriverMissionModels
         .create({
             driverName: req.body.driverName,
@@ -62,7 +86,7 @@ exports.templateCreateMission = (req, res, next) => {
                     code: 0,
                     doc: doc
                 })
-                req.body.clientArray.map(item => {
+                tempDate.map(item => {
                     let poolClient = {
                         client_id: item.client_id,//客户_id
                         dayMission_id: doc._id,//白班司机任务id
