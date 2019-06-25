@@ -276,9 +276,6 @@ exports.mission_addClient = (req, res, next) => {
 
 //任务增加客户并且排序相同名称
 exports.mission_addClientAndSort = (req, res, next) => {
-    console.log('##customer service add client _id')
-    console.log(req.body.mission_id)
-    console.log('##customer service add client _id')
     Product.updateOne({_id:req.body.mission_id},{
         $push:{ "missionclient":{$each:req.body.obj,$position: req.body.ClientPositionNum} }
     })
@@ -434,4 +431,41 @@ exports.mission_remove = (req, res, next) => {
                 error: err
             })
         })
+}
+
+exports.searchClient = (req, res, next) => {
+    let tempDate = new Date(req.body.selectedDate).getTime()
+    tempDate = tempDate + 86400000
+    let endDate = new Date(tempDate).toISOString()
+    Product.find({
+        "missiondate":{$gte: req.body.selectedDate,$lt:endDate}, 
+        "missionclient.clientbname": { $regex: req.body.searchKeyWord, $options: 'i' }
+    },{
+        "_id": 1,
+        "missionline": 1,
+        "missiondate": 1,
+        "missiondirver": 1,
+        "missionclient.$": 1
+    })
+    .then(doc => {
+        console.log('#####')
+        console.log(doc)
+        console.log('#####')
+        if(doc.length === 0){
+            res.send({
+                code: 1
+            })
+        }else{
+            res.send({
+                code: 0,
+                doc: doc
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err)
+        res.send({
+            code: 2
+        })
+    })
 }

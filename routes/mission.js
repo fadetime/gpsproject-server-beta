@@ -32,6 +32,9 @@ router.post('/create', MissionController.mission_create)
 // 删除数据
 router.post('/remove', MissionController.mission_remove)
 
+// 删除数据
+router.post('/searchClient', MissionController.searchClient)
+
 // 司机获取数据
 // router.post('/getmission', MissionController.mission_driver_get)
 
