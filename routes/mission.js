@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const MissionController = require('../controllers/mission')
+const DTuploadImage = require('../middlewares/multerUse_dt');
 
 // 加载单条数据
 router.post('/one', MissionController.mission_get_one)
@@ -34,6 +35,13 @@ router.post('/remove', MissionController.mission_remove)
 
 // 删除数据
 router.post('/searchClient', MissionController.searchClient)
+
+// dt司机增加客户
+router.post('/dtAddClient', DTuploadImage.dataInput,MissionController.dtAddClient)
+
+// dt司机增加客户
+router.post('/dt_submitMission', MissionController.dt_submitMission)
+
 
 // 司机获取数据
 // router.post('/getmission', MissionController.mission_driver_get)

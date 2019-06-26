@@ -1,5 +1,6 @@
 const tripCountModel = require('../models/tripCount')
 const lineModel = require('../models/times')
+const missionModel = require('../models/mission')
 
 exports.tripCount_create = (req, res, next) => {
     tripCountModel.findOne({missionDate:req.body.missionDate})

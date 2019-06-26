@@ -3,6 +3,7 @@ const CarModels = require('../models/car')
 const LineModels = require('../models/times')
 const logControllers = require('../models/log')
 const clientBModels = require('../models/clientb')
+const checkCarModels = require('../models/checkCar')
 const async = require("async")
 
 exports.mission_get_one = (req, res, next) => {
@@ -466,6 +467,93 @@ exports.searchClient = (req, res, next) => {
         console.log(err)
         res.send({
             code: 2
+        })
+    })
+}
+
+exports.dtAddClient = (req, res, next) => {
+    console.log('1')
+    let tempObj = {
+        "position": null,
+        "isNeedPic": false,
+        "finishphoto": null,
+        "finishdate": req.body.finishDate,
+        "image": req.file.path,
+        "isReturn": false,
+        "clientbname": req.body.dialogClientName,
+        "clientbnameEN": req.body.dialogClientName,
+        "clientbaddress": null,
+        "clientbphone": null,
+        "clientbpostcode": null,
+        "clientbserve": "无合作商",
+        "note": null,
+        "noteEN": null,
+        "timeLimit": null
+    }
+    console.log('2')
+    Product.updateOne({"_id": req.body._id},{
+        "$push":{"missionclient": tempObj}
+    })
+    .then(doc => {
+        if(doc.n ===1 && doc.ok === 1){
+            res.send({
+                code: 0
+            })
+        }else{
+            res.send({
+                code: 1
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err)
+        res.send({
+            code: 2
+        })
+    })
+}
+
+exports.dt_submitMission = (req, res, next) => {
+    Product.updateOne({"_id":req.body._id},{
+        carCheckFinish: true,
+        complete: true
+    })
+    .then(doc =>{
+        if(doc.n === 1 && doc.ok === 1){
+            checkCarModels.updateOne({"_id": req.body.carCheck_id},{
+                "finishDate": req.body.finishDate
+            })
+            .then(checkInfo => {
+                if(checkInfo.n === 1 && checkInfo.ok === 1){
+                    res.send({
+                        code: 0
+                    })
+                }else{
+                    res.send({
+                        code: 1,
+                        msg:'update filed in check method'
+                    })
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                res.send({
+                    code: 2,
+                    error: err
+                })
+            })
+        }else{
+            res.send({
+                code: 1,
+                msg:'update filed in mission method'
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err)
+        res.send({
+            code: 2,
+            error: err
         })
     })
 }
