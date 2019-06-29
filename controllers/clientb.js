@@ -844,7 +844,9 @@ exports.client_change_basketNum = (req, res, next) => {
 exports.client_findLostInfoOfClient = (req, res, next) => {
     if(req.body.mode === 'pic'){//find lost pic of client
         Product.find({"image": null},{
-            clientbname: 1
+            clientbname: 1,
+            clientbaddress: 1,
+            clientbphone: 1
         })
         .then(doc => {
             if(doc.length === 0){
@@ -867,7 +869,9 @@ exports.client_findLostInfoOfClient = (req, res, next) => {
         })
     }else if(req.body.mode === 'add'){//find lost add of client
         Product.find({"clientbaddress": null},{
-            clientbname: 1
+            clientbname: 1,
+            clientbaddress: 1,
+            clientbphone: 1
         })
         .then(doc => {
             if(doc.length === 0){
@@ -890,7 +894,9 @@ exports.client_findLostInfoOfClient = (req, res, next) => {
         })
     }else{
         Product.find({"clientbpostcode": null},{
-            clientbname: 1
+            clientbname: 1,
+            clientbaddress: 1,
+            clientbphone: 1
         })
         .then(doc => {
             if(doc.length === 0){
