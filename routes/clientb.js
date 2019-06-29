@@ -53,4 +53,7 @@ router.post('/needpic', ClientBController.client_change_needpic)
 // 修改客户拖欠框数
 router.post('/basket', ClientBController.client_change_basketNum)
 
+// 查找缺失数据的客户
+router.post('/lost', ClientBController.client_findLostInfoOfClient)
+
 module.exports = router

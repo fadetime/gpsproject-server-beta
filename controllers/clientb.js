@@ -840,3 +840,76 @@ exports.client_change_basketNum = (req, res, next) => {
             })
         })
 }
+
+exports.client_findLostInfoOfClient = (req, res, next) => {
+    if(req.body.mode === 'pic'){//find lost pic of client
+        Product.find({"image": null},{
+            clientbname: 1
+        })
+        .then(doc => {
+            if(doc.length === 0){
+                res.send({
+                    code: 1
+                })
+            }else{
+                res.send({
+                    code: 0,
+                    doc: doc,
+                    mode: req.body.mode
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code:2
+            })
+        })
+    }else if(req.body.mode === 'add'){//find lost add of client
+        Product.find({"clientbaddress": null},{
+            clientbname: 1
+        })
+        .then(doc => {
+            if(doc.length === 0){
+                res.send({
+                    code: 1
+                })
+            }else{
+                res.send({
+                    code: 0,
+                    doc: doc,
+                    mode: req.body.mode
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code:2
+            })
+        })
+    }else{
+        Product.find({"clientbpostcode": null},{
+            clientbname: 1
+        })
+        .then(doc => {
+            if(doc.length === 0){
+                res.send({
+                    code: 1
+                })
+            }else{
+                res.send({
+                    code: 0,
+                    doc: doc,
+                    mode: req.body.mode
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({
+                code:2
+            })
+        })
+    }
+}
