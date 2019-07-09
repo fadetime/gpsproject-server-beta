@@ -18,4 +18,7 @@ router.post('/change', MissionController.client_driver_changepsw)
 // 完成任务
 router.post('/exupdate', MissionController.driver_upload_checkPic)
 
+// 财务收款状态更新
+router.post('/update_receipt', MissionController.driver_receipt_update)
+
 module.exports = router

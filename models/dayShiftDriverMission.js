@@ -21,7 +21,12 @@ const dayShiftDriverMissionSchema = mongoose.Schema({
         image: { type: String, default: null },//客户图片
         isIncreaseOrder: { type: String, default: null },//是否为加单，true 加单 false 补单 return 运输 delivery 其他 other
         finisDate: {type: Date, default: null },//完成时间
-        pool_id: { type: String, default: null }//任务池_id
+        pool_id: { type: String, default: null },//任务池_id
+        receiptMission: { type: Boolean, default: false },//是否包含收款任务
+        receiptFinishDate: { type: Date },//收款任务完成时间
+        receiptRemark: { type: String },//收款留言
+        receiptImage: { type: String },//收款照片-财务上传的
+        receipt_id: { type: String }//收款返回客服后台的id
     }]
 })
 

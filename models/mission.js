@@ -36,7 +36,12 @@ const missionSchema = mongoose.Schema({
             noteEN: { type: String },
             image: { type: String, default: null },//客户图片
             isReturn: { type: Boolean, default: false },//属于退菜任务
-            returnPool_id: { type: String, default: null }//退菜任务池_id
+            returnPool_id: { type: String, default: null },//退菜任务池_id
+            receipt_id: { type: String }, //财务收款任务ID
+            receipt_finish: { type: Boolean }, //财务收款任务是否完成
+            receipt_date: { type: Date , default: null}, //财务收款任务完成时间
+            receipt_remark: { type: String }, //财务收款任务留言
+            receipt_image: { type: String } //财务收款任务图片
         }
     ]//线路客户
 })

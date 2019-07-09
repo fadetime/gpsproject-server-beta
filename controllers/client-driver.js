@@ -342,3 +342,26 @@ exports.driver_missionComplete = (req, res, next) => {
             })
         })
 }
+
+exports.driver_receipt_update = (req, res, next) => {
+    Product.updateOne({ "_id": req.body.mission_id,"missionclient._id": req.body.clientArray_id},{
+        $set: {"missionclient.$.receipt_date": req.body.finishDate,"missionclient.$.receipt_finish": true}
+    })
+    .then(doc => {
+        if(doc.n ===1 && doc.ok === 1){
+            res.send({
+                code: 0
+            })
+        }else{
+            res.send({
+                code: 1
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err)
+        res.send({
+            code: 2
+        })
+    })
+}

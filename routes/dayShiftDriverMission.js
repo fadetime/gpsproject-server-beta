@@ -43,4 +43,10 @@ router.post('/delTrips', dayShiftDriverMissionController.dayShiftDriver_removeTr
 //白班主管删除白班车次以内的客户
 router.post('/delClientInTrips', dayShiftDriverMissionController.dayShiftDriver_removeClientInTrips)
 
+//白班主管添加司机收款客户
+router.post('/editReceipt', dayShiftDriverMissionController.dayShiftDriver_editReceipt)
+
+//白班司机完成客户收款
+router.post('/finishReceipt', dayShiftDriverMissionController.dayShiftDriver_finishReceipt)
+
 module.exports = router

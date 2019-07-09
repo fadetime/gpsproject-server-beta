@@ -358,7 +358,11 @@ exports.dayShiftDriver_addClient = (req, res, next) => {
                         isIncreaseOrder: req.body.isIncreaseOrder,////是否为加单，order 订单true 加单 false 补单 bun 面食 return 退单 change 换货 delivery 运输  other 其他
                         driverName: req.body.driverName,//任务司机名
                         orderDate: req.body.orderDate,//订单生成日期
-                        pool_id: null//任务池_id
+                        pool_id: null,//任务池_id
+                        receiptRemark: req.body.receiptRemark,//收款留言
+                        receiptImage: req.body.receiptImage,//收款照片-财务上传的
+                        receipt_id: req.body.receipt_id,//收款后返回的id
+                        receiptMission: req.body.receiptMission //是否含有收款
                     })
                     .then(newPoolInfo => {
                         if(newPoolInfo){
@@ -376,7 +380,11 @@ exports.dayShiftDriver_addClient = (req, res, next) => {
                                         "clientNameEN" : req.body.clientNameEN,
                                         "clientAddress" : req.body.clientAddress,
                                         "clientPhone" : req.body.clientPhone,
-                                        "clientPostcode" : req.body.clientPostcode
+                                        "clientPostcode" : req.body.clientPostcode,
+                                        "receiptRemark": req.body.receiptRemark,//收款留言
+                                        "receiptImage": req.body.receiptImage,//收款照片-财务上传的
+                                        "receipt_id": req.body.receipt_id,//收款后返回的id
+                                        "receiptMission": req.body.receiptMission //是否含有收款
                                     }}
                                 })
                                 .then(doc => {
@@ -577,4 +585,65 @@ exports.dayShiftDriver_removeClientInTrips = (req, res, next) => {
                 error: err
             })
         })
+}
+
+exports.dayShiftDriver_editReceipt = (req, res, next) => {
+    dsDriverMissionModels
+    .updateOne({ "_id": req.body.trips_id,"clientArray._id": req.body.array_id},{
+        $set: {
+            "clientArray.$.receiptRemark": req.body.receiptRemark,
+            "clientArray.$.receiptImage": req.body.receiptImage,
+            "clientArray.$.receipt_id": req.body.receipt_id,
+            "clientArray.$.receiptMission" : true
+        }
+    })
+    .then(doc => {
+        console.log(doc)
+        
+        if(doc.n === 1 && doc.ok === 1){
+            res.send({
+                code: 0
+            })
+        }else{
+            res.send({
+                code: 1
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err)
+        res.send({
+            code: 2,
+            error: err
+        })
+    })
+}
+exports.dayShiftDriver_finishReceipt = (req, res, next) => {
+    console.log('$$$$$$$$')
+    console.log(req.body)
+    dsDriverMissionModels
+    .updateOne({ "_id": req.body.mission_id,"clientArray._id": req.body.tripsArray_id},{
+        $set: {
+            "clientArray.$.receiptFinishDate": req.body.receiptFinishDate
+        }
+    })
+    .then(doc => {
+        console.log(doc)
+        if(doc.n === 1 && doc.ok === 1){
+            res.send({
+                code: 0
+            })
+        }else{
+            res.send({
+                code: 1
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err)
+        res.send({
+            code: 2,
+            error: err
+        })
+    })
 }
