@@ -148,6 +148,8 @@ exports.times_create_product = (req, res, next) => {
 
 exports.times_eidt = (req, res, next) => {
     Product.findById(req.body._id)
+        .populate({ path: 'timesclientb', populate: { path: 'clientbserve' } })
+        .populate({ path: 'timesclientb', populate: { path: 'clientbarea' } })
         .then((doc) => {
             if (!doc) {
                 res.send({
@@ -174,28 +176,36 @@ exports.times_eidt = (req, res, next) => {
                         } else {
                             logOperator = 'name error'
                         }
+                        let beforeClient = ''
+                        doc.timesclientb.forEach(element => {
+                            beforeClient += '{' + element.clientbname + '}'
+                        });
+                        let afterClient = ''
+                        req.body.timesclientb.forEach(element => {
+                            afterClient += '{' + element.clientbname + '}'
+                        });
                         logControllers.create({
                             logDate: new Date().toISOString(),
                             logOperator: logOperator,
                             logPlace: 'line',
                             logMode: 'edit',
-                            logInfo: '信息：(' + '名称' + req.body.timesname + '；准证' + req.body.timesnote + ';)'
+                            logInfo: '信息：(' + '名称' + req.body.timesname + '；线路备注' + req.body.timesnote + ';beforeClient:'+ beforeClient +';afterClient:'+ afterClient+')'
                         })
-                            .then(() => {
-                                res.send({
-                                    code: 0,
-                                    msg: '修改线路成功'
-                                })
+                        .then(() => {
+                            res.send({
+                                code: 0,
+                                msg: '修改线路成功'
                             })
-                            .catch(err => {
-                                console.log('catch an error while write log')
-                                res.send({
-                                    code: 2,
-                                    msg: '修改线路时出现问题',
-                                    error: err
-                                })
-                                console.log(err)
+                        })
+                        .catch(err => {
+                            console.log('catch an error while write log')
+                            res.send({
+                                code: 2,
+                                msg: '修改线路时出现问题',
+                                error: err
                             })
+                            console.log(err)
+                        })
                     })
                     .catch((err) => {
                         console.log('更新时出现问题')

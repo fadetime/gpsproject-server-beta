@@ -453,9 +453,9 @@ exports.clientbs_edit_img = (req, res, next) => {
         })
 }
 
-exports.clientbs_other_edit = (req, res, next) => {//用于ebuy后台修改
+exports.clientbs_other_edit = (req, res, next) => {//用于ebuy后台修改 备注
     Product.findOne({ clientbname: req.body.oldname })
-        .then((doc) => {
+        .then(doc => {
             if (!doc) {
                 res.send({
                     code: 1,
@@ -463,7 +463,7 @@ exports.clientbs_other_edit = (req, res, next) => {//用于ebuy后台修改
                 })
             } else {
                 Product.countDocuments({ clientbname: req.body.oldname })
-                    .then((doc1) => {
+                    .then(doc1 => {
                         if (doc1 === 1) {
                             myArea.findOne({ areaName: '无区域' })
                                 .then(areaDoc => {
@@ -494,7 +494,6 @@ exports.clientbs_other_edit = (req, res, next) => {//用于ebuy后台修改
                                                     })
                                                 })
                                                 .catch((err) => {
-                                                    console.log('查找客户邮编出错')
                                                     console.log(err)
                                                     res.send({
                                                         code: 2,
@@ -542,7 +541,7 @@ exports.clientbs_other_edit = (req, res, next) => {//用于ebuy后台修改
             console.log(err)
             res.status(500).json({
                 msg: '获取数据时服务器发生错误',
-                err
+                err:err
             })
         })
 }
