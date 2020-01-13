@@ -3,6 +3,50 @@ const logControllers = require('../models/log')
 const myClient = require('../models/clientb')
 const mongoose = require('mongoose')
 
+exports.times_double_check = (req, res, next) => {
+    async function searchClientName(groupInfo){
+        return new Promise(async resolve=>{
+            let tempArray = groupInfo
+            for (let item of tempArray){
+                let rest = await myClient.findOne({"_id": item._id})
+                tempArray.forEach(checkInfo=>{
+                    if(checkInfo._id.toString() == rest._id.toString()){
+                        checkInfo.clientName = rest.clientbname
+                    }
+                })
+            }
+            resolve(tempArray)
+        })
+    }
+
+    Product.aggregate([
+        {"$unwind":"$timesclientb"},
+        {"$group": {"_id":"$timesclientb","alerts":{
+                    $addToSet:{
+                        "tripsName":"$timesname"
+                    }
+                },"count":{"$sum":1}
+            }
+        },
+        {"$match": {"_id":{"$ne": null},"count":{"$gt":1}}}
+    ])
+    .then(async groupInfo =>{
+        console.log(groupInfo)
+       let r = await searchClientName(groupInfo)
+        res.send({
+            code: 0,
+            doc: r
+        })
+    })
+    .catch(err =>{
+        console.log(err)
+        res.send({
+            code: 2,
+            msg: err
+        })
+    })
+}
+
 exports.times_get_one = (req, res, next) => {
     Product.findById(req.body.line_id)
         .populate('timescar')

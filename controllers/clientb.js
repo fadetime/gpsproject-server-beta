@@ -246,6 +246,20 @@ exports.clientbs_create_product = (req, res, next) => {
                         noteEN: req.body.noteEN,
                         image: req.file.path
                     }
+                    Product.create(tempData)
+                    .then(() => {
+                        res.send({
+                            code: 0
+                        })
+                    })
+                    .catch(err => {
+                        console.log('catch an error while find company')
+                        console.log(err)
+                        res.send({
+                            code: 2,
+                            error: err
+                        })
+                    })
                 } else {
                     if (!req.body.clientbserve || !req.body.clientbarea) {//ebuy平台建立数据
                         myArea.findOne({ areaName: '无区域' })
@@ -262,10 +276,16 @@ exports.clientbs_create_product = (req, res, next) => {
                                             clientbarea: areaDoc._id
                                         }
                                         Product.create(tempData)
-                                            .then(() => {
-                                                res.send({
-                                                    code: 0
-                                                })
+                                            .then(info => {
+                                                if(info){
+                                                    res.send({
+                                                        code: 0
+                                                    })
+                                                }else{
+                                                    res.send({
+                                                        code: 1
+                                                    })
+                                                }
                                             })
                                             .catch(err => {
                                                 console.log('catch an error while find company')

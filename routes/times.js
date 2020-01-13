@@ -53,4 +53,7 @@ router.get('/DC', TimesController.trips_get_DCInfo_forReport)
 // 车次转移客户
 router.post('/changeTrips', TimesController.trips_changeClientWithOtherTrips)
 
+// 车次重复客户检查
+router.post('/doubleCheck', TimesController.times_double_check)
+
 module.exports = router
